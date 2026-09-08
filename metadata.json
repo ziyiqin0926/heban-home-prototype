@@ -1,0 +1,6 @@
+{
+  "name": "和伴",
+  "description": "面向用户的AI智能陪护需求生成与同城陪伴互助社区平台",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
