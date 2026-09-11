@@ -90,7 +90,7 @@ export default function Directory({ onNavigateToAgent }: DirectoryProps) {
 
           <button type="button" className="directory-ai-cta" onClick={onNavigateToAgent}>
             <Sparkles />
-            <span>没有找到合适的服务？问问AI ~</span>
+            <span>没有找到合适的服务？个性化定制点这~</span>
             <ChevronRight />
           </button>
         </section>
