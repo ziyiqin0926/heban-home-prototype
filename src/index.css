@@ -917,3 +917,396 @@ select:focus-visible {
     border-radius: 28px;
   }
 }
+
+
+/* 黑条内融合档期胶囊 */
+.welcome {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.welcome-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.welcome-left > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.welcome-schedule-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding: 4px 8px 4px 6px;
+  border: 1px solid rgba(248, 212, 119, 0.35);
+  border-radius: 999px;
+  background: rgba(248, 212, 119, 0.12);
+  color: #f8d477;
+  cursor: pointer;
+  transition: transform 140ms ease, background 140ms ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.welcome-schedule-pill:hover {
+  background: rgba(248, 212, 119, 0.22);
+}
+
+.welcome-schedule-pill:active {
+  transform: scale(0.96);
+}
+
+.schedule-pill-badge {
+  padding: 2px 5px;
+  border-radius: 6px;
+  background: #f8d477;
+  color: #252d39;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.schedule-pill-text {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.schedule-pill-arrow {
+  width: 13px;
+  height: 13px;
+  color: #f8d477;
+}
+
+/* 方案三快捷入口高亮强化 */
+.quick-card-highlight .quick-icon-calendar {
+  position: relative;
+  color: var(--blue);
+  background: #edf5ff;
+  box-shadow: 0 2px 8px rgba(32, 102, 222, 0.15);
+}
+
+.quick-card-highlight strong {
+  color: #1e3a8a;
+}
+
+.quick-icon-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ef4444;
+  border: 1.5px solid #fff;
+}
+
+/* AI 档期日历抽屉弹窗样式 */
+.schedule-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(4px);
+  animation: fadeInOverlay 180ms ease;
+}
+
+.schedule-modal-sheet {
+  width: 100%;
+  max-width: 480px;
+  max-height: 85vh;
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  animation: slideUpSheet 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUpSheet {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.schedule-sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  background: #f8fafc;
+  border-bottom: 1px solid #eef2f6;
+}
+
+.schedule-sheet-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.schedule-title-icon {
+  width: 28px;
+  height: 28px;
+  padding: 5px;
+  border-radius: 8px;
+  background: #2066de;
+  color: #fff;
+}
+
+.schedule-sheet-title h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.schedule-sheet-title p {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: #64748b;
+}
+
+.schedule-close-btn {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: #e2e8f0;
+  color: #475569;
+  cursor: pointer;
+}
+
+.schedule-close-btn svg { width: 18px; height: 18px; }
+
+/* 日历周选择条 */
+.schedule-week-bar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  padding: 12px 16px;
+  background: #f8fafc;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.schedule-week-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 0;
+  border-radius: 10px;
+  font-size: 11px;
+  color: #64748b;
+  position: relative;
+}
+
+.schedule-week-day.past { opacity: 0.55; }
+
+.schedule-week-day b {
+  margin-top: 3px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.schedule-week-day.active {
+  background: #2066de;
+  color: #fff;
+}
+
+.schedule-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #f8d477;
+  margin-top: 3px;
+}
+
+.schedule-dot.dot-future {
+  background: #2066de;
+}
+
+/* 任务列表 */
+.schedule-list {
+  padding: 14px 16px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.schedule-section-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #334155;
+}
+
+.schedule-tag {
+  font-size: 10px;
+  color: #059669;
+  background: #d1fae5;
+  padding: 2px 7px;
+  border-radius: 999px;
+}
+
+.schedule-card {
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.schedule-card-blue {
+  background: linear-gradient(180deg, #f8fbff, #f1f7ff);
+  border-color: #dbeafe;
+}
+
+.schedule-card-green {
+  background: linear-gradient(180deg, #f8fdf9, #f0fdf4);
+  border-color: #dcfce7;
+}
+
+.schedule-card-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #475569;
+}
+
+.schedule-card-time-icon {
+  width: 14px;
+  height: 14px;
+  color: #64748b;
+}
+
+.schedule-status-tag {
+  margin-left: auto;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #dbeafe;
+  color: #1d4ed8;
+  font-weight: 700;
+}
+
+.schedule-status-tag.green {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.schedule-card-main h4 {
+  margin: 6px 0 2px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.schedule-card-main p {
+  margin: 0;
+  font-size: 11px;
+  color: #64748b;
+}
+
+.schedule-card-foot {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px dashed rgba(100, 116, 139, 0.2);
+  font-size: 10px;
+  color: #64748b;
+}
+
+/* 档案卡与标签 */
+.schedule-archive-box {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.schedule-archive-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #334155;
+}
+
+.schedule-archive-icon {
+  width: 16px;
+  height: 16px;
+  color: #2066de;
+}
+
+.schedule-archive-link {
+  margin-left: auto;
+  border: 0;
+  background: transparent;
+  font-size: 11px;
+  color: #2066de;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.schedule-archive-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.schedule-member-chip {
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+}
+
+/* 抽屉底部按钮 */
+.schedule-sheet-footer {
+  padding: 12px 16px 18px;
+  background: #fff;
+  border-top: 1px solid #f1f5f9;
+}
+
+.schedule-ai-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 14px;
+  background: #252d39;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: opacity 160ms ease;
+}
+
+.schedule-ai-btn:hover { opacity: 0.94; }
+.schedule-ai-icon { width: 16px; height: 16px; color: #f8d477; }
+.schedule-ai-arrow { width: 16px; height: 16px; margin-left: auto; opacity: 0.7; }

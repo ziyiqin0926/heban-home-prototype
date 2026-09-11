@@ -11,7 +11,12 @@ import {
   ShieldCheck,
   Stethoscope,
   Ticket,
-  UserRoundCheck
+  UserRoundCheck,
+  Calendar,
+  Clock,
+  Sparkles,
+  UserCheck,
+  X
 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 
@@ -30,6 +35,7 @@ const services = [
 export default function Home({ onNavigateToAgent, onNavigateToCommunity, onNavigateToProfile }: HomeProps) {
   const { currentCity, orders, coupons, setPrefilledPrompt } = useAppContext();
   const [slide, setSlide] = useState(0);
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
   const availableCoupon = coupons.find(coupon => coupon.status === 'available');
   const activeOrders = orders.filter(order => order.status === 'pending' || order.status === 'accepted').length;
 
@@ -81,7 +87,22 @@ export default function Home({ onNavigateToAgent, onNavigateToCommunity, onNavig
         </div>
       </section>
 
-      <section className="welcome"><span className="avatar">IP</span><span>Hey，来跟幸福打个招呼！</span></section>
+      <section className="welcome">
+        <div className="welcome-left">
+          <span className="avatar">IP</span>
+          <span>Hey，来跟幸福打个招呼！</span>
+        </div>
+        <button
+          type="button"
+          className="welcome-schedule-pill"
+          onClick={() => setShowScheduleModal(true)}
+          aria-label="查看今日AI排期档期"
+        >
+          <span className="schedule-pill-badge">今日档期</span>
+          <span className="schedule-pill-text">2 项待履约</span>
+          <ChevronRight className="schedule-pill-arrow" />
+        </button>
+      </section>
 
       <section className="surface">
         <div className="service-grid">
@@ -99,7 +120,19 @@ export default function Home({ onNavigateToAgent, onNavigateToCommunity, onNavig
         <div className="quick-grid">
           <button type="button" className="quick-card" onClick={() => onNavigateToProfile('orders')}><span className="quick-icon"><ClipboardList className="icon" /></span><strong>进程订单</strong><small>{activeOrders ? `${activeOrders} 笔进行中` : '查看进度'}</small></button>
           <button type="button" className="quick-card" onClick={() => onNavigateToProfile('coupons')}><span className="quick-icon"><Ticket className="icon" /></span><strong>优惠卡兑换</strong><small>{availableCoupon ? '权益卡 积分兑换' : '暂无优惠'}</small></button>
-          <button type="button" className="quick-card" onClick={() => onNavigateToProfile('menu')}><span className="quick-icon"><UserRoundCheck className="icon" /></span><strong>偏好档案</strong><small>家庭成员档案记录</small></button>
+          <button
+            type="button"
+            className="quick-card quick-card-highlight"
+            onClick={() => setShowScheduleModal(true)}
+            aria-label="档案与档期日历"
+          >
+            <span className="quick-icon quick-icon-calendar">
+              <Calendar className="icon" />
+              <span className="quick-icon-dot" />
+            </span>
+            <strong>档案与档期</strong>
+            <small>家庭日历 · 履约排期</small>
+          </button>
           <button type="button" className="quick-card" onClick={() => openAgent('我需要情绪陪伴服务，请帮我生成需求单')}><span className="quick-icon"><Heart className="icon" /></span><strong>情绪照顾</strong><small>各类服务目录</small></button>
         </div>
       </section>
@@ -134,6 +167,123 @@ export default function Home({ onNavigateToAgent, onNavigateToCommunity, onNavig
       </section>
 
       <div className="trust"><ShieldCheck className="trust-icon" /><span>XXXX 实名认证服务 · XXXX 隐私保障 · XXXX 全程可追踪</span></div>
+    
+      {/* AI 档案日历排期抽屉 / 弹层 */}
+      {showScheduleModal && (
+        <div className="schedule-modal-overlay" onClick={() => setShowScheduleModal(false)}>
+          <div className="schedule-modal-sheet" onClick={e => e.stopPropagation()}>
+            <div className="schedule-sheet-header">
+              <div className="schedule-sheet-title">
+                <Calendar className="schedule-title-icon" />
+                <div>
+                  <h3>AI 档案与排期日历</h3>
+                  <p>家庭成员就医 · 宠物照护 · 智能档期管家</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="schedule-close-btn"
+                onClick={() => setShowScheduleModal(false)}
+                aria-label="关闭"
+              >
+                <X />
+              </button>
+            </div>
+
+            {/* 日历周视图 */}
+            <div className="schedule-week-bar">
+              <div className="schedule-week-day past"><span>一</span><b>9</b></div>
+              <div className="schedule-week-day past"><span>二</span><b>10</b></div>
+              <div className="schedule-week-day past"><span>三</span><b>11</b></div>
+              <div className="schedule-week-day active">
+                <span>四</span><b>12</b><span className="schedule-dot" />
+              </div>
+              <div className="schedule-week-day">
+                <span>五</span><b>13</b><span className="schedule-dot dot-future" />
+              </div>
+              <div className="schedule-week-day"><span>六</span><b>14</b></div>
+              <div className="schedule-week-day"><span>日</span><b>15</b></div>
+            </div>
+
+            {/* 当日档案与已排期任务 */}
+            <div className="schedule-list">
+              <div className="schedule-section-label">
+                <span>3月12日 今天 · 履约排期 (2)</span>
+                <span className="schedule-tag">AI 已锁定专业陪护</span>
+              </div>
+
+              <div className="schedule-card schedule-card-blue">
+                <div className="schedule-card-time">
+                  <Clock className="schedule-card-time-icon" />
+                  <span>14:30 - 17:00</span>
+                  <span className="schedule-status-tag">待履约</span>
+                </div>
+                <div className="schedule-card-main">
+                  <h4>华西医院 · 母亲心内科门诊陪诊</h4>
+                  <p>档案：母亲（张阿姨 · 68岁）| 陪护师：王建国（主治护师）</p>
+                </div>
+                <div className="schedule-card-foot">
+                  <span>全流程协助：挂号就诊、心电图检查、代取药报告</span>
+                </div>
+              </div>
+
+              <div className="schedule-card schedule-card-green">
+                <div className="schedule-card-time">
+                  <Clock className="schedule-card-time-icon" />
+                  <span>18:30 - 19:30</span>
+                  <span className="schedule-status-tag green">已接单</span>
+                </div>
+                <div className="schedule-card-main">
+                  <h4>上门喂猫与专业照料</h4>
+                  <p>档案：布偶猫（雪球 · 2岁）| 宠护师：李晨（持证宠医）</p>
+                </div>
+                <div className="schedule-card-foot">
+                  <span>全流程摄录确认 · 包含换水喂粮、清洁与互动梳毛</span>
+                </div>
+              </div>
+
+              {/* 家庭档案快捷卡 */}
+              <div className="schedule-archive-box">
+                <div className="schedule-archive-header">
+                  <UserCheck className="schedule-archive-icon" />
+                  <strong>家庭成员档案库 (3位已建档)</strong>
+                  <button
+                    type="button"
+                    className="schedule-archive-link"
+                    onClick={() => {
+                      setShowScheduleModal(false);
+                      onNavigateToProfile('menu');
+                    }}
+                  >
+                    管理档案 ›
+                  </button>
+                </div>
+                <div className="schedule-archive-tags">
+                  <span className="schedule-member-chip">母亲 (就诊陪护/高血压)</span>
+                  <span className="schedule-member-chip">父亲 (慢病随访备忘)</span>
+                  <span className="schedule-member-chip">布偶猫 (疫苗与喂护档案)</span>
+                </div>
+              </div>
+            </div>
+
+            {/* 底部 AI 排期唤起 */}
+            <div className="schedule-sheet-footer">
+              <button
+                type="button"
+                className="schedule-ai-btn"
+                onClick={() => {
+                  setShowScheduleModal(false);
+                  openAgent('请根据我家庭成员档案已记录的需求，为接下来一周智能规划就医与照料档期');
+                }}
+              >
+                <Sparkles className="schedule-ai-icon" />
+                <span>让 AI 助手为我智能排档期</span>
+                <ChevronRight className="schedule-ai-arrow" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
