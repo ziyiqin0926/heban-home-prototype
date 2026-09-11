@@ -16,6 +16,7 @@ import {
   Clock,
   Sparkles,
   UserCheck,
+  Users,
   X
 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
@@ -36,6 +37,7 @@ export default function Home({ onNavigateToAgent, onNavigateToCommunity, onNavig
   const { currentCity, orders, coupons, setPrefilledPrompt } = useAppContext();
   const [slide, setSlide] = useState(0);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [showCommunityGroupModal, setShowCommunityGroupModal] = useState(false);
   const availableCoupon = coupons.find(coupon => coupon.status === 'available');
   const activeOrders = orders.filter(order => order.status === 'pending' || order.status === 'accepted').length;
 
@@ -118,8 +120,6 @@ export default function Home({ onNavigateToAgent, onNavigateToCommunity, onNavig
           })}
         </div>
         <div className="quick-grid">
-          <button type="button" className="quick-card" onClick={() => onNavigateToProfile('orders')}><span className="quick-icon"><ClipboardList className="icon" /></span><strong>进程订单</strong><small>{activeOrders ? `${activeOrders} 笔进行中` : '查看进度'}</small></button>
-          <button type="button" className="quick-card" onClick={() => onNavigateToProfile('coupons')}><span className="quick-icon"><Ticket className="icon" /></span><strong>优惠卡兑换</strong><small>{availableCoupon ? '权益卡 积分兑换' : '暂无优惠'}</small></button>
           <button
             type="button"
             className="quick-card quick-card-highlight"
@@ -133,7 +133,21 @@ export default function Home({ onNavigateToAgent, onNavigateToCommunity, onNavig
             <strong>档案与档期</strong>
             <small>家庭日历 · 履约排期</small>
           </button>
-          <button type="button" className="quick-card" onClick={() => openAgent('我需要情绪陪伴服务，请帮我生成需求单')}><span className="quick-icon"><Heart className="icon" /></span><strong>情绪照顾</strong><small>各类服务目录</small></button>
+          <button type="button" className="quick-card" onClick={() => onNavigateToProfile('coupons')}>
+            <span className="quick-icon"><Ticket className="icon" /></span>
+            <strong>优惠卡兑换</strong>
+            <small>{availableCoupon ? '权益卡 积分兑换' : '暂无优惠'}</small>
+          </button>
+          <button type="button" className="quick-card" onClick={() => setShowCommunityGroupModal(true)}>
+            <span className="quick-icon"><Users className="icon" /></span>
+            <strong>官方内测群</strong>
+            <small>意见反馈 扫码进群</small>
+          </button>
+          <button type="button" className="quick-card" onClick={() => onNavigateToProfile('orders')}>
+            <span className="quick-icon"><ClipboardList className="icon" /></span>
+            <strong>进程订单</strong>
+            <small>{activeOrders ? `${activeOrders} 笔进行中` : '查看进度'}</small>
+          </button>
         </div>
       </section>
 
