@@ -16,7 +16,6 @@ import {
   Clock,
   Sparkles,
   UserCheck,
-  Users,
   X
 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
@@ -38,6 +37,121 @@ export default function Home({ onNavigateToAgent, onNavigateToCommunity, onNavig
   const [slide, setSlide] = useState(0);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [showCommunityGroupModal, setShowCommunityGroupModal] = useState(false);
+  const [selectedDay, setSelectedDay] = useState(12);
+  const [isMonthDropdownOpen, setIsMonthDropdownOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState<any | null>(null);
+
+  const [scheduleData, setScheduleData] = useState<Record<number, any[]>>({
+    9: [
+      { id: 't9-1', time: '09:30 - 11:00', title: '西城区社区医院常规血糖复查', note: '已按期履约完成，老人空腹血糖正常', status: 'completed', statusLabel: '已完成', canEdit: false }
+    ],
+    10: [
+      { id: 't10-1', time: '14:00 - 15:30', title: '宠物疫苗与健康驱虫随访', note: '英短猫咪疫苗完成记录', status: 'completed', statusLabel: '已完成', canEdit: false }
+    ],
+    11: [
+      { id: 't11-1', time: '16:00', title: '代取协和医院病理切片报告', note: '报告已送达并由家属签收', status: 'completed', statusLabel: '已完成', canEdit: false }
+    ],
+    12: [
+      {
+        id: 't12-1',
+        time: '14:30 - 17:00',
+        title: '华西医院 · 母亲心内科门诊陪诊',
+        note: '档案：母亲（张阿姨 · 68岁）| 陪护师：王建国（主治护师）',
+        details: '全流程协助：挂号就诊、心电图检查、代取药报告',
+        status: 'pending',
+        statusLabel: '待履约',
+        canEdit: true
+      },
+      {
+        id: 't12-2',
+        time: '18:30 - 19:30',
+        title: '上门喂猫与专业照料',
+        note: '档案：布偶猫（雪球 · 2岁）| 宠护师：李晨（持证宠医已接单）',
+        details: '全流程摄录确认 · 包含换水喂粮、清洁与互动梳毛',
+        status: 'accepted',
+        statusLabel: '已接单锁定',
+        canEdit: false
+      },
+      {
+        id: 't12-3',
+        time: '20:30',
+        title: '自记备忘：提醒父亲晚间测血压',
+        note: '用户个人备忘录，睡前记录入家庭档案卡',
+        details: '若收缩压高于140需留意微信随访',
+        status: 'memo',
+        statusLabel: '随手记备忘',
+        canEdit: true
+      }
+    ],
+    13: [
+      {
+        id: 't13-1',
+        time: '09:00 - 11:30',
+        title: '同仁医院眼科白内障术前检查陪诊',
+        note: '档案：父亲（李大爷 · 72岁）| 待履约',
+        details: '协助挂号排队，检查陪护',
+        status: 'pending',
+        statusLabel: '待履约',
+        canEdit: true
+      },
+      {
+        id: 't13-2',
+        time: '19:00',
+        title: '自记备忘：检查浴室防滑垫与扶手',
+        note: '适老化改造备忘事项',
+        details: '已网购防滑脚垫，等待安装',
+        status: 'memo',
+        statusLabel: '随手记备忘',
+        canEdit: true
+      }
+    ],
+    14: [
+      {
+        id: 't14-1',
+        time: '15:00 - 18:00',
+        title: '奥森公园周末轮椅陪伴散步',
+        note: '档案：外婆（85岁）| 陪护师：张敏',
+        details: '户外散步赏花与聊天倾听',
+        status: 'pending',
+        statusLabel: '待履约',
+        canEdit: true
+      }
+    ],
+    15: [
+      {
+        id: 't15-1',
+        time: '10:00',
+        title: '全家健康档案周度数据整理汇总',
+        note: '整理血糖与血压数据至家庭共享群',
+        details: '例行家庭健康管理',
+        status: 'memo',
+        statusLabel: '随手记备忘',
+        canEdit: true
+      }
+    ]
+  });
+
+  const weekDays = [
+    { name: '一', day: 9, isPast: true },
+    { name: '二', day: 10, isPast: true },
+    { name: '三', day: 11, isPast: true },
+    { name: '四', day: 12, isToday: true },
+    { name: '五', day: 13 },
+    { name: '六', day: 14 },
+    { name: '日', day: 15 }
+  ];
+
+  const handleUpdateTask = (updated: any) => {
+    setScheduleData(prev => {
+      const list = prev[selectedDay] || [];
+      return {
+        ...prev,
+        [selectedDay]: list.map(item => item.id === updated.id ? updated : item)
+      };
+    });
+    setEditingTask(null);
+  };
+
   const availableCoupon = coupons.find(coupon => coupon.status === 'available');
   const activeOrders = orders.filter(order => order.status === 'pending' || order.status === 'accepted').length;
 
@@ -120,6 +234,8 @@ export default function Home({ onNavigateToAgent, onNavigateToCommunity, onNavig
           })}
         </div>
         <div className="quick-grid">
+          <button type="button" className="quick-card" onClick={() => onNavigateToProfile('orders')}><span className="quick-icon"><ClipboardList className="icon" /></span><strong>进程订单</strong><small>{activeOrders ? `${activeOrders} 笔进行中` : '查看进度'}</small></button>
+          <button type="button" className="quick-card" onClick={() => onNavigateToProfile('coupons')}><span className="quick-icon"><Ticket className="icon" /></span><strong>优惠卡兑换</strong><small>{availableCoupon ? '权益卡 积分兑换' : '暂无优惠'}</small></button>
           <button
             type="button"
             className="quick-card quick-card-highlight"
@@ -133,21 +249,7 @@ export default function Home({ onNavigateToAgent, onNavigateToCommunity, onNavig
             <strong>档案与档期</strong>
             <small>家庭日历 · 履约排期</small>
           </button>
-          <button type="button" className="quick-card" onClick={() => onNavigateToProfile('coupons')}>
-            <span className="quick-icon"><Ticket className="icon" /></span>
-            <strong>优惠卡兑换</strong>
-            <small>{availableCoupon ? '权益卡 积分兑换' : '暂无优惠'}</small>
-          </button>
-          <button type="button" className="quick-card" onClick={() => setShowCommunityGroupModal(true)}>
-            <span className="quick-icon"><Users className="icon" /></span>
-            <strong>官方内测群</strong>
-            <small>意见反馈 扫码进群</small>
-          </button>
-          <button type="button" className="quick-card" onClick={() => onNavigateToProfile('orders')}>
-            <span className="quick-icon"><ClipboardList className="icon" /></span>
-            <strong>进程订单</strong>
-            <small>{activeOrders ? `${activeOrders} 笔进行中` : '查看进度'}</small>
-          </button>
+          <button type="button" className="quick-card" onClick={() => openAgent('我需要情绪陪伴服务，请帮我生成需求单')}><span className="quick-icon"><Heart className="icon" /></span><strong>情绪照顾</strong><small>各类服务目录</small></button>
         </div>
       </section>
 

@@ -1310,3 +1310,135 @@ select:focus-visible {
 .schedule-ai-btn:hover { opacity: 0.94; }
 .schedule-ai-icon { width: 16px; height: 16px; color: #f8d477; }
 .schedule-ai-arrow { width: 16px; height: 16px; margin-left: auto; opacity: 0.7; }
+// 增加滴答清单日历排期下周/下拉与点击任务卡详情弹窗样式
+.schedule-dropdown-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: #f1f5f9;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.schedule-month-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e293b;
+  cursor: pointer;
+}
+
+.schedule-month-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  background: #e2e8f0;
+  color: #475569;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.schedule-dropdown-content {
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 6px 12px;
+  animation: fadeInOverlay 150ms ease;
+}
+
+.schedule-dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.schedule-dropdown-item:hover {
+  background: #f8fafc;
+}
+
+.schedule-dropdown-item.active {
+  background: #eff6ff;
+  font-weight: 600;
+}
+
+.dot-recorded {
+  background: #2563eb !important;
+}
+
+.dot-active {
+  background: #ffffff !important;
+}
+
+.schedule-card.schedule-clickable {
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.schedule-card.schedule-clickable:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.schedule-edit-hint {
+  margin-left: auto;
+  font-size: 11px;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.schedule-lock-hint {
+  margin-left: auto;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.schedule-card-gray {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  opacity: 0.85;
+}
+
+.schedule-card-gray h4 {
+  color: #64748b;
+  text-decoration: line-through;
+}
+
+.schedule-detail-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeInOverlay 180ms ease;
+}
+
+.schedule-detail-dialog {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+.schedule-detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.schedule-detail-body {
+  padding: 16px;
+}
