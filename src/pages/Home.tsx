@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import {
   Bell,
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
   ClipboardList,
   FileEdit,
   Heart,
@@ -16,7 +18,6 @@ import {
   Clock,
   Sparkles,
   UserCheck,
-  Users,
   X
 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
@@ -40,6 +41,110 @@ export default function Home({ onNavigateToAgent, onNavigateToCommunity, onNavig
   const [showCommunityGroupModal, setShowCommunityGroupModal] = useState(false);
   const [selectedDay, setSelectedDay] = useState(12);
   const [isMonthDropdownOpen, setIsMonthDropdownOpen] = useState(false);
+  const [activeBookingService, setActiveBookingService] = useState<'medical' | 'pet' | 'custom' | null>(null);
+  const [bookingSuccess, setBookingSuccess] = useState(false);
+
+  const [standardForm, setStandardForm] = useState({
+    subCategory: '全程陪诊服务',
+    targetName: '张阿姨 (母亲)',
+    phone: '138****6621',
+    serviceDate: '2026-03-13',
+    serviceTime: '09:00',
+    venue: '北京协和医院东单院区',
+    note: '腿脚偶有不便，需协助借用院内轮椅'
+  });
+
+  const [customForm, setCustomForm] = useState({
+    theme: '急需代办取送跨区重要就医凭证与排队',
+    eventTime: '今天 16:30 前完成',
+    location: '海淀区 中关村南大街1号',
+    targetPerson: '本人',
+    personRequirements: '身体健壮、熟悉北京路线的专业跑腿人员',
+    details: '需专人去指定前台代取加急化验单并送至就诊医生处。'
+  });
+
+  const handleOpenBooking = (type: 'medical' | 'pet' | 'custom') => {
+    setActiveBookingService(type);
+    if (type === 'medical') {
+      setStandardForm({
+        subCategory: '全程陪诊服务',
+        targetName: '张阿姨 (母亲)',
+        phone: '138****6621',
+        serviceDate: '2026-03-13',
+        serviceTime: '09:00',
+        venue: '北京协和医院东单院区',
+        note: '腿脚偶有不便，需协助借用院内轮椅'
+      });
+    } else if (type === 'pet') {
+      setStandardForm({
+        subCategory: '上门喂猫/遛狗照料',
+        targetName: '布偶猫 (雪球)',
+        phone: '138****6621',
+        serviceDate: '2026-03-13',
+        serviceTime: '18:00',
+        venue: '朝阳区 望京金茂府',
+        note: '需开窗通风10分钟并全程拍摄换粮视频'
+      });
+    } else {
+      setCustomForm({
+        theme: '急需代办取送跨区重要就医凭证与排队',
+        eventTime: '今天 16:30 前完成',
+        location: '海淀区 中关村南大街1号',
+        targetPerson: '本人',
+        personRequirements: '身体健壮、熟悉北京路线的专业跑腿人员',
+        details: '需专人去指定前台代取加急化验单并送至就诊医生处。'
+      });
+    }
+  };
+
+  const handleStandardSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setBookingSuccess(true);
+    const newId = 'book-' + Date.now();
+    const newTask = {
+      id: newId,
+      time: standardForm.serviceTime,
+      title: standardForm.venue + ' · ' + standardForm.subCategory,
+      note: '服务对象：' + standardForm.targetName + ' | 手机：' + standardForm.phone,
+      details: standardForm.note || '已成功直达下单，服务专员正分配派单中',
+      status: 'pending',
+      statusLabel: '待履约',
+      canEdit: true
+    };
+    setScheduleData(prev => ({
+      ...prev,
+      13: [newTask, ...(prev[13] || [])]
+    }));
+    setTimeout(() => {
+      setBookingSuccess(false);
+      setActiveBookingService(null);
+    }, 1200);
+  };
+
+  const handleCustomSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setBookingSuccess(true);
+    const newId = 'custom-' + Date.now();
+    const newTask = {
+      id: newId,
+      time: customForm.eventTime,
+      title: '自定义需求 · ' + customForm.theme,
+      note: '地点：' + customForm.location + ' | 人选要求：' + customForm.personRequirements,
+      details: '【已推送到后台人工审核】审核通过即自动挂牌到同城抢单广场让服务者接单',
+      status: 'pending',
+      statusLabel: '后台审核中',
+      canEdit: true
+    };
+    setScheduleData(prev => ({
+      ...prev,
+      12: [newTask, ...(prev[12] || [])]
+    }));
+    setTimeout(() => {
+      setBookingSuccess(false);
+      setActiveBookingService(null);
+    }, 1400);
+  };
+
   const [editingTask, setEditingTask] = useState<any | null>(null);
 
   const [scheduleData, setScheduleData] = useState<Record<number, any[]>>({
@@ -235,6 +340,8 @@ export default function Home({ onNavigateToAgent, onNavigateToCommunity, onNavig
           })}
         </div>
         <div className="quick-grid">
+          <button type="button" className="quick-card" onClick={() => onNavigateToProfile('orders')}><span className="quick-icon"><ClipboardList className="icon" /></span><strong>进程订单</strong><small>{activeOrders ? `${activeOrders} 笔进行中` : '查看进度'}</small></button>
+          <button type="button" className="quick-card" onClick={() => onNavigateToProfile('coupons')}><span className="quick-icon"><Ticket className="icon" /></span><strong>优惠卡兑换</strong><small>{availableCoupon ? '权益卡 积分兑换' : '暂无优惠'}</small></button>
           <button
             type="button"
             className="quick-card quick-card-highlight"
@@ -248,21 +355,7 @@ export default function Home({ onNavigateToAgent, onNavigateToCommunity, onNavig
             <strong>档案与档期</strong>
             <small>家庭日历 · 履约排期</small>
           </button>
-          <button type="button" className="quick-card" onClick={() => onNavigateToProfile('orders')}>
-            <span className="quick-icon"><ClipboardList className="icon" /></span>
-            <strong>进程订单</strong>
-            <small>{activeOrders ? `${activeOrders} 笔进行中` : '查看进度'}</small>
-          </button>
-          <button type="button" className="quick-card" onClick={() => onNavigateToProfile('coupons')}>
-            <span className="quick-icon"><Ticket className="icon" /></span>
-            <strong>优惠卡兑换</strong>
-            <small>{availableCoupon ? '权益卡 积分兑换' : '暂无优惠'}</small>
-          </button>
-          <button type="button" className="quick-card" onClick={() => setShowCommunityGroupModal(true)}>
-            <span className="quick-icon"><Users className="icon" /></span>
-            <strong>官方内测群</strong>
-            <small>意见反馈 扫码进群</small>
-          </button>
+          <button type="button" className="quick-card" onClick={() => openAgent('我需要情绪陪伴服务，请帮我生成需求单')}><span className="quick-icon"><Heart className="icon" /></span><strong>情绪照顾</strong><small>各类服务目录</small></button>
         </div>
       </section>
 
@@ -319,57 +412,108 @@ export default function Home({ onNavigateToAgent, onNavigateToCommunity, onNavig
               </button>
             </div>
 
-            {/* 日历周视图 */}
-            <div className="schedule-week-bar">
-              <div className="schedule-week-day past"><span>一</span><b>9</b></div>
-              <div className="schedule-week-day past"><span>二</span><b>10</b></div>
-              <div className="schedule-week-day past"><span>三</span><b>11</b></div>
-              <div className="schedule-week-day active">
-                <span>四</span><b>12</b><span className="schedule-dot" />
-              </div>
-              <div className="schedule-week-day">
-                <span>五</span><b>13</b><span className="schedule-dot dot-future" />
-              </div>
-              <div className="schedule-week-day"><span>六</span><b>14</b></div>
-              <div className="schedule-week-day"><span>日</span><b>15</b></div>
+            {/* 月份下拉选择栏 */}
+            <div className="schedule-dropdown-bar">
+              <button
+                type="button"
+                className="schedule-month-select"
+                onClick={() => setIsMonthDropdownOpen(!isMonthDropdownOpen)}
+              >
+                <span>2026年 3月（第 2 周）</span>
+                {isMonthDropdownOpen ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
+              </button>
+              <div className="schedule-month-badge">共 {(scheduleData[selectedDay] || []).length} 项日程</div>
             </div>
 
-            {/* 当日档案与已排期任务 */}
+            {/* 下拉展开面板（支持快速切换周/月视界） */}
+            {isMonthDropdownOpen && (
+              <div className="schedule-dropdown-content">
+                <div className="schedule-dropdown-item active" onClick={() => setIsMonthDropdownOpen(false)}>
+                  <span>📅 2026年3月 第二周 (03/09 - 03/15)</span>
+                  <span className="text-blue-600 font-bold text-xs">当前周</span>
+                </div>
+                <div className="schedule-dropdown-item" onClick={() => { alert('已切换到下周排期规划'); setIsMonthDropdownOpen(false); }}>
+                  <span>📅 2026年3月 第三周 (03/16 - 03/22)</span>
+                  <span className="text-slate-400 text-xs">查看待办</span>
+                </div>
+                <div className="schedule-dropdown-item" onClick={() => { alert('已切换到整月视图'); setIsMonthDropdownOpen(false); }}>
+                  <span>🗓️ 3月整月家庭健康大日历</span>
+                  <span className="text-slate-400 text-xs">月度统计</span>
+                </div>
+              </div>
+            )}
+
+            {/* 日历周视图（带有记录标记点，点击即可联动切换日期） */}
+            <div className="schedule-week-bar">
+              {weekDays.map(item => {
+                const count = (scheduleData[item.day] || []).length;
+                const isSelected = selectedDay === item.day;
+                const hasRecord = count > 0;
+                return (
+                  <button
+                    key={item.day}
+                    type="button"
+                    onClick={() => setSelectedDay(item.day)}
+                    className={`schedule-week-day ${item.isPast ? 'past' : ''} ${isSelected ? 'active' : ''}`}
+                    title={`查看 3月${item.day}日 任务列表`}
+                  >
+                    <span className="text-[11px]">{item.name}</span>
+                    <b className="text-[13px]">{item.day}</b>
+                    {hasRecord && (
+                      <span className={`schedule-dot ${isSelected ? 'dot-active' : 'dot-recorded'}`} />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* 当日档案与任务列表（参考滴答清单排布，可点击进入详情/修改） */}
             <div className="schedule-list">
               <div className="schedule-section-label">
-                <span>3月12日 今天 · 履约排期 (2)</span>
-                <span className="schedule-tag">AI 已锁定专业陪护</span>
+                <span>
+                  3月{selectedDay}日 {selectedDay === 12 ? '今天' : selectedDay < 12 ? '往期记录' : '未来预约'} · 任务排布 ({(scheduleData[selectedDay] || []).length})
+                </span>
+                <span className="schedule-tag">
+                  {selectedDay === 12 ? 'AI 联动履约中' : '清单日历排期'}
+                </span>
               </div>
 
-              <div className="schedule-card schedule-card-blue">
-                <div className="schedule-card-time">
-                  <Clock className="schedule-card-time-icon" />
-                  <span>14:30 - 17:00</span>
-                  <span className="schedule-status-tag">待履约</span>
+              {(scheduleData[selectedDay] || []).length === 0 ? (
+                <div className="p-8 text-center text-slate-400 text-xs bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                  当天暂无排期或备忘
                 </div>
-                <div className="schedule-card-main">
-                  <h4>华西医院 · 母亲心内科门诊陪诊</h4>
-                  <p>档案：母亲（张阿姨 · 68岁）| 陪护师：王建国（主治护师）</p>
-                </div>
-                <div className="schedule-card-foot">
-                  <span>全流程协助：挂号就诊、心电图检查、代取药报告</span>
-                </div>
-              </div>
-
-              <div className="schedule-card schedule-card-green">
-                <div className="schedule-card-time">
-                  <Clock className="schedule-card-time-icon" />
-                  <span>18:30 - 19:30</span>
-                  <span className="schedule-status-tag green">已接单</span>
-                </div>
-                <div className="schedule-card-main">
-                  <h4>上门喂猫与专业照料</h4>
-                  <p>档案：布偶猫（雪球 · 2岁）| 宠护师：李晨（持证宠医）</p>
-                </div>
-                <div className="schedule-card-foot">
-                  <span>全流程摄录确认 · 包含换水喂粮、清洁与互动梳毛</span>
-                </div>
-              </div>
+              ) : (
+                (scheduleData[selectedDay] || []).map((task: any) => (
+                  <div
+                    key={task.id}
+                    onClick={() => setEditingTask({ ...task })}
+                    className={`schedule-card ${task.status === 'accepted' ? 'schedule-card-green' : task.status === 'completed' ? 'schedule-card-gray' : 'schedule-card-blue'} schedule-clickable`}
+                    title={task.canEdit ? '点击查看或编辑此任务内容' : '该订单已被服务者接单锁定，不可更改内容'}
+                  >
+                    <div className="schedule-card-time">
+                      <Clock className="schedule-card-time-icon" />
+                      <span>{task.time}</span>
+                      <span className={`schedule-status-tag ${task.status === 'accepted' ? 'green' : task.status === 'completed' ? 'gray' : ''}`}>
+                        {task.statusLabel}
+                      </span>
+                      {task.canEdit ? (
+                        <span className="schedule-edit-hint">点击可修改 ›</span>
+                      ) : (
+                        <span className="schedule-lock-hint">🔒 已接单锁定</span>
+                      )}
+                    </div>
+                    <div className="schedule-card-main">
+                      <h4>{task.title}</h4>
+                      <p>{task.note}</p>
+                    </div>
+                    {task.details && (
+                      <div className="schedule-card-foot">
+                        <span>{task.details}</span>
+                      </div>
+                    )}
+                  </div>
+                ))
+              )}
 
               {/* 家庭档案快捷卡 */}
               <div className="schedule-archive-box">
