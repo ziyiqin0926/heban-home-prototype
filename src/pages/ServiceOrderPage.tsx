@@ -4,22 +4,19 @@ import {
   UserCheck,
   Trophy,
   Headphones,
-  Sparkles,
-  Search,
-  Filter,
-  Star,
-  CheckCircle2,
-  Volume2,
-  Calendar,
-  Clock,
   MapPin,
   Phone,
   Send,
   Check,
   ChevronRight,
   ShieldCheck,
-  Award,
-  Zap
+  Star,
+  Volume2,
+  Clock,
+  Calendar,
+  Sparkles,
+  Ticket,
+  AlertCircle
 } from 'lucide-react';
 import { EscortProfile } from '../types';
 import { getEscortsByCity } from '../data/escortProfiles';
@@ -43,38 +40,79 @@ export default function ServiceOrderPage({
     isMedical ? e.category === '医疗陪诊' || !e.category : e.category === '宠物陪伴'
   );
 
-  // 排序与筛选状态
   const [activeSort, setActiveSort] = useState<'rating' | 'orders' | 'all'>('rating');
   const [genderFilter, setGenderFilter] = useState<'all' | '女' | '男'>('all');
   const [activeLeaderboardTab, setActiveLeaderboardTab] = useState<'list' | 'rank'>('list');
 
-  // 下单抽屉状态
   const [selectedEscort, setSelectedEscort] = useState<EscortProfile | null>(null);
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [isDispatchModalOpen, setIsDispatchModalOpen] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
 
-  // 家庭档案库模拟
+  // 家庭档案库
   const familyProfiles = isMedical
     ? [
-        { name: '母亲 (张阿姨)', age: '68岁', phone: '138****6621', condition: '高血压/心内科复诊', defaultVenue: '北京协和医院门诊楼' },
-        { name: '父亲 (李大爷)', age: '72岁', phone: '139****1124', condition: '白内障术后复查/需轮椅', defaultVenue: '同仁医院眼科' },
-        { name: '本人', age: '29岁', phone: '136****8890', condition: '日常门诊陪同/代取报告', defaultVenue: '朝阳医院' }
+        {
+          name: '母亲 (张阿姨)',
+          age: '68岁',
+          phone: '138****6621',
+          condition: '母亲年过七旬腿脚不便，需要推轮椅进出；需协助排队拿心电图和化验单，陪同看诊并记录医生嘱咐。',
+          defaultVenue: '北京协和医院门诊大楼一楼大厅'
+        },
+        {
+          name: '父亲 (李大爷)',
+          age: '72岁',
+          phone: '139****1124',
+          condition: '慢病随访与白内障术前检查，需提早取号排队协助散瞳。',
+          defaultVenue: '同仁医院眼科门诊部'
+        },
+        {
+          name: '本人',
+          age: '29岁',
+          phone: '136****8890',
+          condition: '常规身体体检与专科就诊复查全流程陪同。',
+          defaultVenue: '朝阳医院门诊楼'
+        }
       ]
     : [
-        { name: '布偶猫 (雪球)', age: '2岁', phone: '138****6621', condition: '换粮喂水/需摄录确认/温顺', defaultVenue: '朝阳区 望京金茂府' },
-        { name: '柯基犬 (皮皮)', age: '3岁', phone: '138****6621', condition: '定时遛狗30分钟/喜好草坪', defaultVenue: '海淀区 中关村软件园' }
+        {
+          name: '布偶猫 (雪球)',
+          age: '2岁',
+          phone: '138****6621',
+          condition: '备好主粮与冻干，换净水、清洁猫砂盆并互动梳毛，拍摄1分钟全流程视频发回。',
+          defaultVenue: '朝阳区 望京金茂府'
+        },
+        {
+          name: '柯基犬 (皮皮)',
+          age: '3岁',
+          phone: '138****6621',
+          condition: '定时上门遛狗30分钟，牵紧牵引绳，避开大型犬打闹，备好拾便袋。',
+          defaultVenue: '海淀区 中关村软件园'
+        }
       ];
 
-  // 下单表单状态
+  // 快捷地点标签
+  const quickLocations = isMedical
+    ? ['市第一人民医院门诊大厅', '省中医院门诊大楼', '市妇幼保健院', '华西医院门诊部', '家中上门接送']
+    : ['家中上门喂养', '同城宠物医院', '社区宠物公园', '接送至宠物洗护店', '指定寄养交接点'];
+
+  // 快捷报酬金额档位
+  const rewardOptions = isMedical
+    ? ['50元', '60元', '80元', '100元', '150元', '200元', '300元', '面议 / 线下协商']
+    : ['30元', '50元', '68元', '88元', '120元', '150元', '面议 / 线下协商'];
+
+  // 完整标准下单表单（融合参考图字段）
   const [orderForm, setOrderForm] = useState({
-    subCategory: isMedical ? '全程就诊陪护' : '上门喂养陪伴',
-    targetName: familyProfiles[0].name,
-    phone: '138****6621',
-    serviceDate: '2026-03-14',
-    serviceTime: '09:30',
+    title: isMedical ? '就医门诊复查全程陪同与引导' : '上门宠物喂养与日常照料陪伴',
+    subCategory: isMedical ? '门诊陪同' : '上门喂护',
     venue: familyProfiles[0].defaultVenue,
-    requirements: isMedical ? '老人走路较慢，需协助挂号、心电图排队并代取报告' : '备好干粮冻干，换水清洗食盆，拍摄1分钟视频发回'
+    serviceDate: '今天 上午 09:00',
+    duration: '2.5 小时',
+    reward: isMedical ? '300 元' : '68 元',
+    phone: familyProfiles[0].phone,
+    targetName: familyProfiles[0].name,
+    details: familyProfiles[0].condition,
+    useCoupon: true
   });
 
   // 一键迁入家庭档案
@@ -84,17 +122,15 @@ export default function ServiceOrderPage({
       targetName: profile.name,
       phone: profile.phone,
       venue: profile.defaultVenue,
-      requirements: (isMedical ? '【档案要点】：' : '【宠护重点】：') + profile.condition
+      details: profile.condition
     }));
   };
 
-  // 处理直接针对某个服务者点单
   const handleSelectEscortOrder = (escort: EscortProfile) => {
     setSelectedEscort(escort);
     setIsOrderModalOpen(true);
   };
 
-  // 提交订单
   const handleSubmitOrder = (e: React.FormEvent) => {
     e.preventDefault();
     setOrderSuccess(true);
@@ -103,18 +139,18 @@ export default function ServiceOrderPage({
       setIsOrderModalOpen(false);
       setIsDispatchModalOpen(false);
       onCompleteOrder({
-        title: (selectedEscort ? `指定 ${selectedEscort.name} · ` : '人工智能派单 · ') + orderForm.subCategory,
+        title: (selectedEscort ? `指定 ${selectedEscort.name} · ` : '人工派单 · ') + orderForm.title,
         venue: orderForm.venue,
-        time: `${orderForm.serviceDate} ${orderForm.serviceTime}`,
+        time: orderForm.serviceDate,
         target: orderForm.targetName,
         phone: orderForm.phone,
-        requirements: orderForm.requirements,
+        requirements: orderForm.details,
+        reward: orderForm.reward,
         escort: selectedEscort
       });
     }, 1200);
   };
 
-  // 排序列表
   const displayedEscorts = [...filteredEscorts]
     .filter(e => (genderFilter === 'all' ? true : e.gender === genderFilter))
     .sort((a, b) => {
@@ -135,7 +171,7 @@ export default function ServiceOrderPage({
           <ArrowLeft className="w-5 h-5" />
         </button>
         <h1 className="font-bold text-base text-slate-800">
-          {isMedical ? '健康医陪 · 专业陪护挑选' : '宠物陪伴 · 金牌上门照顾'}
+          {isMedical ? '健康医陪 · 服务点单' : '宠物陪伴 · 金牌上门照顾'}
         </h1>
         <div className="flex items-center space-x-1 text-xs text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full font-medium">
           <MapPin className="w-3.5 h-3.5" />
@@ -167,7 +203,7 @@ export default function ServiceOrderPage({
             </div>
           </button>
 
-          {/* 排行榜 (放大版，替换原一键安排) */}
+          {/* 排行榜 (放大版) */}
           <button
             type="button"
             onClick={() => setActiveLeaderboardTab(activeLeaderboardTab === 'rank' ? 'list' : 'rank')}
@@ -189,7 +225,7 @@ export default function ServiceOrderPage({
         </div>
       </section>
 
-      {/* 筛选与排序工具栏 (参考点单平台设计) */}
+      {/* 筛选与排序工具栏 */}
       <div className="bg-white px-4 py-2.5 border-b border-slate-100 flex items-center justify-between text-xs text-slate-600">
         <div className="flex items-center space-x-3">
           <button
@@ -223,7 +259,7 @@ export default function ServiceOrderPage({
         </div>
         <div className="flex items-center space-x-1 text-[11px] text-slate-400">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-          <span>官方实名持证认证</span>
+          <span>官方实名认证</span>
         </div>
       </div>
 
@@ -234,7 +270,6 @@ export default function ServiceOrderPage({
             key={escort.id}
             className="bg-white rounded-2xl p-3.5 border border-slate-100 shadow-xs flex space-x-3.5 items-start hover:border-blue-200 transition-all"
           >
-            {/* 头像与标签 */}
             <div className="relative flex-shrink-0">
               <img
                 src={escort.avatar}
@@ -242,7 +277,7 @@ export default function ServiceOrderPage({
                 className="w-18 h-18 rounded-2xl object-cover border border-slate-100"
               />
               <span className="absolute -top-1.5 -left-1.5 px-1.5 py-0.5 rounded-md bg-amber-500 text-white text-[9px] font-bold shadow-xs">
-                {idx < 3 ? `TOP ${idx + 1}` : '平台认证'}
+                {idx < 3 ? `TOP ${idx + 1}` : '持证严选'}
               </span>
               <div className="absolute -bottom-1 inset-x-0 mx-auto w-fit px-1.5 py-0.5 bg-blue-600/90 text-white rounded-full text-[9px] font-medium flex items-center space-x-0.5">
                 <Volume2 className="w-2.5 h-2.5" />
@@ -250,7 +285,6 @@ export default function ServiceOrderPage({
               </div>
             </div>
 
-            {/* 详细信息 */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-1.5">
@@ -266,7 +300,6 @@ export default function ServiceOrderPage({
                 </div>
               </div>
 
-              {/* 身份段位标签 */}
               <div className="flex flex-wrap gap-1 mt-1">
                 <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 text-[10px] font-bold border border-blue-100">
                   {escort.title}
@@ -279,12 +312,10 @@ export default function ServiceOrderPage({
                 </span>
               </div>
 
-              {/* 业务专长 */}
               <p className="text-[11px] text-slate-500 mt-1.5 line-clamp-1 leading-snug">
                 擅长：{escort.specialties ? escort.specialties.join(' · ') : escort.tag}
               </p>
 
-              {/* 价格与下单动作按钮 */}
               <div className="mt-2.5 pt-2 border-t border-slate-50 flex items-center justify-between">
                 <div className="flex items-baseline space-x-1">
                   <span className="text-xs text-rose-500 font-bold">首单8折</span>
@@ -308,7 +339,7 @@ export default function ServiceOrderPage({
         ))}
       </main>
 
-      {/* 下单抽屉弹窗 (支持档案一键迁移导入、二级项目、时间、地点填写) */}
+      {/* 完善需求下单弹窗（严格遵循参考页规范设计链路） */}
       {(isOrderModalOpen || isDispatchModalOpen) && (
         <div
           className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fadeIn"
@@ -318,18 +349,18 @@ export default function ServiceOrderPage({
           }}
         >
           <div
-            className="w-full max-w-lg bg-white rounded-t-3xl sm:rounded-3xl max-h-[90vh] overflow-y-auto p-5 shadow-2xl animate-slideUp"
+            className="w-full max-w-xl bg-white rounded-t-3xl sm:rounded-3xl max-h-[92vh] overflow-y-auto p-4 sm:p-6 shadow-2xl animate-slideUp"
             onClick={e => e.stopPropagation()}
           >
-            {/* 弹窗头部 */}
+            {/* 顶栏与专属服务介绍 */}
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <div>
+              <div className="flex items-center space-x-2">
+                <span className="w-7 h-7 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-xs">
+                  和
+                </span>
                 <h2 className="font-bold text-base text-slate-900">
-                  {selectedEscort ? `预约指定服务师 · ${selectedEscort.name}` : '官方人工极速派单 · 快速建单'}
+                  完善【{isMedical ? '健康陪诊' : '宠物陪伴'}】需求
                 </h2>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  支持调用全家档案一键带入，系统自动匹配并锁定档期
-                </p>
               </div>
               <button
                 type="button"
@@ -343,12 +374,41 @@ export default function ServiceOrderPage({
               </button>
             </div>
 
-            {/* 一键导入家庭档案捷径区 */}
-            <div className="my-3.5 p-3 rounded-2xl bg-blue-50/70 border border-blue-100">
+            {/* 专属表单 · 规范履约卡 */}
+            <div className="my-3 p-3 rounded-2xl bg-slate-50 border border-slate-200/80">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-bold text-sm text-slate-800">
+                    {isMedical ? '健康陪诊' : '专业宠护陪伴'}
+                  </h3>
+                  <p className="text-[11px] text-slate-500 mt-0.5">
+                    {isMedical
+                      ? '门诊就医 · 排队挂号 · 检查引导 · 医嘱记录整理'
+                      : '上门换粮 · 清洁猫砂 · 互动梳毛 · 全程摄录确认'}
+                  </p>
+                </div>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 font-bold">
+                  {selectedEscort ? `已指定: ${selectedEscort.name}` : '专属表单 · 规范履约'}
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {(isMedical
+                  ? ['#门诊陪同', '#排队挂号', '#长者就医', '#代取报告', '#轮椅推护']
+                  : ['#上门喂猫', '#遛狗照料', '#清洁消毒', '#实拍视频', '#持证宠医']
+                ).map(tag => (
+                  <span key={tag} className="text-[10px] px-2 py-0.5 rounded-md bg-white text-slate-600 border border-slate-200">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* 一键导入全家档案 */}
+            <div className="my-3 p-3 rounded-2xl bg-blue-50/70 border border-blue-100">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center space-x-1.5 text-xs font-bold text-blue-900">
                   <UserCheck className="w-4 h-4 text-blue-600" />
-                  <span>一键导入家庭档案（点击自动代填信息）：</span>
+                  <span>一键导入全家档案（点击自动代填信息）：</span>
                 </div>
               </div>
               <div className="flex flex-wrap gap-1.5">
@@ -357,7 +417,7 @@ export default function ServiceOrderPage({
                     key={profile.name}
                     type="button"
                     onClick={() => handleApplyProfile(profile)}
-                    className="px-2.5 py-1.5 rounded-xl bg-white text-[11px] font-medium text-slate-700 border border-blue-200 hover:border-blue-400 hover:bg-blue-50/80 transition-all flex items-center space-x-1"
+                    className="px-2.5 py-1.5 rounded-xl bg-white text-[11px] font-medium text-slate-700 border border-blue-200 hover:border-blue-400 hover:bg-blue-50 transition-all flex items-center space-x-1"
                   >
                     <span>+ {profile.name}</span>
                   </button>
@@ -365,55 +425,63 @@ export default function ServiceOrderPage({
               </div>
             </div>
 
-            {/* 下单填写表单 */}
-            <form onSubmit={handleSubmitOrder} className="space-y-3 text-xs">
+            {/* 填写服务明细信息表单 */}
+            <form onSubmit={handleSubmitOrder} className="space-y-3.5 text-xs">
+              <div className="flex items-center justify-between">
+                <h4 className="font-bold text-slate-800 text-xs">填写服务明细信息</h4>
+                <span className="text-rose-500 text-[10px] font-bold">* 为必填项</span>
+              </div>
+
+              {/* 1. 需求标题 */}
               <div>
-                <label className="block font-bold text-slate-700 mb-1">1. 服务二级类别 *</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {(isMedical
-                    ? ['全程就诊陪护', '住院照护陪伴', '就诊排队/取药报告', '检查陪同/绿通']
-                    : ['上门喂养陪伴', '遛狗互动照护', '洗护接送陪护', '绝育/体检就医陪伴']
-                  ).map(cat => (
+                <label className="block font-bold text-slate-700 mb-1">📄 1. 需求标题 *</label>
+                <input
+                  type="text"
+                  required
+                  value={orderForm.title}
+                  onChange={e => setOrderForm({ ...orderForm, title: e.target.value })}
+                  className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 outline-none"
+                />
+              </div>
+
+              {/* 2. 集合或服务地点 + 快捷地点 */}
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="font-bold text-slate-700">📍 2. 集合或服务地点 *</label>
+                  <span className="text-slate-400 text-[10px]">当前城市: {currentCity}</span>
+                </div>
+                <input
+                  type="text"
+                  required
+                  value={orderForm.venue}
+                  onChange={e => setOrderForm({ ...orderForm, venue: e.target.value })}
+                  placeholder="例如：市民医院门诊大楼一楼大厅 / 省中医院"
+                  className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 outline-none"
+                />
+                <div className="flex items-center space-x-1 mt-1.5 overflow-x-auto py-1">
+                  <span className="text-[10px] text-slate-400 flex-shrink-0">快捷地点:</span>
+                  {quickLocations.map(loc => (
                     <button
-                      key={cat}
+                      key={loc}
                       type="button"
-                      onClick={() => setOrderForm({ ...orderForm, subCategory: cat })}
-                      className={`p-2 rounded-xl border text-left font-medium transition-all ${orderForm.subCategory === cat ? 'border-blue-600 bg-blue-50 text-blue-700 font-bold' : 'border-slate-200 bg-slate-50 text-slate-600'}`}
+                      onClick={() => setOrderForm({ ...orderForm, venue: loc })}
+                      className="px-2 py-0.5 rounded-lg bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-600 text-[10px] flex-shrink-0 border border-slate-200 transition-colors"
                     >
-                      {cat}
+                      {loc}
                     </button>
                   ))}
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              {/* 3 & 4. 期望服务时间 与 预估耗时 */}
+              <div className="grid grid-cols-2 gap-2.5">
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">2. 服务对象 / 姓名 *</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="font-bold text-slate-700">🕒 3. 期望服务时间 *</label>
+                    <span className="text-blue-600 text-[10px]">自定义时间</span>
+                  </div>
                   <input
                     type="text"
-                    required
-                    value={orderForm.targetName}
-                    onChange={e => setOrderForm({ ...orderForm, targetName: e.target.value })}
-                    className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">3. 联系手机 *</label>
-                  <input
-                    type="tel"
-                    required
-                    value={orderForm.phone}
-                    onChange={e => setOrderForm({ ...orderForm, phone: e.target.value })}
-                    className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 outline-none"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">4. 预定服务日期 *</label>
-                  <input
-                    type="date"
                     required
                     value={orderForm.serviceDate}
                     onChange={e => setOrderForm({ ...orderForm, serviceDate: e.target.value })}
@@ -421,54 +489,136 @@ export default function ServiceOrderPage({
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">5. 开始时间 *</label>
-                  <input
-                    type="time"
-                    required
-                    value={orderForm.serviceTime}
-                    onChange={e => setOrderForm({ ...orderForm, serviceTime: e.target.value })}
+                  <label className="block font-bold text-slate-700 mb-1">⏱️ 4. 预估耗时 *</label>
+                  <select
+                    value={orderForm.duration}
+                    onChange={e => setOrderForm({ ...orderForm, duration: e.target.value })}
                     className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 outline-none"
-                  />
+                  >
+                    <option value="1 小时">1.0 小时</option>
+                    <option value="2.0 小时">2.0 小时</option>
+                    <option value="2.5 小时">2.5 小时</option>
+                    <option value="4.0 小时 (半天)">4.0 小时 (半天)</option>
+                    <option value="8.0 小时 (全天)">8.0 小时 (全天)</option>
+                  </select>
                 </div>
               </div>
 
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">6. 履约地点 / 医院社区 *</label>
-                <input
-                  type="text"
-                  required
-                  value={orderForm.venue}
-                  onChange={e => setOrderForm({ ...orderForm, venue: e.target.value })}
-                  placeholder="如：北京协和医院门诊楼二层"
-                  className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 outline-none"
-                />
+              {/* 5 & 6. 期望报酬金额 与 联系手机号 */}
+              <div className="grid grid-cols-2 gap-2.5">
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="font-bold text-slate-700">💰 5. 期望报酬金额</label>
+                    <span className="text-slate-400 text-[10px]">线下完成当面结清</span>
+                  </div>
+                  <input
+                    type="text"
+                    required
+                    value={orderForm.reward}
+                    onChange={e => setOrderForm({ ...orderForm, reward: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 outline-none font-bold text-slate-800"
+                  />
+                  <div className="flex flex-wrap gap-1 mt-1.5">
+                    {rewardOptions.map(r => (
+                      <button
+                        key={r}
+                        type="button"
+                        onClick={() => setOrderForm({ ...orderForm, reward: r })}
+                        className={`px-1.5 py-0.5 rounded text-[10px] border transition-all ${orderForm.reward === r ? 'border-amber-400 bg-amber-50 text-amber-800 font-bold' : 'border-slate-200 text-slate-500'}`}
+                      >
+                        {r}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">📞 6. 联系手机号 *</label>
+                  <input
+                    type="tel"
+                    required
+                    value={orderForm.phone}
+                    onChange={e => setOrderForm({ ...orderForm, phone: e.target.value })}
+                    placeholder="用于服务人员对接联系"
+                    className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 outline-none"
+                  />
+                  <p className="text-[10px] text-slate-400 mt-1">平台严格执行号码保护，仅匹配成功的服务人员可见</p>
+                </div>
               </div>
 
+              {/* 7. 需求详情与特殊要求 */}
               <div>
-                <label className="block font-bold text-slate-700 mb-1">7. 特别注意事项与交代</label>
+                <label className="block font-bold text-slate-700 mb-1">📝 7. 需求详情与特殊要求 (选填)</label>
                 <textarea
                   rows={2}
-                  value={orderForm.requirements}
-                  onChange={e => setOrderForm({ ...orderForm, requirements: e.target.value })}
-                  className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 outline-none resize-none"
+                  value={orderForm.details}
+                  onChange={e => setOrderForm({ ...orderForm, details: e.target.value })}
+                  placeholder="例如：母亲年过七旬腿脚不便，需要推轮椅进出；需协助排队拿心电图和化验单，陪同看诊并记录医生嘱咐。"
+                  className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 outline-none resize-none leading-relaxed"
                 />
               </div>
 
-              <div className="pt-2">
+              {/* 优惠券立减抵扣 */}
+              <div className="p-3 rounded-2xl bg-rose-50/60 border border-rose-100">
+                <div className="flex items-center justify-between mb-1.5">
+                  <div className="flex items-center space-x-1.5 text-xs font-bold text-rose-800">
+                    <Ticket className="w-4 h-4 text-rose-600" />
+                    <span>优惠券立减抵扣</span>
+                  </div>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-rose-200 text-rose-900 font-bold">1 张可用</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <button
+                    type="button"
+                    onClick={() => setOrderForm({ ...orderForm, useCoupon: true })}
+                    className={`px-3 py-1 rounded-xl text-xs font-bold transition-all ${orderForm.useCoupon ? 'bg-rose-500 text-white shadow-xs' : 'bg-white text-slate-600 border border-slate-200'}`}
+                  >
+                    8折 新人首单专属陪护券 (无门槛)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setOrderForm({ ...orderForm, useCoupon: false })}
+                    className={`px-2.5 py-1 rounded-xl text-xs transition-all ${!orderForm.useCoupon ? 'bg-slate-700 text-white' : 'bg-white text-slate-500 border border-slate-200'}`}
+                  >
+                    不使用优惠券
+                  </button>
+                </div>
+                <p className="text-[10px] text-rose-500 mt-1">已为您抵扣优惠，差额将由官方和伴基金补贴给陪护师，不影响服务质量</p>
+              </div>
+
+              {/* 发布与履约保障声明 */}
+              <div className="flex items-start space-x-2 p-2.5 rounded-xl bg-slate-100 text-[11px] text-slate-600">
+                <ShieldCheck className="w-4 h-4 flex-shrink-0 text-blue-600 mt-0.5" />
+                <span>发布后需求将同步公示至同城需求社区供合资格人员快速接单响应。服务产生的全部费用均在服务完成后由用户与服务人员在线下当面核对结清。</span>
+              </div>
+
+              {/* 底部动作按钮栏 */}
+              <div className="pt-2 flex items-center space-x-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsOrderModalOpen(false);
+                    setIsDispatchModalOpen(false);
+                  }}
+                  className="py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-all"
+                >
+                  重选分类
+                </button>
+
                 <button
                   type="submit"
                   disabled={orderSuccess}
-                  className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-xs flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-md disabled:bg-emerald-600"
+                  className="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-xs flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-md disabled:bg-emerald-600"
                 >
                   {orderSuccess ? (
                     <>
                       <Check className="w-4 h-4" />
-                      <span>建单成功！已直接生成订单并锁定排期</span>
+                      <span>已成功建单并同步排期！</span>
                     </>
                   ) : (
                     <>
-                      <Send className="w-3.5 h-3.5" />
-                      <span>确认提交订单并排入日历档期</span>
+                      <Sparkles className="w-4 h-4" />
+                      <span>立即发布需求并锁定排期</span>
                     </>
                   )}
                 </button>
