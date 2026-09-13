@@ -366,7 +366,7 @@ export default function Home({ onNavigateToAgent, onNavigateToCommunity, onNavig
           </button>
           <button type="button" className="quick-card" onClick={() => setShowCommunityGroupModal(true)}>
             <span className="quick-icon"><Users className="icon" /></span>
-            <strong>官方内测群</strong>
+            <strong>意见反馈群</strong>
             <small>意见反馈 扫码进群</small>
           </button>
         </div>
