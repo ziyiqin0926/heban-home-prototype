@@ -563,7 +563,7 @@ export default function Home({ onNavigateToAgent, onNavigateToCommunity, onNavig
                 }}
               >
                 <Sparkles className="schedule-ai-icon" />
-                <span>让 AI 助手为我智能排档期</span>
+                <span>新增档期任务 对话助手为我智能排档期</span>
                 <ChevronRight className="schedule-ai-arrow" />
               </button>
             </div>
