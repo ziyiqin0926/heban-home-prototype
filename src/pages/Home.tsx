@@ -269,6 +269,7 @@ export default function Home({ onNavigateToAgent, onNavigateToCommunity, onNavig
         type={activeSubPage}
         currentCity={currentCity}
         onBack={() => setActiveSubPage(null)}
+        onNavigateToCommunity={onNavigateToCommunity}
         onCompleteOrder={(newOrder) => {
           // 下单后自动入库日历与订单排期
           const newId = 'book-' + Date.now();

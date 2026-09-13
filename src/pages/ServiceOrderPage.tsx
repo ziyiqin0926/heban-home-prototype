@@ -16,7 +16,14 @@ import {
   Calendar,
   Sparkles,
   Ticket,
-  AlertCircle
+  AlertCircle,
+  Heart,
+  Share2,
+  ThumbsUp,
+  MessageCircle,
+  X,
+  Award,
+  Zap
 } from 'lucide-react';
 import { EscortProfile } from '../types';
 import { getEscortsByCity } from '../data/escortProfiles';
@@ -26,13 +33,15 @@ interface ServiceOrderPageProps {
   currentCity: string;
   onBack: () => void;
   onCompleteOrder: (orderInfo: any) => void;
+  onNavigateToCommunity?: () => void;
 }
 
 export default function ServiceOrderPage({
   type,
   currentCity,
   onBack,
-  onCompleteOrder
+  onCompleteOrder,
+  onNavigateToCommunity
 }: ServiceOrderPageProps) {
   const isMedical = type === 'medical';
   const allEscorts = getEscortsByCity(currentCity || '北京');
@@ -45,6 +54,7 @@ export default function ServiceOrderPage({
   const [activeLeaderboardTab, setActiveLeaderboardTab] = useState<'list' | 'rank'>('list');
 
   const [selectedEscort, setSelectedEscort] = useState<EscortProfile | null>(null);
+  const [viewingEscortProfile, setViewingEscortProfile] = useState<EscortProfile | null>(null);
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [isDispatchModalOpen, setIsDispatchModalOpen] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
@@ -179,53 +189,31 @@ export default function ServiceOrderPage({
         </div>
       </header>
 
-      {/* 顶部排行榜与24小时评价体系介绍板块 */}
-      <section className="p-3.5 bg-white border-b border-slate-100">
-        <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-blue-500/10 border border-amber-200/80 shadow-xs relative overflow-hidden">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-400 flex items-center justify-center text-white shadow-sm flex-shrink-0">
-                <Trophy className="w-6 h-6 text-yellow-200" />
-              </div>
-              <div>
-                <div className="flex items-center space-x-2">
-                  <span className="font-extrabold text-base text-slate-900">
-                    {isMedical ? "医陪金牌排行榜" : "宠陪金牌口碑榜"}
-                  </span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500 text-white font-extrabold tracking-wide shadow-xs">
-                    24H 实时更新
-                  </span>
-                </div>
-                <p className="text-xs text-slate-600 mt-1 font-medium">
-                  基于近24小时真实履约率、100%持证认证、服务满意度综合评定
-                </p>
-              </div>
+      {/* 顶部紧凑型24小时排行榜窗口（直接联动社区排行榜） */}
+      <section className="px-3 pt-2.5 pb-1 bg-white border-b border-slate-100">
+        <div
+          onClick={() => onNavigateToCommunity ? onNavigateToCommunity() : alert("前往社区查看完整24小时排行榜")}
+          className="py-2 px-3 rounded-xl bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-blue-500/10 border border-amber-200/90 flex items-center justify-between hover:border-amber-400 hover:shadow-2xs transition-all active:scale-[0.99] cursor-pointer"
+        >
+          <div className="flex items-center space-x-2.5 min-w-0">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-amber-500 to-orange-400 flex items-center justify-center text-white shadow-2xs flex-shrink-0">
+              <Trophy className="w-4 h-4 text-yellow-200" />
             </div>
-            <button
-              type="button"
-              onClick={() => setActiveLeaderboardTab(activeLeaderboardTab === "rank" ? "list" : "rank")}
-              className="px-3 py-1.5 rounded-xl bg-white border border-amber-300 text-amber-900 font-bold text-xs shadow-2xs hover:bg-amber-50 transition-all flex items-center space-x-1 flex-shrink-0 cursor-pointer"
-            >
-              <span>{activeLeaderboardTab === "rank" ? "查看全部" : "只看榜单"}</span>
-              <ChevronRight className="w-3.5 h-3.5" />
-            </button>
+            <div className="flex items-center space-x-2 truncate">
+              <span className="font-extrabold text-xs text-slate-900">
+                {isMedical ? "医陪24H口碑榜" : "宠陪24H口碑榜"}
+              </span>
+              <span className="text-[9px] px-1.5 py-0.2 rounded bg-amber-500 text-white font-bold tracking-tight flex-shrink-0">
+                实时更新
+              </span>
+              <span className="text-[11px] text-slate-500 truncate hidden xs:inline">
+                100%持证认证 · 近24h服务满意度
+              </span>
+            </div>
           </div>
-          <div className="mt-3 pt-2.5 border-t border-amber-200/60 flex items-center justify-between text-[11px] text-slate-600">
-            <div className="flex items-center space-x-4">
-              <span className="flex items-center space-x-1">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                <span>实名三证验真</span>
-              </span>
-              <span className="flex items-center space-x-1">
-                <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                <span>24小时差评全赔保障</span>
-              </span>
-              <span className="flex items-center space-x-1">
-                <Clock className="w-3.5 h-3.5 text-blue-600" />
-                <span>履约全程可追溯</span>
-              </span>
-            </div>
-            <span className="text-slate-400 hidden sm:inline">日更500+实名评价</span>
+          <div className="flex items-center space-x-0.5 text-xs text-amber-700 font-bold flex-shrink-0 ml-2">
+            <span>社区榜单</span>
+            <ChevronRight className="w-4 h-4" />
           </div>
         </div>
       </section>
@@ -272,7 +260,8 @@ export default function ServiceOrderPage({
       <main className="p-3 space-y-3">
         {/* 师傅列表第一项：手动填写需求 人工派单 */}
         <article
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             setSelectedEscort(null);
             setIsDispatchModalOpen(true);
           }}
@@ -313,7 +302,8 @@ export default function ServiceOrderPage({
         {displayedEscorts.map((escort, idx) => (
           <article
             key={escort.id}
-            className="bg-white rounded-2xl p-3.5 border border-slate-100 shadow-xs flex space-x-3.5 items-start hover:border-blue-200 transition-all"
+            onClick={() => setViewingEscortProfile(escort)}
+            className="bg-white rounded-2xl p-3.5 border border-slate-100 shadow-xs flex space-x-3.5 items-start hover:border-blue-200 transition-all cursor-pointer"
           >
             <div className="relative flex-shrink-0">
               <img
@@ -669,6 +659,238 @@ export default function ServiceOrderPage({
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* 师傅个人主页抽屉/大弹窗 (参考成熟点单/陪玩点单模式) */}
+      {viewingEscortProfile && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex justify-center items-end sm:items-center p-0 sm:p-4 animate-in fade-in duration-200">
+          <div className="bg-slate-50 w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden border border-slate-200">
+            {/* 抽屉头部导航条 */}
+            <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-md px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => setViewingEscortProfile(null)}
+                className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-slate-200 transition-all cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+              <span className="font-bold text-sm text-slate-800">陪伴师主页</span>
+              <div className="flex items-center space-x-2">
+                <button
+                  type="button"
+                  onClick={() => alert("已收藏该师傅，将在【我的关注】中优先展示")}
+                  className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:text-rose-500 hover:bg-rose-50 transition-all cursor-pointer"
+                >
+                  <Heart className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => alert("主页链接已复制到剪贴板，可分享给好友")}
+                  className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-slate-200 transition-all cursor-pointer"
+                >
+                  <Share2 className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* 主内容滚动区 */}
+            <div className="overflow-y-auto flex-1 p-4 space-y-4">
+              {/* 1. 顶部大卡片：头像、认证、声音、状态 */}
+              <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-xs relative overflow-hidden">
+                <div className="flex items-start space-x-4">
+                  <div className="relative flex-shrink-0">
+                    <img
+                      src={viewingEscortProfile.avatar}
+                      alt={viewingEscortProfile.name}
+                      className="w-20 h-20 rounded-2xl object-cover border-2 border-white shadow-sm"
+                    />
+                    <span className="absolute -bottom-1.5 -right-1.5 px-2 py-0.5 rounded-full bg-emerald-500 text-white font-extrabold text-[9px] shadow-xs flex items-center space-x-0.5">
+                      <Zap className="w-2.5 h-2.5" />
+                      <span>可秒接</span>
+                    </span>
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center space-x-2">
+                      <h3 className="text-lg font-black text-slate-900 truncate">{viewingEscortProfile.name}</h3>
+                      <span className="text-xs px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 font-bold border border-blue-100">
+                        {viewingEscortProfile.gender} · {viewingEscortProfile.age}岁
+                      </span>
+                    </div>
+
+                    <div className="flex items-center space-x-2 mt-1.5">
+                      <div className="flex items-center text-amber-500 font-black text-xs space-x-0.5">
+                        <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                        <span>{viewingEscortProfile.rating}分</span>
+                      </div>
+                      <span className="text-slate-300">|</span>
+                      <span className="text-xs text-slate-500 font-medium">已履约 {viewingEscortProfile.serviceCount}次</span>
+                      <span className="text-slate-300">|</span>
+                      <span className="text-xs text-emerald-600 font-bold">好评率 99.8%</span>
+                    </div>
+
+                    <div className="mt-2 flex items-center space-x-2">
+                      <div className="px-2 py-1 rounded-xl bg-slate-50 border border-slate-200 flex items-center space-x-1.5 text-xs text-slate-700 font-medium">
+                        <Volume2 className="w-3.5 h-3.5 text-blue-600 animate-pulse" />
+                        <span>实声认证 32s</span>
+                      </div>
+                      <span className="text-[11px] text-slate-400">近30天履约率 100%</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 标签 */}
+                <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-slate-100">
+                  {viewingEscortProfile.tags.map((tag, i) => (
+                    <span
+                      key={i}
+                      className="text-[11px] px-2.5 py-0.8 rounded-lg bg-blue-50 text-blue-700 font-bold border border-blue-100/60"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* 2. 价格与服务规格选择卡片 */}
+              <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-xs space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="font-extrabold text-sm text-slate-900 flex items-center space-x-1.5">
+                    <Award className="w-4 h-4 text-blue-600" />
+                    <span>服务规格与资费</span>
+                  </span>
+                  <span className="text-xs text-rose-500 font-bold bg-rose-50 px-2 py-0.5 rounded-full border border-rose-100">
+                    新客首单立减20%
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2.5">
+                  <div className="p-3 rounded-xl border-2 border-blue-500 bg-blue-50/40 relative cursor-pointer">
+                    <span className="absolute top-0 right-0 bg-blue-600 text-white text-[9px] px-2 py-0.5 rounded-bl-lg font-bold">推荐</span>
+                    <p className="font-bold text-xs text-slate-900">标准单次陪护 (半日)</p>
+                    <p className="text-[11px] text-slate-500 mt-0.5">门诊/基础遛护 · 4小时</p>
+                    <div className="mt-2 flex items-baseline space-x-1">
+                      <span className="text-base font-black text-blue-600">{viewingEscortProfile.price}</span>
+                      <span className="text-[10px] text-slate-400 line-through">¥{parseInt(viewingEscortProfile.price.replace(/[^0-9]/g, "") || "168") + 50}</span>
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-xl border border-slate-200 bg-white hover:border-slate-300 relative cursor-pointer">
+                    <p className="font-bold text-xs text-slate-900">全天深度陪护</p>
+                    <p className="text-[11px] text-slate-500 mt-0.5">全流程陪伴 · 8小时</p>
+                    <div className="mt-2 flex items-baseline space-x-1">
+                      <span className="text-base font-black text-slate-800">¥298</span>
+                      <span className="text-[10px] text-slate-400">/全天</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-[11px] text-slate-600 space-y-1">
+                  <div className="flex items-center space-x-1.5 text-emerald-700 font-bold">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>和伴平台三重履约承诺</span>
+                  </div>
+                  <p>① 实名健康认证，持证上岗；② 爽约包赔，20分钟极速响应；③ 平台责任险全程保驾护航。</p>
+                </div>
+              </div>
+
+              {/* 3. 师傅从业经历与服务特色 */}
+              <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-xs space-y-2.5">
+                <h4 className="font-extrabold text-sm text-slate-900">个人介绍与专长经历</h4>
+                <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100">
+                  {viewingEscortProfile.bio}。曾为数百位家庭提供过细致、耐心的陪护与照料服务，熟悉本市各大三甲医院流程与不同宠物品种看护要点。细致踏实，沟通温和。
+                </p>
+              </div>
+
+              {/* 4. 用户真实评价卡片列表 */}
+              <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-xs space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <h4 className="font-extrabold text-sm text-slate-900">真实用户评价</h4>
+                    <span className="text-xs font-bold text-slate-400">({viewingEscortProfile.serviceCount}+)</span>
+                  </div>
+                  <div className="flex items-center space-x-1 text-amber-500 font-black text-xs">
+                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    <span>{viewingEscortProfile.rating} 超棒</span>
+                  </div>
+                </div>
+
+                {/* 评价标签 */}
+                <div className="flex flex-wrap gap-1.5">
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 font-medium">细心专业 (182)</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 font-medium">准时到达 (143)</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 font-medium">态度特别温和 (98)</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 font-medium">办事效率高 (76)</span>
+                </div>
+
+                {/* 评价项 */}
+                <div className="space-y-2.5 pt-1">
+                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+                    <div className="flex items-center justify-between text-xs">
+                      <div className="flex items-center space-x-2">
+                        <span className="font-bold text-slate-800">王** (匿名用户)</span>
+                        <span className="text-[10px] text-slate-400">北京协和医院门诊陪护</span>
+                      </div>
+                      <span className="text-[10px] text-slate-400">昨天</span>
+                    </div>
+                    <div className="flex items-center text-amber-400 space-x-0.5">
+                      {[...Array(5)].map((_, idx) => (
+                        <Star key={idx} className="w-3 h-3 fill-amber-400" />
+                      ))}
+                    </div>
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      师傅非常敬业，提前半小时就在门诊大厅等候，挂号、做心电图、拿药一条龙全部办得妥妥当当，家里老人直夸师傅有耐心！强烈推荐！
+                    </p>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+                    <div className="flex items-center justify-between text-xs">
+                      <div className="flex items-center space-x-2">
+                        <span className="font-bold text-slate-800">林** (朝阳区)</span>
+                        <span className="text-[10px] text-slate-400">上门宠照料与喂药</span>
+                      </div>
+                      <span className="text-[10px] text-slate-400">3天前</span>
+                    </div>
+                    <div className="flex items-center text-amber-400 space-x-0.5">
+                      {[...Array(5)].map((_, idx) => (
+                        <Star key={idx} className="w-3 h-3 fill-amber-400" />
+                      ))}
+                    </div>
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      出差临时找的，全程视频和照片实时同步，猫咪被照顾得很好，砂盆清理得很干净，让人特别放心。
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 底部固定操作条 (参考游戏点单模版：聊一聊 + 立即指定TA) */}
+            <div className="sticky bottom-0 bg-white border-t border-slate-100 px-4 py-3 flex items-center space-x-3 shadow-lg">
+              <button
+                type="button"
+                onClick={() => alert("已开启与【" + viewingEscortProfile.name + "】的在线即时沟通窗口，您可以提前沟通细节")}
+                className="px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center space-x-1.5 transition-all cursor-pointer flex-shrink-0"
+              >
+                <MessageCircle className="w-4 h-4 text-slate-600" />
+                <span>聊一聊</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  const target = viewingEscortProfile;
+                  setViewingEscortProfile(null);
+                  setSelectedEscort(target);
+                  setIsOrderModalOpen(true);
+                }}
+                className="flex-1 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-sm flex items-center justify-center space-x-2 shadow-md hover:shadow-lg transition-all cursor-pointer"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>立即指定TA · 填写需求 (带入档案)</span>
+              </button>
+            </div>
           </div>
         </div>
       )}
