@@ -1310,7 +1310,7 @@ select:focus-visible {
 .schedule-ai-btn:hover { opacity: 0.94; }
 .schedule-ai-icon { width: 16px; height: 16px; color: #f8d477; }
 .schedule-ai-arrow { width: 16px; height: 16px; margin-left: auto; opacity: 0.7; }
-// 增加滴答清单日历排期下周/下拉与点击任务卡详情弹窗样式
+/* 增加滴答清单日历排期下周/下拉与点击任务卡详情弹窗样式 */
 .schedule-dropdown-bar {
   display: flex;
   align-items: center;

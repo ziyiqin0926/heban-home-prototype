@@ -743,7 +743,7 @@ export default function ServiceOrderPage({
 
                 {/* 标签 */}
                 <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-slate-100">
-                  {viewingEscortProfile.tags.map((tag, i) => (
+                  {(viewingEscortProfile.specialties || [viewingEscortProfile.tag || "持证上岗"]).slice(0, 4).map((tag, i) => (
                     <span
                       key={i}
                       className="text-[11px] px-2.5 py-0.8 rounded-lg bg-blue-50 text-blue-700 font-bold border border-blue-100/60"
@@ -772,8 +772,8 @@ export default function ServiceOrderPage({
                     <p className="font-bold text-xs text-slate-900">标准单次陪护 (半日)</p>
                     <p className="text-[11px] text-slate-500 mt-0.5">门诊/基础遛护 · 4小时</p>
                     <div className="mt-2 flex items-baseline space-x-1">
-                      <span className="text-base font-black text-blue-600">{viewingEscortProfile.price}</span>
-                      <span className="text-[10px] text-slate-400 line-through">¥{parseInt(viewingEscortProfile.price.replace(/[^0-9]/g, "") || "168") + 50}</span>
+                      <span className="text-base font-black text-blue-600">¥168/半天</span>
+                      <span className="text-[10px] text-slate-400 line-through">¥218</span>
                     </div>
                   </div>
 
