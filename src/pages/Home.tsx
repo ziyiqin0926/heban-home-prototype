@@ -347,7 +347,7 @@ export default function Home({ onNavigateToAgent, onNavigateToCommunity, onNavig
           {services.map(service => {
             const Icon = service.icon;
             return (
-              <button key={service.title} type="button" className="service-card" onClick={() => openAgent(service.prompt)}>
+              <button key={service.title} type="button" className="service-card" onClick={() => { if (service.title.includes('医陪') || service.title.includes('陪诊')) { handleOpenBooking('medical'); } else if (service.title.includes('宠')) { handleOpenBooking('pet'); } else { handleOpenBooking('custom'); } }}>
                 <span className="service-visual"><Icon className="icon icon-lg" /></span>
                 <strong>{service.title}</strong>
                 <small>{service.subtitle}</small>
