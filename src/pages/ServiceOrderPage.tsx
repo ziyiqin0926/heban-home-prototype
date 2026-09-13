@@ -179,49 +179,54 @@ export default function ServiceOrderPage({
         </div>
       </header>
 
-      {/* 核心双通道金刚位：放大版「人工派单」与「排行榜」 */}
+      {/* 顶部排行榜与24小时评价体系介绍板块 */}
       <section className="p-3.5 bg-white border-b border-slate-100">
-        <div className="grid grid-cols-2 gap-3">
-          {/* 人工派单 (放大版) */}
-          <button
-            type="button"
-            onClick={() => {
-              setSelectedEscort(null);
-              setIsDispatchModalOpen(true);
-            }}
-            className="p-4 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 border border-orange-200/80 flex items-center space-x-3 text-left hover:shadow-md transition-all active:scale-[0.98] cursor-pointer"
-          >
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-400 flex items-center justify-center text-white shadow-sm flex-shrink-0">
-              <Headphones className="w-6 h-6" />
-            </div>
-            <div>
-              <div className="flex items-center space-x-1.5">
-                <span className="font-bold text-sm text-slate-900">人工派单</span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-amber-200/80 text-amber-900 font-bold">专人接待</span>
+        <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-blue-500/10 border border-amber-200/80 shadow-xs relative overflow-hidden">
+          <div className="flex items-start justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-400 flex items-center justify-center text-white shadow-sm flex-shrink-0">
+                <Trophy className="w-6 h-6 text-yellow-200" />
               </div>
-              <p className="text-[11px] text-slate-500 mt-0.5">管家1对1统筹安排 · 极速出单</p>
-            </div>
-          </button>
-
-          {/* 排行榜 (放大版) */}
-          <button
-            type="button"
-            onClick={() => setActiveLeaderboardTab(activeLeaderboardTab === 'rank' ? 'list' : 'rank')}
-            className={`p-4 rounded-2xl border flex items-center space-x-3 text-left hover:shadow-md transition-all active:scale-[0.98] cursor-pointer ${activeLeaderboardTab === 'rank' ? 'bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-300' : 'bg-gradient-to-br from-blue-50/50 to-slate-50 border-blue-100'}`}
-          >
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-sm flex-shrink-0">
-              <Trophy className="w-6 h-6 text-yellow-300" />
-            </div>
-            <div>
-              <div className="flex items-center space-x-1.5">
-                <span className="font-bold text-sm text-slate-900">
-                  {isMedical ? '医陪排行榜' : '宠陪金牌榜'}
-                </span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-blue-100 text-blue-800 font-bold">Top口碑</span>
+              <div>
+                <div className="flex items-center space-x-2">
+                  <span className="font-extrabold text-base text-slate-900">
+                    {isMedical ? "医陪金牌排行榜" : "宠陪金牌口碑榜"}
+                  </span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500 text-white font-extrabold tracking-wide shadow-xs">
+                    24H 实时更新
+                  </span>
+                </div>
+                <p className="text-xs text-slate-600 mt-1 font-medium">
+                  基于近24小时真实履约率、100%持证认证、服务满意度综合评定
+                </p>
               </div>
-              <p className="text-[11px] text-slate-500 mt-0.5">实名持证好评严选 · 榜单直约</p>
             </div>
-          </button>
+            <button
+              type="button"
+              onClick={() => setActiveLeaderboardTab(activeLeaderboardTab === "rank" ? "list" : "rank")}
+              className="px-3 py-1.5 rounded-xl bg-white border border-amber-300 text-amber-900 font-bold text-xs shadow-2xs hover:bg-amber-50 transition-all flex items-center space-x-1 flex-shrink-0 cursor-pointer"
+            >
+              <span>{activeLeaderboardTab === "rank" ? "查看全部" : "只看榜单"}</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+          <div className="mt-3 pt-2.5 border-t border-amber-200/60 flex items-center justify-between text-[11px] text-slate-600">
+            <div className="flex items-center space-x-4">
+              <span className="flex items-center space-x-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                <span>实名三证验真</span>
+              </span>
+              <span className="flex items-center space-x-1">
+                <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                <span>24小时差评全赔保障</span>
+              </span>
+              <span className="flex items-center space-x-1">
+                <Clock className="w-3.5 h-3.5 text-blue-600" />
+                <span>履约全程可追溯</span>
+              </span>
+            </div>
+            <span className="text-slate-400 hidden sm:inline">日更500+实名评价</span>
+          </div>
         </div>
       </section>
 
@@ -265,6 +270,46 @@ export default function ServiceOrderPage({
 
       {/* 服务师点单列表 */}
       <main className="p-3 space-y-3">
+        {/* 师傅列表第一项：手动填写需求 人工派单 */}
+        <article
+          onClick={() => {
+            setSelectedEscort(null);
+            setIsDispatchModalOpen(true);
+          }}
+          className="bg-gradient-to-br from-amber-50/90 via-orange-50/60 to-white rounded-2xl p-4 border-2 border-orange-300 shadow-sm flex items-center justify-between hover:border-orange-500 hover:shadow-md transition-all active:scale-[0.99] cursor-pointer relative overflow-hidden group"
+        >
+          <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-orange-200/30 rounded-full blur-xl pointer-events-none" />
+          <div className="flex items-center space-x-3.5 z-10">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-400 flex items-center justify-center text-white shadow-md flex-shrink-0 group-hover:scale-105 transition-transform">
+              <Headphones className="w-7 h-7" />
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <h3 className="font-black text-base text-slate-900 tracking-tight">
+                  手动填写需求 · 人工派单
+                </h3>
+                <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 text-white text-[10px] font-black shadow-xs">
+                  极速安排
+                </span>
+              </div>
+              <p className="text-xs text-slate-600 mt-1 font-medium">
+                不纠结选谁，1分钟直接填需求，官方专属管家1对1协调最合适服务师
+              </p>
+              <div className="flex items-center space-x-2 mt-1.5 text-[10px] text-orange-700 font-bold">
+                <span className="px-1.5 py-0.5 bg-orange-100/80 rounded">3分钟内极速响应</span>
+                <span className="px-1.5 py-0.5 bg-orange-100/80 rounded">不满意随时退换</span>
+                <span className="px-1.5 py-0.5 bg-orange-100/80 rounded">支持一键代入全家档案</span>
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            className="px-4 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white font-extrabold text-xs flex items-center space-x-1 shadow-md shadow-orange-200 z-10 flex-shrink-0"
+          >
+            <span>直接填需求</span>
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </article>
         {displayedEscorts.map((escort, idx) => (
           <article
             key={escort.id}
