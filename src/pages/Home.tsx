@@ -22,6 +22,7 @@ import {
   X
 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
+import ServiceOrderPage from './ServiceOrderPage';
 
 interface HomeProps {
   onNavigateToAgent: () => void;
@@ -42,6 +43,8 @@ export default function Home({ onNavigateToAgent, onNavigateToCommunity, onNavig
   const [showCommunityGroupModal, setShowCommunityGroupModal] = useState(false);
   const [selectedDay, setSelectedDay] = useState(12);
   const [isMonthDropdownOpen, setIsMonthDropdownOpen] = useState(false);
+  
+  const [activeSubPage, setActiveSubPage] = useState<'medical' | 'pet' | null>(null);
   const [activeBookingService, setActiveBookingService] = useState<'medical' | 'pet' | 'custom' | null>(null);
   const [bookingSuccess, setBookingSuccess] = useState(false);
 
@@ -65,37 +68,19 @@ export default function Home({ onNavigateToAgent, onNavigateToCommunity, onNavig
   });
 
   const handleOpenBooking = (type: 'medical' | 'pet' | 'custom') => {
-    setActiveBookingService(type);
-    if (type === 'medical') {
-      setStandardForm({
-        subCategory: '全程陪诊服务',
-        targetName: '张阿姨 (母亲)',
-        phone: '138****6621',
-        serviceDate: '2026-03-13',
-        serviceTime: '09:00',
-        venue: '北京协和医院东单院区',
-        note: '腿脚偶有不便，需协助借用院内轮椅'
-      });
-    } else if (type === 'pet') {
-      setStandardForm({
-        subCategory: '上门喂猫/遛狗照料',
-        targetName: '布偶猫 (雪球)',
-        phone: '138****6621',
-        serviceDate: '2026-03-13',
-        serviceTime: '18:00',
-        venue: '朝阳区 望京金茂府',
-        note: '需开窗通风10分钟并全程拍摄换粮视频'
-      });
-    } else {
-      setCustomForm({
-        theme: '急需代办取送跨区重要就医凭证与排队',
-        eventTime: '今天 16:30 前完成',
-        location: '海淀区 中关村南大街1号',
-        targetPerson: '本人',
-        personRequirements: '身体健壮、熟悉北京路线的专业跑腿人员',
-        details: '需专人去指定前台代取加急化验单并送至就诊医生处。'
-      });
+    if (type === 'medical' || type === 'pet') {
+      setActiveSubPage(type);
+      return;
     }
+    setActiveBookingService('custom');
+    setCustomForm({
+      theme: '急需代办取送跨区重要就医凭证与排队',
+      eventTime: '今天 16:30 前完成',
+      location: '海淀区 中关村南大街1号',
+      targetPerson: '本人',
+      personRequirements: '身体健壮、熟悉北京路线的专业跑腿人员',
+      details: '需专人去指定前台代取加急化验单并送至就诊医生处。'
+    });
   };
 
   const handleStandardSubmit = (e: React.FormEvent) => {
@@ -277,6 +262,36 @@ export default function Home({ onNavigateToAgent, onNavigateToCommunity, onNavig
     ['XXXX · 陪伴服务', '把需要说清楚', '把陪伴交给我们', 'XXXX 认证服务 · XXXX 保障 · XXXX 响应', '开始匹配'],
     ['XXXX · 版本首测', '首测全场', '八折优惠', '领取 XXXX 优惠卡，开启你的第一次陪伴。', '立即领取']
   ];
+
+  if (activeSubPage) {
+    return (
+      <ServiceOrderPage
+        type={activeSubPage}
+        currentCity={currentCity}
+        onBack={() => setActiveSubPage(null)}
+        onCompleteOrder={(newOrder) => {
+          // 下单后自动入库日历与订单排期
+          const newId = 'book-' + Date.now();
+          const newTask = {
+            id: newId,
+            time: newOrder.time,
+            title: newOrder.title,
+            note: '服务对象：' + newOrder.target + ' | 手机：' + newOrder.phone,
+            details: newOrder.requirements || '已指派专业服务师，专人接洽中',
+            status: 'pending',
+            statusLabel: '待履约',
+            canEdit: true
+          };
+          setScheduleData(prev => ({
+            ...prev,
+            14: [newTask, ...(prev[14] || [])]
+          }));
+          setActiveSubPage(null);
+          setShowScheduleModal(true);
+        }}
+      />
+    );
+  }
 
   return (
     <div className="home-page min-h-full">
