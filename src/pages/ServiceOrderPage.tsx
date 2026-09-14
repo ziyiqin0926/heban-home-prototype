@@ -271,39 +271,43 @@ export default function ServiceOrderPage({
             setSelectedEscort(null);
             setIsDispatchModalOpen(true);
           }}
-          className="bg-gradient-to-br from-amber-50/90 via-orange-50/60 to-white rounded-2xl p-4 border-2 border-orange-300 shadow-sm flex items-center justify-between hover:border-orange-500 hover:shadow-md transition-all active:scale-[0.99] cursor-pointer relative overflow-hidden group"
+          className="bg-gradient-to-br from-amber-50/90 via-orange-50/60 to-white rounded-2xl p-3.5 border-2 border-orange-300 shadow-sm hover:border-orange-500 hover:shadow-md transition-all active:scale-[0.99] cursor-pointer relative overflow-hidden group space-y-2"
         >
           <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-orange-200/30 rounded-full blur-xl pointer-events-none" />
-          <div className="flex items-center space-x-3.5 z-10">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-400 flex items-center justify-center text-white shadow-md flex-shrink-0 group-hover:scale-105 transition-transform">
-              <Headphones className="w-7 h-7" />
-            </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <h3 className="font-black text-base text-slate-900 tracking-tight">
+          
+          <div className="flex items-center justify-between z-10 relative">
+            <div className="flex items-center space-x-2.5 min-w-0">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-500 to-amber-400 flex items-center justify-center text-white shadow-sm flex-shrink-0 group-hover:scale-105 transition-transform">
+                <Headphones className="w-5 h-5" />
+              </div>
+              <div className="flex items-center space-x-2 flex-wrap gap-y-1 min-w-0">
+                <h3 className="font-black text-sm sm:text-base text-slate-900 tracking-tight whitespace-nowrap">
                   手动填写需求 · 人工派单
                 </h3>
-                <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 text-white text-[10px] font-black shadow-xs">
+                <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 text-white text-[10px] font-black shadow-xs whitespace-nowrap">
                   极速安排
                 </span>
               </div>
-              <p className="text-xs text-slate-600 mt-1 font-medium">
-                不纠结选谁，1分钟直接填需求，官方专属管家1对1协调最合适服务师
-              </p>
-              <div className="flex items-center space-x-2 mt-1.5 text-[10px] text-orange-700 font-bold">
-                <span className="px-1.5 py-0.5 bg-orange-100/80 rounded">3分钟内极速响应</span>
-                <span className="px-1.5 py-0.5 bg-orange-100/80 rounded">不满意随时退换</span>
-                <span className="px-1.5 py-0.5 bg-orange-100/80 rounded">支持一键代入全家档案</span>
-              </div>
             </div>
+
+            <button
+              type="button"
+              className="px-3 py-1.5 rounded-xl bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white font-black text-xs flex items-center space-x-0.5 shadow-sm shadow-orange-200 flex-shrink-0 ml-2 cursor-pointer"
+            >
+              <span>直接填需求</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
           </div>
-          <button
-            type="button"
-            className="px-4 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white font-extrabold text-xs flex items-center space-x-1 shadow-md shadow-orange-200 z-10 flex-shrink-0"
-          >
-            <span>直接填需求</span>
-            <ChevronRight className="w-4 h-4" />
-          </button>
+
+          <p className="text-xs text-slate-600 leading-normal font-medium z-10 relative">
+            不纠结选谁，1分钟直接填需求，官方专属管家1对1协调最合适服务师
+          </p>
+
+          <div className="flex items-center space-x-1.5 flex-wrap gap-y-1 text-[10px] text-orange-700 font-bold z-10 relative">
+            <span className="px-1.5 py-0.5 bg-orange-100/90 rounded whitespace-nowrap">3分钟极速响应</span>
+            <span className="px-1.5 py-0.5 bg-orange-100/90 rounded whitespace-nowrap">不满意随时退换</span>
+            <span className="px-1.5 py-0.5 bg-orange-100/90 rounded whitespace-nowrap">一键代入全家档案</span>
+          </div>
         </article>
         {displayedEscorts.map((escort, idx) => (
           <article
