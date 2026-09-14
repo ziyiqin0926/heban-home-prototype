@@ -680,7 +680,7 @@ export default function ServiceOrderPage({
                 <X className="w-4 h-4" />
               </button>
               <div className="flex items-center space-x-1.5">
-                <span className="font-extrabold text-sm text-white">{viewingEscortProfile.name} 的个人空间</span>
+                <span className="font-extrabold text-sm text-white">{viewingEscortProfile?.name} 的个人空间</span>
                 <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/40">
                   ● 在线
                 </span>
@@ -688,11 +688,11 @@ export default function ServiceOrderPage({
               <div className="flex items-center space-x-2">
                 <button
                   type="button"
-                  onClick={() => viewingEscortProfile && toggleFavoriteEscort(viewingEscortProfile.id)}
-                  className={"w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer " + (isEscortFavorite(viewingEscortProfile.id) ? "bg-rose-500/20 text-rose-400 border border-rose-500/40" : "bg-slate-800 text-slate-300 hover:bg-slate-700")}
-                  title={isEscortFavorite(viewingEscortProfile.id) ? "已收藏" : "收藏师傅"}
+                  onClick={() => viewingEscortProfile && toggleFavoriteEscort(viewingEscortProfile?.id)}
+                  className={"w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer " + (isEscortFavorite(viewingEscortProfile?.id) ? "bg-rose-500/20 text-rose-400 border border-rose-500/40" : "bg-slate-800 text-slate-300 hover:bg-slate-700")}
+                  title={isEscortFavorite(viewingEscortProfile?.id) ? "已收藏" : "收藏师傅"}
                 >
-                  <Heart className={"w-4 h-4 " + (isEscortFavorite(viewingEscortProfile.id) ? "fill-rose-500 text-rose-500" : "")} />
+                  <Heart className={"w-4 h-4 " + (isEscortFavorite(viewingEscortProfile?.id) ? "fill-rose-500 text-rose-500" : "")} />
                 </button>
                 <button
                   type="button"
@@ -711,7 +711,7 @@ export default function ServiceOrderPage({
                 {/* 师傅工作实拍封面背景图 */}
                 <div className="h-44 w-full relative overflow-hidden bg-gradient-to-b from-slate-800 to-slate-950">
                   <img
-                    src={(viewingEscortProfile.workPhotos && viewingEscortProfile.workPhotos[0]?.url) || viewingEscortProfile.avatar}
+                    src={(viewingEscortProfile?.workPhotos && viewingEscortProfile?.workPhotos[0]?.url) || viewingEscortProfile?.avatar}
                     alt="工作实景背景"
                     className="w-full h-full object-cover opacity-35 filter blur-xs scale-105"
                   />
@@ -727,8 +727,8 @@ export default function ServiceOrderPage({
                   <div className="flex items-end justify-between">
                     <div className="relative">
                       <img
-                        src={viewingEscortProfile.avatar}
-                        alt={viewingEscortProfile.name}
+                        src={viewingEscortProfile?.avatar}
+                        alt={viewingEscortProfile?.name}
                         className="w-22 h-22 rounded-2xl object-cover border-3 border-slate-900 shadow-xl"
                       />
                       <span className="absolute -bottom-1 -right-1 px-2 py-0.5 rounded-full bg-emerald-500 text-white font-black text-[9px] shadow-sm flex items-center space-x-0.5">
@@ -740,12 +740,12 @@ export default function ServiceOrderPage({
                     {/* 师傅右侧数据概览 */}
                     <div className="flex items-center space-x-3 text-right pb-1">
                       <div>
-                        <p className="text-lg font-black text-amber-400">{viewingEscortProfile.rating}</p>
+                        <p className="text-lg font-black text-amber-400">{viewingEscortProfile?.rating}</p>
                         <p className="text-[10px] text-slate-400">综合评分</p>
                       </div>
                       <div className="w-px h-6 bg-slate-800"></div>
                       <div>
-                        <p className="text-lg font-black text-white">{viewingEscortProfile.serviceCount}+</p>
+                        <p className="text-lg font-black text-white">{viewingEscortProfile?.serviceCount}+</p>
                         <p className="text-[10px] text-slate-400">已履约次</p>
                       </div>
                       <div className="w-px h-6 bg-slate-800"></div>
@@ -758,9 +758,9 @@ export default function ServiceOrderPage({
 
                   <div className="mt-3">
                     <div className="flex items-center space-x-2">
-                      <h2 className="text-xl font-black text-white tracking-wide">{viewingEscortProfile.name}</h2>
+                      <h2 className="text-xl font-black text-white tracking-wide">{viewingEscortProfile?.name}</h2>
                       <span className="text-xs px-2 py-0.5 rounded-md bg-blue-500/20 text-blue-300 font-bold border border-blue-500/30">
-                        {viewingEscortProfile.gender} · {viewingEscortProfile.age}岁
+                        {viewingEscortProfile?.gender} · {viewingEscortProfile?.age}岁
                       </span>
                       <span className="text-xs px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30 flex items-center space-x-0.5">
                         <ShieldCheck className="w-3 h-3" />
@@ -769,10 +769,10 @@ export default function ServiceOrderPage({
                     </div>
 
                     <p className="text-xs text-slate-300 mt-1.5 font-medium leading-relaxed">
-                      {viewingEscortProfile.title}
+                      {viewingEscortProfile?.title}
                     </p>
                     <p className="text-[11px] text-slate-400 mt-1">
-                      常驻范围：{viewingEscortProfile.serviceArea || "北京市核心三甲医院及周边生活圈"}
+                      常驻范围：{viewingEscortProfile?.serviceArea || "北京市核心三甲医院及周边生活圈"}
                     </p>
                   </div>
                 </div>
@@ -822,7 +822,7 @@ export default function ServiceOrderPage({
                   onClick={() => setProfileActiveTab("reviews")}
                   className={"py-3 text-xs font-black transition-all relative cursor-pointer " + (profileActiveTab === "reviews" ? "text-blue-400" : "text-slate-400 hover:text-slate-200")}
                 >
-                  <span>用户评价 ({viewingEscortProfile.serviceCount}+)</span>
+                  <span>用户评价 ({viewingEscortProfile?.serviceCount}+)</span>
                   {profileActiveTab === "reviews" && (
                     <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500 rounded-full"></span>
                   )}
@@ -855,11 +855,11 @@ export default function ServiceOrderPage({
                       <div className="flex items-center justify-between text-xs">
                         <div className="flex items-center space-x-2">
                           <img
-                            src={viewingEscortProfile.avatar}
+                            src={viewingEscortProfile?.avatar}
                             alt=""
                             className="w-7 h-7 rounded-full object-cover"
                           />
-                          <span className="font-bold text-white">{viewingEscortProfile.name}</span>
+                          <span className="font-bold text-white">{viewingEscortProfile?.name}</span>
                           <span className="text-[10px] text-slate-500">今天 11:20 · 协和门诊</span>
                         </div>
                         <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 font-bold">
@@ -872,7 +872,7 @@ export default function ServiceOrderPage({
 
                       {/* 师傅自上传实拍照片相册 */}
                       <div className="grid grid-cols-2 gap-2 pt-1">
-                        {(viewingEscortProfile.workPhotos || [
+                        {(viewingEscortProfile?.workPhotos || [
                           { url: "https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=600&auto=format&fit=crop&q=80", caption: "门诊大厅协助取号" },
                           { url: "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=600&auto=format&fit=crop&q=80", caption: "轮椅无障碍推行" }
                         ]).map((photo, pIdx) => (
@@ -903,11 +903,11 @@ export default function ServiceOrderPage({
                       <div className="flex items-center justify-between text-xs">
                         <div className="flex items-center space-x-2">
                           <img
-                            src={viewingEscortProfile.avatar}
+                            src={viewingEscortProfile?.avatar}
                             alt=""
                             className="w-7 h-7 rounded-full object-cover"
                           />
-                          <span className="font-bold text-white">{viewingEscortProfile.name}</span>
+                          <span className="font-bold text-white">{viewingEscortProfile?.name}</span>
                           <span className="text-[10px] text-slate-500">3天前 · 积水潭医院</span>
                         </div>
                         <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
@@ -927,10 +927,10 @@ export default function ServiceOrderPage({
                     <div className="p-3 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-between">
                       <div>
                         <div className="flex items-baseline space-x-1.5">
-                          <span className="text-2xl font-black text-amber-400">{viewingEscortProfile.rating}</span>
+                          <span className="text-2xl font-black text-amber-400">{viewingEscortProfile?.rating}</span>
                           <span className="text-xs text-slate-400">/ 5.0 卓越口碑</span>
                         </div>
-                        <p className="text-[11px] text-slate-400 mt-0.5">近100%服务好评率 · 累计 {viewingEscortProfile.serviceCount}+ 次履约</p>
+                        <p className="text-[11px] text-slate-400 mt-0.5">近100%服务好评率 · 累计 {viewingEscortProfile?.serviceCount}+ 次履约</p>
                       </div>
                       <div className="flex text-amber-400 space-x-0.5">
                         {[...Array(5)].map((_, i) => (
@@ -949,7 +949,7 @@ export default function ServiceOrderPage({
 
                     {/* 真实用户评价卡片流 */}
                     <div className="space-y-2.5">
-                      {(viewingEscortProfile.reviews || [
+                      {(viewingEscortProfile?.reviews || [
                         {
                           id: "rev-default-01",
                           author: "张女士 (海淀区)",
@@ -1028,7 +1028,7 @@ export default function ServiceOrderPage({
 
                       <div className="pt-2 border-t border-amber-500/20 grid grid-cols-3 gap-2 text-center text-xs">
                         <div className="p-2 rounded-xl bg-slate-900/60">
-                          <p className="font-black text-white">{viewingEscortProfile.yearsOfExperience || 5}年</p>
+                          <p className="font-black text-white">{viewingEscortProfile?.yearsOfExperience || 5}年</p>
                           <p className="text-[10px] text-slate-400">从业工龄</p>
                         </div>
                         <div className="p-2 rounded-xl bg-slate-900/60">
@@ -1053,7 +1053,7 @@ export default function ServiceOrderPage({
                       </div>
 
                       <div className="space-y-2">
-                        {(viewingEscortProfile.certificates || [
+                        {(viewingEscortProfile?.certificates || [
                           { name: "应急救护师资认证证书", issuer: "中国红十字会应急救护中心", date: "2020年取得 · 有效期内" },
                           { name: "国家养老护理员职业资格", issuer: "人力资源和社会保障局", date: "认证通过" },
                           { name: "从业人员健康合格证", issuer: "卫生健康委员会", date: "2026年核验通过" }
@@ -1078,7 +1078,7 @@ export default function ServiceOrderPage({
                     <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
                       <h4 className="font-extrabold text-sm text-white">个人履历与自我介绍</h4>
                       <p className="text-xs text-slate-300 leading-relaxed bg-slate-950 p-3 rounded-xl border border-slate-800/80">
-                        {viewingEscortProfile.bio || "本人具有多年长者照护与陪护服务经验，身体素质过硬、为人忠厚可靠、严谨守时。擅长舒缓看病紧张情绪并精通各项流程。"}
+                        {viewingEscortProfile?.bio || "本人具有多年长者照护与陪护服务经验，身体素质过硬、为人忠厚可靠、严谨守时。擅长舒缓看病紧张情绪并精通各项流程。"}
                       </p>
                     </div>
 
@@ -1086,7 +1086,7 @@ export default function ServiceOrderPage({
                     <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
                       <h4 className="font-extrabold text-sm text-white">师傅郑重履约承诺</h4>
                       <div className="space-y-1.5">
-                        {(viewingEscortProfile.serviceCommitment || [
+                        {(viewingEscortProfile?.serviceCommitment || [
                           "全程陪同候诊挂号与取药，主动分担随身负重",
                           "行动不便长者上下车及轮椅转运稳妥防护",
                           "如实记录检验报告时间点并及时取送回执",
@@ -1110,13 +1110,13 @@ export default function ServiceOrderPage({
                 type="button"
                 onClick={() => {
                   if (viewingEscortProfile) {
-                    toggleFavoriteEscort(viewingEscortProfile.id);
+                    toggleFavoriteEscort(viewingEscortProfile?.id);
                   }
                 }}
-                className={"px-4 py-3 rounded-xl font-bold text-xs flex items-center justify-center space-x-1.5 transition-all cursor-pointer flex-shrink-0 border " + (isEscortFavorite(viewingEscortProfile.id) ? "bg-rose-500/20 border-rose-500/40 text-rose-300" : "bg-slate-800 border-slate-700 hover:bg-slate-700 text-slate-300")}
+                className={"px-4 py-3 rounded-xl font-bold text-xs flex items-center justify-center space-x-1.5 transition-all cursor-pointer flex-shrink-0 border " + (isEscortFavorite(viewingEscortProfile?.id) ? "bg-rose-500/20 border-rose-500/40 text-rose-300" : "bg-slate-800 border-slate-700 hover:bg-slate-700 text-slate-300")}
               >
-                <Heart className={"w-4 h-4 " + (isEscortFavorite(viewingEscortProfile.id) ? "fill-rose-500 text-rose-500" : "text-slate-400")} />
-                <span>{isEscortFavorite(viewingEscortProfile.id) ? "已收藏" : "收藏师傅"}</span>
+                <Heart className={"w-4 h-4 " + (isEscortFavorite(viewingEscortProfile?.id) ? "fill-rose-500 text-rose-500" : "text-slate-400")} />
+                <span>{isEscortFavorite(viewingEscortProfile?.id) ? "已收藏" : "收藏师傅"}</span>
               </button>
 
               <button
