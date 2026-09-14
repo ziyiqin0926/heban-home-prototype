@@ -6,13 +6,25 @@ interface DirectoryProps {
   onNavigateToAgent: () => void;
 }
 
-const categories = [
-  { id: 'medical', title: '医陪', icon: Stethoscope, tone: 'blue', heading: '医陪服务', detail: '陪诊护工取药 · 专业持证', services: ['医院陪诊', '排队取号', '取药代办', '检查陪同'] },
-  { id: 'pet', title: '宠陪', icon: PawPrint, tone: 'green', heading: '宠陪服务', detail: '各类宠物 · 上门照顾 · 安心陪伴', services: ['上门喂养', '遛宠陪玩', '短期寄养', '基础护理'] },
-  { id: 'life', title: '生活便捷', icon: FileEdit, tone: 'red', heading: '生活便捷', detail: '即时代办 · 任务跑腿', services: ['代取代送', '排队办事', '物品搬运', '临时跑腿'] },
-  { id: 'travel', title: '旅陪', icon: TramFront, tone: 'amber', heading: '旅陪服务', detail: '出行陪同 · 行程协助', services: ['旅途陪同', '车站接送', '行程协助', '城市向导'] },
-  { id: 'tour', title: '游陪', icon: Waves, tone: 'violet', heading: '游陪服务', detail: '休闲出游 · 轻松陪伴', services: ['景点陪游', '活动陪同', '城市漫游', '兴趣搭子'] }
-];
+import { PLATFORM_CATEGORIES } from '../data/categories';
+
+const iconMap: Record<string, any> = {
+  medical: Stethoscope,
+  pet: PawPrint,
+  life: FileEdit,
+  travel: TramFront,
+  tour: Waves
+};
+
+const categories = PLATFORM_CATEGORIES.map(cat => ({
+  id: cat.id,
+  title: cat.name,
+  icon: iconMap[cat.id] || Stethoscope,
+  tone: cat.tone,
+  heading: cat.fullName,
+  detail: cat.detail,
+  services: cat.subServices.map(s => s.name)
+}));
 
 export default function Directory({ onNavigateToAgent }: DirectoryProps) {
   const { currentCity } = useAppContext();

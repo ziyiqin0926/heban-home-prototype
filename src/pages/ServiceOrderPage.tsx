@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { EscortProfile } from '../types';
 import { getEscortsByCity } from '../data/escortProfiles';
+import { PLATFORM_CATEGORIES, getSubServicesByCategory } from '../data/categories';
 
 interface ServiceOrderPageProps {
   type: 'medical' | 'pet';
@@ -493,9 +494,7 @@ export default function ServiceOrderPage({
                   <div className="flex flex-wrap gap-1.5">
                     {(selectedEscort.specialties && selectedEscort.specialties.length > 0
                       ? selectedEscort.specialties
-                      : (isMedical
-                          ? ["大型三甲医院全程门诊陪诊", "老人行动不便推椅代诊", "急诊与检查指引", "代取药化验单回执报告", "老年慢性病就诊流程指导"]
-                          : ["全流程上门喂猫喂养", "科学定时遛狗照料", "宠物就医陪护转运", "洗护接送代办", "宠物伤病日常换药照护"])
+                      : getSubServicesByCategory(isMedical ? "medical" : "pet")
                     ).map((serviceName) => {
                       const isSelected = selectedServices.includes(serviceName);
                       return (
@@ -564,10 +563,7 @@ export default function ServiceOrderPage({
                     选择您需要的人工服务大类：
                   </span>
                   <div className="flex flex-wrap gap-1.5">
-                    {(isMedical
-                      ? ["门诊陪同挂号", "检查推椅协助", "代取药及化验报告", "全流程住院陪护"]
-                      : ["上门喂猫喂粮", "定时遛狗散步", "陪伴玩耍梳毛", "宠物洗护就医接送"]
-                    ).map(item => {
+                    {getSubServicesByCategory(isMedical ? "medical" : "pet").map(item => {
                       const isSelected = orderForm.subCategory === item;
                       return (
                         <button
