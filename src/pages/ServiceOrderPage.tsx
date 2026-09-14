@@ -476,42 +476,65 @@ export default function ServiceOrderPage({
                   </span>
                 </div>
 
-                {/* 师傅具备的所有服务类型标签（点选即直接切换服务与需求标题） */}
+                {/* 师傅具备的所有服务类型标签（支持单选或多选组合，价格采用多业态累加制） */}
                 <div className="pt-2 border-t border-blue-100/80">
                   <div className="flex items-center justify-between mb-1.5">
                     <span className="text-xs font-black text-slate-800 flex items-center space-x-1">
                       <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-                      <span>点击选择该师傅具备的服务类型：</span>
+                      <span>点击选择服务（支持单选或多选组合）：</span>
                     </span>
-                    <span className="text-[10px] text-blue-600">已选：{orderForm.subCategory || "请点选下方服务"}</span>
+                    <span className="text-[10px] text-blue-600 font-bold">
+                      {selectedServices.length > 0
+                        ? `已选 ${selectedServices.length} 项（多业态累加）`
+                        : "请点击勾选服务"}
+                    </span>
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     {(selectedEscort.specialties && selectedEscort.specialties.length > 0
                       ? selectedEscort.specialties
                       : (isMedical
-                          ? ["大型三甲医院全程门诊陪诊", "老人行动不便推椅代诊", "急诊与检查指引", "代取药化验单回执报告"]
-                          : ["全流程上门喂猫喂养", "科学定时遛狗照料", "宠物就医陪护转运", "洗护接送代办"])
+                          ? ["大型三甲医院全程门诊陪诊", "老人行动不便推椅代诊", "急诊与检查指引", "代取药化验单回执报告", "老年慢性病就诊流程指导"]
+                          : ["全流程上门喂猫喂养", "科学定时遛狗照料", "宠物就医陪护转运", "洗护接送代办", "宠物伤病日常换药照护"])
                     ).map((serviceName) => {
-                      const isSelected = orderForm.subCategory === serviceName;
+                      const isSelected = selectedServices.includes(serviceName);
                       return (
                         <button
                           key={serviceName}
                           type="button"
                           onClick={() => {
+                            let nextServices: string[];
+                            if (isSelected) {
+                              nextServices = selectedServices.filter(s => s !== serviceName);
+                            } else {
+                              nextServices = [...selectedServices, serviceName];
+                            }
+                            setSelectedServices(nextServices);
+                            const updatedTitle = nextServices.length > 0
+                              ? nextServices.join(" + ") + " · 全程陪护与规范履约"
+                              : "";
+                            const newRange = getPriceRange(orderForm.duration, nextServices.length || 1);
                             setOrderForm(prev => ({
                               ...prev,
-                              subCategory: serviceName,
-                              title: serviceName + " · 全程陪护与规范履约"
+                              subCategory: nextServices.join("、"),
+                              title: updatedTitle,
+                              reward: newRange.def + " 元"
                             }));
                           }}
-                          className={"px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1 cursor-pointer " + (isSelected ? "bg-blue-600 text-white shadow-xs border border-blue-600 scale-[1.02]" : "bg-white text-slate-700 border border-slate-200 hover:border-blue-300 hover:bg-blue-50/50")}
+                          className={"px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer " + (isSelected ? "bg-blue-600 text-white shadow-xs border border-blue-600 scale-[1.01]" : "bg-white text-slate-700 border border-slate-200 hover:border-blue-300 hover:bg-blue-50/50")}
                         >
-                          <Check className={"w-3 h-3 " + (isSelected ? "inline" : "hidden")} />
+                          <span className={"w-3.5 h-3.5 rounded flex items-center justify-center text-[10px] border " + (isSelected ? "bg-white text-blue-600 border-white font-black" : "border-slate-300 bg-slate-50")}>
+                            {isSelected ? "✓" : ""}
+                          </span>
                           <span>{serviceName}</span>
                         </button>
                       );
                     })}
                   </div>
+                  {selectedServices.length > 1 && (
+                    <p className="text-[10px] text-blue-600 font-medium mt-1.5 bg-blue-100/50 px-2 py-1 rounded-lg">
+                      💡 已为您启用「多业态叠加优惠」，附加业务按阶梯累加折扣计算，综合性价比更高！
+                    </p>
+                  )}
                 </div>
               </div>
             ) : (
@@ -651,7 +674,7 @@ export default function ServiceOrderPage({
                     required
                     value={orderForm.serviceDate}
                     onChange={e => setOrderForm({ ...orderForm, serviceDate: e.target.value })}
-                    placeholder="例如：今天 14:00 / 09-18 09:30（必填）"
+                    placeholder="例如：2026年9月18日 14:00（必填日期+具体时间点）"
                     className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 outline-none placeholder:text-slate-400 placeholder:text-xs text-slate-800"
                   />
                 </div>
@@ -661,7 +684,7 @@ export default function ServiceOrderPage({
                     value={orderForm.duration}
                     onChange={e => {
                       const newDur = e.target.value;
-                      const newRange = getPriceRange(newDur);
+                      const newRange = getPriceRange(newDur, selectedServices.length || 1);
                       setOrderForm({
                         ...orderForm,
                         duration: newDur,
@@ -693,7 +716,7 @@ export default function ServiceOrderPage({
                       平台定价区间:
                     </span>
                     <span className="text-[11px] font-black text-amber-700">
-                      {getPriceRange(orderForm.duration).label}
+                      {getPriceRange(orderForm.duration, selectedServices.length || 1).label}
                     </span>
                   </div>
 
@@ -709,7 +732,7 @@ export default function ServiceOrderPage({
                   {/* 快速填入平台区间价格标签 */}
                   <div className="flex items-center space-x-1 mt-1.5 flex-wrap gap-y-1">
                     {(() => {
-                      const r = getPriceRange(orderForm.duration);
+                      const r = getPriceRange(orderForm.duration, selectedServices.length || 1);
                       return [
                         { label: "推荐 " + r.def + "元", val: r.def + " 元" },
                         { label: "起步 " + r.min + "元", val: r.min + " 元" },
@@ -735,23 +758,41 @@ export default function ServiceOrderPage({
                     required
                     value={orderForm.phone}
                     onChange={e => setOrderForm({ ...orderForm, phone: e.target.value })}
-                    placeholder="请填写联系手机号（必填）"
-                    className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 outline-none placeholder:text-slate-400 placeholder:text-xs text-slate-800"
+                    placeholder="请输入11位联系手机号（必填）"
+                    className={"w-full p-2.5 rounded-xl border bg-slate-50 focus:bg-white outline-none placeholder:text-slate-400 placeholder:text-xs text-slate-800 transition-all " + (
+                      orderForm.phone && !/^1[3-9]\d{9}$/.test(orderForm.phone.replace(/\s+/g, ""))
+                        ? "border-rose-500 bg-rose-50/40 text-rose-800 focus:border-rose-600 ring-1 ring-rose-300"
+                        : "border-slate-200 focus:border-blue-500"
+                    )}
                   />
-                  <p className="text-[10px] text-slate-400 mt-1">平台严格执行号码保护，仅匹配成功的服务人员可见</p>
+                  {orderForm.phone && !/^1[3-9]\d{9}$/.test(orderForm.phone.replace(/\s+/g, "")) ? (
+                    <p className="text-[10px] text-rose-500 font-bold mt-1 flex items-center space-x-1">
+                      <AlertCircle className="w-3 h-3 text-rose-500 flex-shrink-0" />
+                      <span>手机号格式有误，请输入以1开头的有效11位手机号码</span>
+                    </p>
+                  ) : (
+                    <p className="text-[10px] text-slate-400 mt-1">例如：13800138000（平台号码保护，仅履约人员可见）</p>
+                  )}
                 </div>
               </div>
 
               {/* 7. 需求详情与特殊要求 */}
               <div>
-                <label className="block font-bold text-slate-700 mb-1">📝 7. 需求详情与特殊要求 (选填)</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="font-bold text-slate-700">📝 7. 需求详情与特殊要求 (选填)</label>
+                  <span className="text-slate-400 text-[10px]">可留空由师傅接单后沟通</span>
+                </div>
                 <textarea
                   rows={2}
                   value={orderForm.details}
                   onChange={e => setOrderForm({ ...orderForm, details: e.target.value })}
-                  placeholder="请详细描述被陪护人情况、特殊禁忌、物品交接或注意事项（选填，代入全家档案可自动填充）"
+                  placeholder={isMedical ? "请描述长者/患者身体状况、科室、是否需轮椅或自带物品等..." : "请描述宠物性格、喂养习惯、活动范围与上门门锁注意事项等..."}
                   className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 outline-none resize-none leading-relaxed placeholder:text-slate-400 placeholder:text-xs text-slate-800"
                 />
+                <div className="mt-1.5 p-2 rounded-xl bg-slate-50 border border-slate-200/60 text-[11px] text-slate-400 leading-normal">
+                  <span className="font-bold text-slate-500">参考案例：</span>
+                  <span>{isMedical ? "“母亲年过七旬腿脚不便，需推轮椅；协助排队取化验单并陪同听医嘱。”" : "“备好主粮与净水，换猫砂并梳毛10分钟，进出门请关严防溜猫。”"}</span>
+                </div>
               </div>
 
               {/* 优惠券立减抵扣 */}
