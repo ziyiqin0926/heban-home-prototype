@@ -368,7 +368,10 @@ export default function ServiceOrderPage({
 
                 <button
                   type="button"
-                  onClick={() => handleSelectEscortOrder(escort)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSelectEscortOrder(escort);
+                  }}
                   className="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-xs shadow-xs transition-all flex items-center space-x-1 cursor-pointer"
                 >
                   <span>立即点TA</span>
@@ -669,30 +672,36 @@ export default function ServiceOrderPage({
         </div>
       )}
 
-            {/* 师傅个人主页抽屉 (参考游戏点单/个人空间全新架构：动态+小卡片资费+评价+关于Ta成就) */}
+                  {/* 师傅个人主页抽屉 (统一全站明亮温和白蓝基调，参考游戏点单空间全新架构：动态+精巧资费小卡片+评价+关于Ta成就) */}
       {viewingEscortProfile && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex justify-center items-end sm:items-center p-0 sm:p-4 animate-in fade-in duration-200">
-          <div className="bg-slate-900 text-slate-100 w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[94vh] flex flex-col shadow-2xl overflow-hidden border border-slate-700/80">
-            {/* 顶层悬浮导航栏 */}
-            <div className="sticky top-0 z-30 bg-slate-900/90 backdrop-blur-md px-4 py-3 border-b border-slate-800 flex items-center justify-between">
+        <div
+          className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex justify-center items-end sm:items-center p-0 sm:p-4 animate-in fade-in duration-200"
+          onClick={() => setViewingEscortProfile(null)}
+        >
+          <div
+            className="bg-white text-slate-800 w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[94vh] flex flex-col shadow-2xl overflow-hidden border border-slate-100"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* 顶层悬浮导航栏 (明亮白底半透明) */}
+            <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md px-4 py-3 border-b border-slate-100 flex items-center justify-between shadow-2xs">
               <button
                 type="button"
                 onClick={() => setViewingEscortProfile(null)}
-                className="w-8 h-8 rounded-full bg-slate-800/90 hover:bg-slate-700 flex items-center justify-center text-slate-300 transition-all cursor-pointer"
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition-all cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
               <div className="flex items-center space-x-1.5">
-                <span className="font-extrabold text-sm text-white">{viewingEscortProfile?.name} 的个人空间</span>
-                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/40">
-                  ● 在线
+                <span className="font-extrabold text-sm text-slate-900">{viewingEscortProfile?.name} 的个人空间</span>
+                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-50 text-emerald-600 font-bold border border-emerald-200">
+                  ● 在线可约
                 </span>
               </div>
               <div className="flex items-center space-x-2">
                 <button
                   type="button"
                   onClick={() => viewingEscortProfile && toggleFavoriteEscort(viewingEscortProfile?.id)}
-                  className={"w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer " + (isEscortFavorite(viewingEscortProfile?.id) ? "bg-rose-500/20 text-rose-400 border border-rose-500/40" : "bg-slate-800 text-slate-300 hover:bg-slate-700")}
+                  className={"w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer " + (isEscortFavorite(viewingEscortProfile?.id) ? "bg-rose-50 text-rose-500 border border-rose-200" : "bg-slate-100 text-slate-600 hover:text-rose-500 hover:bg-rose-50")}
                   title={isEscortFavorite(viewingEscortProfile?.id) ? "已收藏" : "收藏师傅"}
                 >
                   <Heart className={"w-4 h-4 " + (isEscortFavorite(viewingEscortProfile?.id) ? "fill-rose-500 text-rose-500" : "")} />
@@ -700,27 +709,27 @@ export default function ServiceOrderPage({
                 <button
                   type="button"
                   onClick={() => alert("主页链接已复制到剪贴板，可分享给好友")}
-                  className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-300 hover:bg-slate-700 transition-all cursor-pointer"
+                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition-all cursor-pointer"
                 >
                   <Share2 className="w-4 h-4" />
                 </button>
               </div>
             </div>
 
-            {/* 可滚动主内容区 */}
-            <div className="overflow-y-auto flex-1 bg-slate-950 text-slate-200">
+            {/* 可滚动主内容区 (统一明亮米白背景) */}
+            <div className="overflow-y-auto flex-1 bg-slate-50 text-slate-800">
               {/* 1. 顶部大背景 + 师傅自上传头像 + 个人信息 */}
-              <div className="relative pb-4 border-b border-slate-800">
-                {/* 师傅工作实拍封面背景图 */}
-                <div className="h-44 w-full relative overflow-hidden bg-gradient-to-b from-slate-800 to-slate-950">
+              <div className="relative pb-4 bg-white border-b border-slate-100">
+                {/* 师傅工作实拍封面背景图 (温暖明亮渐变蒙层) */}
+                <div className="h-44 w-full relative overflow-hidden bg-gradient-to-tr from-blue-100 via-amber-50 to-orange-100">
                   <img
                     src={(viewingEscortProfile?.workPhotos && viewingEscortProfile?.workPhotos[0]?.url) || viewingEscortProfile?.avatar}
                     alt="工作实景背景"
-                    className="w-full h-full object-cover opacity-35 filter blur-xs scale-105"
+                    className="w-full h-full object-cover opacity-60 filter blur-2xs scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
-                  <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-[11px] text-amber-300 font-bold border border-amber-400/30 flex items-center space-x-1">
-                    <Award className="w-3.5 h-3.5" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent"></div>
+                  <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md text-[11px] text-amber-700 font-extrabold border border-amber-300/80 shadow-xs flex items-center space-x-1">
+                    <Award className="w-3.5 h-3.5 text-amber-500" />
                     <span>金牌 Lv.5 陪伴师</span>
                   </div>
                 </div>
@@ -732,7 +741,7 @@ export default function ServiceOrderPage({
                       <img
                         src={viewingEscortProfile?.avatar}
                         alt={viewingEscortProfile?.name}
-                        className="w-22 h-22 rounded-2xl object-cover border-3 border-slate-900 shadow-xl"
+                        className="w-22 h-22 rounded-2xl object-cover border-4 border-white shadow-md bg-white"
                       />
                       <span className="absolute -bottom-1 -right-1 px-2 py-0.5 rounded-full bg-emerald-500 text-white font-black text-[9px] shadow-sm flex items-center space-x-0.5">
                         <Zap className="w-2.5 h-2.5" />
@@ -743,133 +752,133 @@ export default function ServiceOrderPage({
                     {/* 师傅右侧数据概览 */}
                     <div className="flex items-center space-x-3 text-right pb-1">
                       <div>
-                        <p className="text-lg font-black text-amber-400">{viewingEscortProfile?.rating}</p>
-                        <p className="text-[10px] text-slate-400">综合评分</p>
+                        <p className="text-lg font-black text-amber-500">{viewingEscortProfile?.rating}</p>
+                        <p className="text-[10px] text-slate-500">综合评分</p>
                       </div>
-                      <div className="w-px h-6 bg-slate-800"></div>
+                      <div className="w-px h-6 bg-slate-200"></div>
                       <div>
-                        <p className="text-lg font-black text-white">{viewingEscortProfile?.serviceCount}+</p>
-                        <p className="text-[10px] text-slate-400">已履约次</p>
+                        <p className="text-lg font-black text-slate-800">{viewingEscortProfile?.serviceCount}+</p>
+                        <p className="text-[10px] text-slate-500">已履约次</p>
                       </div>
-                      <div className="w-px h-6 bg-slate-800"></div>
+                      <div className="w-px h-6 bg-slate-200"></div>
                       <div>
-                        <p className="text-lg font-black text-emerald-400">99.8%</p>
-                        <p className="text-[10px] text-slate-400">好评率</p>
+                        <p className="text-lg font-black text-emerald-600">99.8%</p>
+                        <p className="text-[10px] text-slate-500">好评率</p>
                       </div>
                     </div>
                   </div>
 
                   <div className="mt-3">
-                    <div className="flex items-center space-x-2">
-                      <h2 className="text-xl font-black text-white tracking-wide">{viewingEscortProfile?.name}</h2>
-                      <span className="text-xs px-2 py-0.5 rounded-md bg-blue-500/20 text-blue-300 font-bold border border-blue-500/30">
+                    <div className="flex items-center space-x-2 flex-wrap gap-y-1">
+                      <h2 className="text-xl font-black text-slate-900 tracking-wide">{viewingEscortProfile?.name}</h2>
+                      <span className="text-xs px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 font-bold border border-blue-200">
                         {viewingEscortProfile?.gender} · {viewingEscortProfile?.age}岁
                       </span>
-                      <span className="text-xs px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30 flex items-center space-x-0.5">
-                        <ShieldCheck className="w-3 h-3" />
+                      <span className="text-xs px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-bold border border-emerald-200 flex items-center space-x-0.5">
+                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
                         <span>平台实名认证</span>
                       </span>
                     </div>
 
-                    <p className="text-xs text-slate-300 mt-1.5 font-medium leading-relaxed">
+                    <p className="text-xs text-slate-600 mt-1.5 font-medium leading-relaxed">
                       {viewingEscortProfile?.title}
                     </p>
-                    <p className="text-[11px] text-slate-400 mt-1">
+                    <p className="text-[11px] text-slate-500 mt-1">
                       常驻范围：{viewingEscortProfile?.serviceArea || "北京市核心三甲医院及周边生活圈"}
                     </p>
                   </div>
                 </div>
 
-                {/* 2. 游戏王者风格精巧技能/服务资费小卡片 */}
+                {/* 2. 游戏王者风格精巧技能/服务资费小卡片 (明亮暖色卡片) */}
                 <div className="px-4 mt-3">
-                  <div className="p-3 rounded-2xl bg-slate-900 border border-slate-800/90 shadow-sm flex items-center justify-between">
+                  <div className="p-3 rounded-2xl bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-blue-500/10 border border-amber-200/90 shadow-2xs flex items-center justify-between">
                     <div className="flex items-center space-x-2.5">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 flex items-center justify-center text-slate-950 font-black text-sm shadow-xs flex-shrink-0">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-400 flex items-center justify-center text-white font-black text-sm shadow-xs flex-shrink-0">
                         陪
                       </div>
                       <div>
                         <div className="flex items-center space-x-1.5">
-                          <span className="text-xs font-black text-white">标准陪护技能资费</span>
-                          <span className="text-[9px] px-1.5 py-0.2 rounded bg-rose-500/20 text-rose-300 font-bold border border-rose-500/30">
+                          <span className="text-xs font-black text-slate-900">标准陪护技能资费</span>
+                          <span className="text-[9px] px-1.5 py-0.2 rounded bg-rose-50 text-rose-600 font-extrabold border border-rose-200">
                             新客8折
                           </span>
                         </div>
-                        <p className="text-[11px] text-slate-400 mt-0.5">
+                        <p className="text-[11px] text-slate-600 mt-0.5 font-medium">
                           半日 ¥168 (4h) · 全天 ¥298 (8h) · 支持个性化定制
                         </p>
                       </div>
                     </div>
 
-                    <span className="text-[10px] text-slate-400 bg-slate-800/80 px-2 py-1 rounded-lg border border-slate-700/60">
+                    <span className="text-[10px] text-amber-800 bg-white px-2 py-1 rounded-lg border border-amber-200 shadow-2xs font-bold">
                       规范透明
                     </span>
                   </div>
                 </div>
               </div>
 
-              {/* 3. 三大主页分类 Tab：动态(服务动态) / 用户评价 / 关于Ta */}
-              <div className="sticky top-[53px] z-20 bg-slate-900/95 backdrop-blur-md px-4 border-b border-slate-800 flex items-center space-x-6">
+              {/* 3. 三大主页分类 Tab：动态(服务动态) / 用户评价 / 关于Ta (明亮白底Tab) */}
+              <div className="sticky top-[53px] z-20 bg-white/95 backdrop-blur-md px-4 border-b border-slate-100 flex items-center space-x-6 shadow-2xs">
                 <button
                   type="button"
                   onClick={() => setProfileActiveTab("dynamic")}
-                  className={"py-3 text-xs font-black transition-all relative cursor-pointer " + (profileActiveTab === "dynamic" ? "text-blue-400" : "text-slate-400 hover:text-slate-200")}
+                  className={"py-3 text-xs font-black transition-all relative cursor-pointer " + (profileActiveTab === "dynamic" ? "text-blue-600" : "text-slate-500 hover:text-slate-800")}
                 >
                   <span>动态 (服务动态)</span>
                   {profileActiveTab === "dynamic" && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500 rounded-full"></span>
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-full"></span>
                   )}
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setProfileActiveTab("reviews")}
-                  className={"py-3 text-xs font-black transition-all relative cursor-pointer " + (profileActiveTab === "reviews" ? "text-blue-400" : "text-slate-400 hover:text-slate-200")}
+                  className={"py-3 text-xs font-black transition-all relative cursor-pointer " + (profileActiveTab === "reviews" ? "text-blue-600" : "text-slate-500 hover:text-slate-800")}
                 >
                   <span>用户评价 ({viewingEscortProfile?.serviceCount}+)</span>
                   {profileActiveTab === "reviews" && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500 rounded-full"></span>
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-full"></span>
                   )}
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setProfileActiveTab("about")}
-                  className={"py-3 text-xs font-black transition-all relative cursor-pointer " + (profileActiveTab === "about" ? "text-blue-400" : "text-slate-400 hover:text-slate-200")}
+                  className={"py-3 text-xs font-black transition-all relative cursor-pointer " + (profileActiveTab === "about" ? "text-blue-600" : "text-slate-500 hover:text-slate-800")}
                 >
                   <span>关于Ta (成就与证书)</span>
                   {profileActiveTab === "about" && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500 rounded-full"></span>
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-full"></span>
                   )}
                 </button>
               </div>
 
-              {/* 4. Tab 对应的内容板块 */}
+              {/* 4. Tab 对应的内容板块 (明亮白底卡片) */}
               <div className="p-4 space-y-4">
                 {/* TAB 1: 动态 (服务动态 + 师傅自上传服务实拍与随记) */}
                 {profileActiveTab === "dynamic" && (
                   <div className="space-y-3.5 animate-in fade-in duration-150">
-                    <div className="flex items-center justify-between text-xs text-slate-400">
-                      <span className="font-bold text-slate-300">师傅近况与服务足迹</span>
+                    <div className="flex items-center justify-between text-xs text-slate-500">
+                      <span className="font-bold text-slate-800">师傅近况与服务足迹</span>
                       <span>履约记录真实可查</span>
                     </div>
 
                     {/* 动态卡片 1 */}
-                    <article className="p-3.5 rounded-2xl bg-slate-900 border border-slate-800 space-y-2.5">
+                    <article className="p-3.5 rounded-2xl bg-white border border-slate-100 shadow-xs space-y-2.5">
                       <div className="flex items-center justify-between text-xs">
                         <div className="flex items-center space-x-2">
                           <img
                             src={viewingEscortProfile?.avatar}
                             alt=""
-                            className="w-7 h-7 rounded-full object-cover"
+                            className="w-7 h-7 rounded-full object-cover border border-slate-100"
                           />
-                          <span className="font-bold text-white">{viewingEscortProfile?.name}</span>
-                          <span className="text-[10px] text-slate-500">今天 11:20 · 协和门诊</span>
+                          <span className="font-bold text-slate-900">{viewingEscortProfile?.name}</span>
+                          <span className="text-[10px] text-slate-400">今天 11:20 · 协和门诊</span>
                         </div>
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 font-bold">
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100 font-bold">
                           就医随拍
                         </span>
                       </div>
-                      <p className="text-xs text-slate-300 leading-relaxed">
+                      <p className="text-xs text-slate-700 leading-relaxed">
                         上午顺利陪同张阿姨完成神经内科专家号看诊，协助排队拿到了脑电图报告，老人血压平稳，已平安送达南门出租车乘车点。
                       </p>
 
@@ -879,22 +888,22 @@ export default function ServiceOrderPage({
                           { url: "https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=600&auto=format&fit=crop&q=80", caption: "门诊大厅协助取号" },
                           { url: "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=600&auto=format&fit=crop&q=80", caption: "轮椅无障碍推行" }
                         ]).map((photo, pIdx) => (
-                          <div key={pIdx} className="rounded-xl overflow-hidden bg-slate-800 relative group aspect-4/3">
+                          <div key={pIdx} className="rounded-xl overflow-hidden bg-slate-100 relative group aspect-4/3 border border-slate-200/60 shadow-2xs">
                             <img
                               src={photo.url}
                               alt={photo.caption}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                             />
-                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-1.5">
-                              <p className="text-[10px] text-slate-200 truncate">{photo.caption}</p>
+                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-1.5">
+                              <p className="text-[10px] text-white truncate">{photo.caption}</p>
                             </div>
                           </div>
                         ))}
                       </div>
 
-                      <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
-                        <span className="flex items-center space-x-1">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+                        <span className="flex items-center space-x-1 text-emerald-600 font-medium">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
                           <span>服务已核验并归档</span>
                         </span>
                         <span>428次浏览</span>
@@ -902,22 +911,22 @@ export default function ServiceOrderPage({
                     </article>
 
                     {/* 动态卡片 2 */}
-                    <article className="p-3.5 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
+                    <article className="p-3.5 rounded-2xl bg-white border border-slate-100 shadow-xs space-y-2">
                       <div className="flex items-center justify-between text-xs">
                         <div className="flex items-center space-x-2">
                           <img
                             src={viewingEscortProfile?.avatar}
                             alt=""
-                            className="w-7 h-7 rounded-full object-cover"
+                            className="w-7 h-7 rounded-full object-cover border border-slate-100"
                           />
-                          <span className="font-bold text-white">{viewingEscortProfile?.name}</span>
-                          <span className="text-[10px] text-slate-500">3天前 · 积水潭医院</span>
+                          <span className="font-bold text-slate-900">{viewingEscortProfile?.name}</span>
+                          <span className="text-[10px] text-slate-400">3天前 · 积水潭医院</span>
                         </div>
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 font-bold">
                           履约心得
                         </span>
                       </div>
-                      <p className="text-xs text-slate-300 leading-relaxed">
+                      <p className="text-xs text-slate-700 leading-relaxed">
                         陪伴服务不仅是跑腿，更是一份沉甸甸的托付。无论推轮椅过坎、还是细心核对服药清单，多问一句、慢走两步，长辈心里就踏实多了。
                       </p>
                     </article>
@@ -927,13 +936,13 @@ export default function ServiceOrderPage({
                 {/* TAB 2: 用户评价 (真实用户评分、评价标签与反馈) */}
                 {profileActiveTab === "reviews" && (
                   <div className="space-y-3.5 animate-in fade-in duration-150">
-                    <div className="p-3 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-between">
+                    <div className="p-3.5 rounded-2xl bg-white border border-slate-100 shadow-xs flex items-center justify-between">
                       <div>
                         <div className="flex items-baseline space-x-1.5">
-                          <span className="text-2xl font-black text-amber-400">{viewingEscortProfile?.rating}</span>
-                          <span className="text-xs text-slate-400">/ 5.0 卓越口碑</span>
+                          <span className="text-2xl font-black text-amber-500">{viewingEscortProfile?.rating}</span>
+                          <span className="text-xs text-slate-500">/ 5.0 卓越口碑</span>
                         </div>
-                        <p className="text-[11px] text-slate-400 mt-0.5">近100%服务好评率 · 累计 {viewingEscortProfile?.serviceCount}+ 次履约</p>
+                        <p className="text-[11px] text-slate-500 mt-0.5 font-medium">近100%服务好评率 · 累计 {viewingEscortProfile?.serviceCount}+ 次履约</p>
                       </div>
                       <div className="flex text-amber-400 space-x-0.5">
                         {[...Array(5)].map((_, i) => (
@@ -944,10 +953,10 @@ export default function ServiceOrderPage({
 
                     {/* 评价标签 */}
                     <div className="flex flex-wrap gap-1.5">
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">细心踏实 (210)</span>
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">准时到达 (165)</span>
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">业务熟练 (142)</span>
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">老人很满意 (98)</span>
+                      <span className="text-[10px] px-2.5 py-0.8 rounded-full bg-blue-50 text-blue-700 font-bold border border-blue-100">细心踏实 (210)</span>
+                      <span className="text-[10px] px-2.5 py-0.8 rounded-full bg-emerald-50 text-emerald-700 font-bold border border-emerald-100">准时到达 (165)</span>
+                      <span className="text-[10px] px-2.5 py-0.8 rounded-full bg-purple-50 text-purple-700 font-bold border border-purple-100">业务熟练 (142)</span>
+                      <span className="text-[10px] px-2.5 py-0.8 rounded-full bg-amber-50 text-amber-700 font-bold border border-amber-100">老人很满意 (98)</span>
                     </div>
 
                     {/* 真实用户评价卡片流 */}
@@ -963,45 +972,45 @@ export default function ServiceOrderPage({
                           content: "师傅非常专业敬业，提前半小时就在门诊大厅等候，挂号、心电图、拿药一条龙全办妥，家里老人直夸师傅有耐心！强烈推荐！"
                         }
                       ]).map((rev, rIdx) => (
-                        <div key={rev.id || rIdx} className="p-3.5 rounded-2xl bg-slate-900 border border-slate-800 space-y-1.5">
+                        <div key={rev.id || rIdx} className="p-3.5 rounded-2xl bg-white border border-slate-100 shadow-xs space-y-1.5">
                           <div className="flex items-center justify-between text-xs">
                             <div className="flex items-center space-x-2">
                               <img
                                 src={rev.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"}
                                 alt=""
-                                className="w-6 h-6 rounded-full object-cover"
+                                className="w-6 h-6 rounded-full object-cover border border-slate-100"
                               />
-                              <span className="font-bold text-white">{rev.author}</span>
-                              <span className="text-[10px] text-slate-500">{rev.serviceType}</span>
+                              <span className="font-bold text-slate-800">{rev.author}</span>
+                              <span className="text-[10px] text-slate-400">{rev.serviceType}</span>
                             </div>
-                            <span className="text-[10px] text-slate-500">{rev.date}</span>
+                            <span className="text-[10px] text-slate-400">{rev.date}</span>
                           </div>
                           <div className="flex items-center text-amber-400 space-x-0.5">
                             {[...Array(5)].map((_, sIdx) => (
-                              <Star key={sIdx} className="w-3 h-3 fill-amber-400" />
+                              <Star key={sIdx} className="w-3.5 h-3.5 fill-amber-400" />
                             ))}
                           </div>
-                          <p className="text-xs text-slate-300 leading-relaxed">
+                          <p className="text-xs text-slate-600 leading-relaxed">
                             {rev.content}
                           </p>
                         </div>
                       ))}
 
                       {/* 补充评价项 */}
-                      <div className="p-3.5 rounded-2xl bg-slate-900 border border-slate-800 space-y-1.5">
+                      <div className="p-3.5 rounded-2xl bg-white border border-slate-100 shadow-xs space-y-1.5">
                         <div className="flex items-center justify-between text-xs">
                           <div className="flex items-center space-x-2">
-                            <span className="font-bold text-white">林** (朝阳区)</span>
-                            <span className="text-[10px] text-slate-500">上门照料与喂护</span>
+                            <span className="font-bold text-slate-800">林** (朝阳区)</span>
+                            <span className="text-[10px] text-slate-400">上门照料与喂护</span>
                           </div>
-                          <span className="text-[10px] text-slate-500">3天前</span>
+                          <span className="text-[10px] text-slate-400">3天前</span>
                         </div>
                         <div className="flex items-center text-amber-400 space-x-0.5">
                           {[...Array(5)].map((_, sIdx) => (
-                            <Star key={sIdx} className="w-3 h-3 fill-amber-400" />
+                            <Star key={sIdx} className="w-3.5 h-3.5 fill-amber-400" />
                           ))}
                         </div>
-                        <p className="text-xs text-slate-300 leading-relaxed">
+                        <p className="text-xs text-slate-600 leading-relaxed">
                           出差临时找的，全程照片和视频实时同步，照顾得特别细致，让人非常踏实放心。
                         </p>
                       </div>
@@ -1013,46 +1022,46 @@ export default function ServiceOrderPage({
                 {profileActiveTab === "about" && (
                   <div className="space-y-3.5 animate-in fade-in duration-150">
                     {/* 平台成就与段位等级卡片 */}
-                    <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-blue-500/15 border border-amber-500/30 space-y-2">
+                    <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-blue-500/10 border border-amber-200/90 shadow-2xs space-y-2">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
-                          <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-black">
+                          <div className="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center font-black shadow-xs">
                             <Award className="w-5 h-5" />
                           </div>
                           <div>
-                            <h4 className="font-extrabold text-sm text-white">平台荣耀金牌服务师 · Lv.5</h4>
-                            <p className="text-[10px] text-amber-300/90">入驻和伴 500+ 天 · 履约零差评勋章</p>
+                            <h4 className="font-extrabold text-sm text-slate-900">平台荣耀金牌服务师 · Lv.5</h4>
+                            <p className="text-[10px] text-slate-500">入驻和伴 500+ 天 · 履约零差评勋章</p>
                           </div>
                         </div>
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500 text-slate-950 font-black">
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500 text-white font-extrabold shadow-2xs">
                           官方认证
                         </span>
                       </div>
 
-                      <div className="pt-2 border-t border-amber-500/20 grid grid-cols-3 gap-2 text-center text-xs">
-                        <div className="p-2 rounded-xl bg-slate-900/60">
-                          <p className="font-black text-white">{viewingEscortProfile?.yearsOfExperience || 5}年</p>
-                          <p className="text-[10px] text-slate-400">从业工龄</p>
+                      <div className="pt-2 border-t border-amber-200/60 grid grid-cols-3 gap-2 text-center text-xs">
+                        <div className="p-2 rounded-xl bg-white border border-amber-100 shadow-2xs">
+                          <p className="font-black text-slate-900">{viewingEscortProfile?.yearsOfExperience || 5}年</p>
+                          <p className="text-[10px] text-slate-500">从业工龄</p>
                         </div>
-                        <div className="p-2 rounded-xl bg-slate-900/60">
-                          <p className="font-black text-white">100%</p>
-                          <p className="text-[10px] text-slate-400">准时到达率</p>
+                        <div className="p-2 rounded-xl bg-white border border-amber-100 shadow-2xs">
+                          <p className="font-black text-slate-900">100%</p>
+                          <p className="text-[10px] text-slate-500">准时到达率</p>
                         </div>
-                        <div className="p-2 rounded-xl bg-slate-900/60">
-                          <p className="font-black text-emerald-400">三证齐全</p>
-                          <p className="text-[10px] text-slate-400">验真认证</p>
+                        <div className="p-2 rounded-xl bg-white border border-amber-100 shadow-2xs">
+                          <p className="font-black text-emerald-600">三证齐全</p>
+                          <p className="text-[10px] text-slate-500">验真认证</p>
                         </div>
                       </div>
                     </div>
 
                     {/* 官方认证证书列表 */}
-                    <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
+                    <div className="p-4 rounded-2xl bg-white border border-slate-100 shadow-xs space-y-3">
                       <div className="flex items-center justify-between">
-                        <h4 className="font-extrabold text-sm text-white flex items-center space-x-1.5">
-                          <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                        <h4 className="font-extrabold text-sm text-slate-900 flex items-center space-x-1.5">
+                          <ShieldCheck className="w-4 h-4 text-emerald-600" />
                           <span>官方审核认证证书</span>
                         </h4>
-                        <span className="text-[10px] text-emerald-400 font-bold">100% 实名验真</span>
+                        <span className="text-[10px] text-emerald-600 font-bold">100% 实名验真</span>
                       </div>
 
                       <div className="space-y-2">
@@ -1061,15 +1070,15 @@ export default function ServiceOrderPage({
                           { name: "国家养老护理员职业资格", issuer: "人力资源和社会保障局", date: "认证通过" },
                           { name: "从业人员健康合格证", issuer: "卫生健康委员会", date: "2026年核验通过" }
                         ]).map((cert, cIdx) => (
-                          <div key={cIdx} className="p-2.5 rounded-xl bg-slate-950 border border-slate-800/90 flex items-center justify-between text-xs">
+                          <div key={cIdx} className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs">
                             <div className="flex items-center space-x-2 min-w-0">
-                              <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                              <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
                               <div className="min-w-0">
-                                <p className="font-bold text-white truncate">{cert.name}</p>
-                                <p className="text-[10px] text-slate-400 truncate">{cert.issuer} · {cert.date}</p>
+                                <p className="font-bold text-slate-900 truncate">{cert.name}</p>
+                                <p className="text-[10px] text-slate-500 truncate">{cert.issuer} · {cert.date}</p>
                               </div>
                             </div>
-                            <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 font-bold flex-shrink-0 ml-2">
+                            <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold border border-emerald-200 flex-shrink-0 ml-2">
                               已验真
                             </span>
                           </div>
@@ -1078,16 +1087,16 @@ export default function ServiceOrderPage({
                     </div>
 
                     {/* 个人履历简介 */}
-                    <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
-                      <h4 className="font-extrabold text-sm text-white">个人履历与自我介绍</h4>
-                      <p className="text-xs text-slate-300 leading-relaxed bg-slate-950 p-3 rounded-xl border border-slate-800/80">
+                    <div className="p-4 rounded-2xl bg-white border border-slate-100 shadow-xs space-y-2">
+                      <h4 className="font-extrabold text-sm text-slate-900">个人履历与自我介绍</h4>
+                      <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100">
                         {viewingEscortProfile?.bio || "本人具有多年长者照护与陪护服务经验，身体素质过硬、为人忠厚可靠、严谨守时。擅长舒缓看病紧张情绪并精通各项流程。"}
                       </p>
                     </div>
 
                     {/* 服务承诺 */}
-                    <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
-                      <h4 className="font-extrabold text-sm text-white">师傅郑重履约承诺</h4>
+                    <div className="p-4 rounded-2xl bg-white border border-slate-100 shadow-xs space-y-2">
+                      <h4 className="font-extrabold text-sm text-slate-900">师傅郑重履约承诺</h4>
                       <div className="space-y-1.5">
                         {(viewingEscortProfile?.serviceCommitment || [
                           "全程陪同候诊挂号与取药，主动分担随身负重",
@@ -1095,8 +1104,8 @@ export default function ServiceOrderPage({
                           "如实记录检验报告时间点并及时取送回执",
                           "恪守职业道德，爽约平台双倍赔付"
                         ]).map((comm, cIdx) => (
-                          <div key={cIdx} className="flex items-start space-x-2 text-xs text-slate-300">
-                            <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 flex-shrink-0"></span>
+                          <div key={cIdx} className="flex items-start space-x-2 text-xs text-slate-600">
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 flex-shrink-0"></span>
                             <span>{comm}</span>
                           </div>
                         ))}
@@ -1108,7 +1117,7 @@ export default function ServiceOrderPage({
             </div>
 
             {/* 底部固定操作条：收藏师傅 + 立即指定TA填写需求 (带入档案) */}
-            <div className="sticky bottom-0 bg-slate-900 border-t border-slate-800 px-4 py-3 flex items-center space-x-3 shadow-2xl z-30">
+            <div className="sticky bottom-0 bg-white border-t border-slate-100 px-4 py-3 flex items-center space-x-3 shadow-lg z-30">
               <button
                 type="button"
                 onClick={() => {
@@ -1116,9 +1125,9 @@ export default function ServiceOrderPage({
                     toggleFavoriteEscort(viewingEscortProfile?.id);
                   }
                 }}
-                className={"px-4 py-3 rounded-xl font-bold text-xs flex items-center justify-center space-x-1.5 transition-all cursor-pointer flex-shrink-0 border " + (isEscortFavorite(viewingEscortProfile?.id) ? "bg-rose-500/20 border-rose-500/40 text-rose-300" : "bg-slate-800 border-slate-700 hover:bg-slate-700 text-slate-300")}
+                className={"px-4 py-3 rounded-xl font-bold text-xs flex items-center justify-center space-x-1.5 transition-all cursor-pointer flex-shrink-0 border " + (isEscortFavorite(viewingEscortProfile?.id) ? "bg-rose-50 border-rose-200 text-rose-600 shadow-2xs" : "bg-slate-100 border-slate-200 hover:bg-slate-200 text-slate-700")}
               >
-                <Heart className={"w-4 h-4 " + (isEscortFavorite(viewingEscortProfile?.id) ? "fill-rose-500 text-rose-500" : "text-slate-400")} />
+                <Heart className={"w-4 h-4 " + (isEscortFavorite(viewingEscortProfile?.id) ? "fill-rose-500 text-rose-500" : "text-slate-500")} />
                 <span>{isEscortFavorite(viewingEscortProfile?.id) ? "已收藏" : "收藏师傅"}</span>
               </button>
 
@@ -1130,7 +1139,7 @@ export default function ServiceOrderPage({
                   setSelectedEscort(target);
                   setIsOrderModalOpen(true);
                 }}
-                className="flex-1 py-3 rounded-xl bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-sm flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transition-all cursor-pointer active:scale-[0.99]"
+                className="flex-1 py-3 rounded-xl bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white font-extrabold text-sm flex items-center justify-center space-x-2 shadow-md hover:shadow-lg transition-all cursor-pointer active:scale-[0.99]"
               >
                 <Sparkles className="w-4 h-4" />
                 <span>立即指定TA · 填写需求 (带入档案)</span>
