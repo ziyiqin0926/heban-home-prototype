@@ -33,11 +33,10 @@ export const ESCORT_PROFILES_BY_CITY: Record<string, EscortProfile[]> = {
         '恪守服务职业道德，诚实守信'
       ],
       specialties: [
-        '大型三甲综合医院门诊/住院陪诊',
-        '骨折术后/偏瘫行动不便长者推护',
-        '异地就医代办代办挂号建档',
-        '急救护理与突发情况应对',
-        '老年慢性病就诊流程指导'
+        '医院全程陪诊',
+        '排队挂号建档',
+        '检查推椅与转运协助',
+        '全流程住院陪护'
       ],
       certificates: [
         {
@@ -112,10 +111,9 @@ export const ESCORT_PROFILES_BY_CITY: Record<string, EscortProfile[]> = {
         '协助推轮椅、拿取重物、行动搀扶全程细心呵护'
       ],
       specialties: [
-        '三甲医院就医全程陪诊',
-        '轮椅推护与无障碍通道导航',
-        '心内科/神经科/骨科就医引导',
-        '异地家属代取送检查化验报告'
+        '医院全程陪诊',
+        '排队挂号建档',
+        '代取药及化验报告'
       ],
       certificates: [
         {
@@ -174,7 +172,7 @@ export const ESCORT_PROFILES_BY_CITY: Record<string, EscortProfile[]> = {
       noCriminalRecord: true,
       bio: '热爱小动物，拥有3年上门喂猫遛狗与宠物就医代送经验。细心拍照记录宠物进食和排便情况，提供专业安全的宠物生活陪伴。',
       serviceCommitment: ['进门全程录像拍照', '添水喂粮消毒猫砂盆', '户外遛狗双保险牵引'],
-      specialties: ['上门定时喂养与互动', '中大型犬户外安全遛狗', '宠物医院代送就诊'],
+      specialties: ['上门喂养照料', '遛宠户外陪跑', '宠物送医就诊陪护'],
       certificates: [{ name: '高级宠物训导师职业技能证', issuer: '中国畜牧业协会', verified: true, date: '2023年' }],
       workPhotos: [{ url: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&auto=format&fit=crop&q=80', caption: '社区公园宠物犬牵引遛行' }],
       reviews: [{ id: 'rev-cxm-1', author: '孙女士', rating: 5, date: '2026-08-12', serviceType: '上门喂猫遛狗', content: '晓萌姑娘特别有爱心，每次上门都发好多视频！' }]
@@ -204,7 +202,7 @@ export const ESCORT_PROFILES_BY_CITY: Record<string, EscortProfile[]> = {
       noCriminalRecord: true,
       bio: '专注同城长者生活陪伴、户外散步、谈心解闷及社区代办事务。耐心细致、待人真诚热情，擅长与高龄老人交流。',
       serviceCommitment: ['慢步陪同散步', '贴心日常谈心沟通', '慢病代配药与商超代办'],
-      specialties: ['同城长者户外散步', '日常谈心交流', '慢病处方药代配取送'],
+      specialties: ['代取代送', '排队办事', '临时跑腿'],
       certificates: [{ name: '养老护理员技能等级证书', issuer: '民政部职业技能鉴定指导中心', verified: true, date: '2022年' }],
       workPhotos: [{ url: 'https://images.unsplash.com/photo-1581056771107-24ca5f033842?w=600&auto=format&fit=crop&q=80', caption: '公园绿道陪同长辈散步' }],
       reviews: [{ id: 'rev-wjg-1', author: '赵先生', rating: 5, date: '2026-08-08', serviceType: '长者户外散步', content: '王叔叔非常健谈而且很细心！' }]
@@ -234,7 +232,7 @@ export const ESCORT_PROFILES_BY_CITY: Record<string, EscortProfile[]> = {
       noCriminalRecord: true,
       bio: '8年医疗陪诊与就医心理疏导经验，擅长慢病长者安抚、疑难杂症科室导医与跨院转诊接驳。',
       serviceCommitment: ['看诊全程耐心疏导', '无缝代取报告并顺丰回寄', '全程尊重隐私'],
-      specialties: ['心血管与慢病门诊导诊', '长者就医情绪安抚', '跨院检查接驳'],
+      specialties: ['医院全程陪诊', '代取药及化验报告', '全流程住院陪护'],
       certificates: [{ name: '国家二级心理咨询师', issuer: '人力资源社会保障部', verified: true, date: '2018年' }],
       workPhotos: [{ url: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=600&auto=format&fit=crop&q=80', caption: '安贞医院候诊陪伴' }],
       reviews: [{ id: 'rev-zxf-1', author: '孙先生', rating: 5, date: '2026-08-01', serviceType: '安贞医院心内科门诊', content: '赵老师非常专业且有耐心！' }]
@@ -272,10 +270,9 @@ export const ESCORT_PROFILES_BY_CITY: Record<string, EscortProfile[]> = {
         '门诊主治专家医嘱逐条录音与手写备忘录交接家属'
       ],
       specialties: [
-        '西京医院消化/骨科/神经内科全流程陪诊',
-        '交大一附院心血管与肾内科专家导医',
-        '异地患者来陕就医全套接待与接送站陪同',
-        '轮椅无障碍推护与急救处置'
+        '医院全程陪诊',
+        '排队挂号建档',
+        '检查推椅与转运协助'
       ],
       certificates: [
         { name: '中国红十字会救护员证书', issuer: '陕西省红十字会', verified: true, date: '2021年' },
@@ -322,7 +319,7 @@ export const ESCORT_PROFILES_BY_CITY: Record<string, EscortProfile[]> = {
       noCriminalRecord: true,
       bio: '前三甲医院主管护师，持有国家护士执业证与急救认证。精通陕西省人民医院与交大二附院就医全流程，对老年心脑血管、内分泌及肿瘤慢病有深厚医学常识储备。',
       serviceCommitment: ['门诊看病全程无缝陪护', '专业整理化验与影像报告', '陕西方言与普通话无障碍沟通'],
-      specialties: ['三甲医院全程陪诊', '肿瘤科/放化疗就诊引导', '慢病用药提醒与指标监测'],
+      specialties: ['医院全程陪诊', '代取药及化验报告', '全流程住院陪护'],
       certificates: [
         { name: '国家护士执业资格证书', issuer: '陕西省卫健委', verified: true, date: '2019年' },
         { name: '初级急救员证书', issuer: '西安市红十字会', verified: true, date: '2023年' }
@@ -355,7 +352,7 @@ export const ESCORT_PROFILES_BY_CITY: Record<string, EscortProfile[]> = {
       noCriminalRecord: true,
       bio: '曲江与高新区专业上门伴宠师。熟悉猫犬行为学，上门按时换水添粮、清理猫砂并拍摄10分钟高清玩耍视频，提供安心周到的伴宠服务。',
       serviceCommitment: ['进门鞋套手消录像', '严防宠物应激', '遛狗双牵引绳保障'],
-      specialties: ['高品质上门喂猫', '中大型犬公园遛护', '宠物医院代送代打疫苗'],
+      specialties: ['上门喂养照料', '遛宠户外陪跑', '梳毛互动玩耍'],
       certificates: [{ name: '伴侣动物健康护理员', issuer: '中国畜牧业协会', verified: true, date: '2023年' }],
       workPhotos: [{ url: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&auto=format&fit=crop&q=80', caption: '大唐芙蓉园周边绿道遛狗' }],
       reviews: [{ id: 'rev-bx-1', author: '程先生', rating: 5, date: '2026-08-13', serviceType: '曲江上门喂养金毛', content: '白姑娘非常负责，视频拍得巨清楚！' }]
@@ -385,7 +382,7 @@ export const ESCORT_PROFILES_BY_CITY: Record<string, EscortProfile[]> = {
       noCriminalRecord: true,
       bio: '老西安人，熟悉古城各区民俗与社区。擅长陪同高龄独居老人散步、聊秦腔历史、协助医院配药、采购民生用品及社区政务代办。',
       serviceCommitment: ['随身携带急救小药盒与测压仪', '慢步陪伴防止跌倒', '及时向家属汇报老人精神状态'],
-      specialties: ['长者公园散步陪伴', '谈心聊天与心理慰藉', '社区便民跑腿代办'],
+      specialties: ['代取代送', '排队办事', '临时跑腿'],
       certificates: [{ name: '养老护理员高级证书', issuer: '陕西省人社厅', verified: true, date: '2020年' }],
       workPhotos: [{ url: 'https://images.unsplash.com/photo-1581056771107-24ca5f033842?w=600&auto=format&fit=crop&q=80', caption: '环城公园陪同长辈散步' }],
       reviews: [{ id: 'rev-zwm-1', author: '高女士', rating: 5, date: '2026-08-07', serviceType: '老人日常散步谈心', content: '张师傅特别有耐心，我爸很喜欢跟他聊天！' }]
@@ -422,7 +419,7 @@ export const ESCORT_PROFILES_BY_CITY: Record<string, EscortProfile[]> = {
         '全程轮椅推行与无障碍升降电梯接送',
         '详细整理名医门诊专家医嘱并转交家属'
       ],
-      specialties: ['瑞金/华山/中山医院门诊陪诊', '沪语高龄长者耐心沟通', '异地来沪就医代建档代取报告'],
+      specialties: ['医院全程陪诊', '排队挂号建档', '代取药及化验报告'],
       certificates: [
         { name: '国家护士执业证书', issuer: '上海市卫生健康委员会', verified: true, date: '2018年' },
         { name: '急救员认证', issuer: '上海市红十字会', verified: true, date: '2022年' }
@@ -455,7 +452,7 @@ export const ESCORT_PROFILES_BY_CITY: Record<string, EscortProfile[]> = {
       noCriminalRecord: true,
       bio: '身体强壮、稳重守信。精通仁济医院、新华医院就诊路线，擅长骨科术后、偏瘫长者轮椅上下台阶防护与车辆接驳。',
       serviceCommitment: ['轮椅转运稳当安全', '全程排队跑腿取药', '协助医保结算核对'],
-      specialties: ['骨折术后行动不便推护', '仁济/新华医院导诊', '急救护理'],
+      specialties: ['医院全程陪诊', '检查推椅与转运协助', '全流程住院陪护'],
       certificates: [{ name: '急救员导师证', issuer: '红十字会', verified: true, date: '2021年' }],
       workPhotos: [{ url: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=600&auto=format&fit=crop&q=80', caption: '仁济医院轮椅推护' }],
       reviews: [{ id: 'rev-zzy-1', author: '沈女士', rating: 5, date: '2026-08-12', serviceType: '仁济医院骨科复查', content: '周师傅力气大手法专业，推车平稳，老爸连连称赞！' }]
@@ -485,7 +482,7 @@ export const ESCORT_PROFILES_BY_CITY: Record<string, EscortProfile[]> = {
       noCriminalRecord: true,
       bio: '专业为上海各品质小区提供定时上门喂猫、带犬户外排便奔跑及就医代办服务。注重消毒与门禁安全，深受年轻白领信赖。',
       serviceCommitment: ['进门全景拍摄报备', '梳毛铲屎细致消毒', '雨天回屋清洁脚爪'],
-      specialties: ['高标准上门喂养', '犬类行为正向引导', '宠物急诊代送'],
+      specialties: ['上门喂养照料', '遛宠户外陪跑', '洗护接送与短期看护'],
       certificates: [{ name: '宠物训导师资格证', issuer: '上海畜牧兽医行业协会', verified: true, date: '2022年' }],
       workPhotos: [{ url: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&auto=format&fit=crop&q=80', caption: '滨江绿道安全遛犬' }],
       reviews: [{ id: 'rev-syt-1', author: '潘小姐', rating: 5, date: '2026-08-15', serviceType: '上门喂养两只布偶猫', content: '依婷特别温柔，猫猫超级喜欢她，拍照超好看！' }]
@@ -515,7 +512,7 @@ export const ESCORT_PROFILES_BY_CITY: Record<string, EscortProfile[]> = {
       noCriminalRecord: true,
       bio: '具有多年上海社区居家养老陪伴服务经验。善解人意、做事细致，能陪同高龄老人公园慢走散步、谈心解闷、代取药品及日常代办。',
       serviceCommitment: ['全程细致照看防跌倒', '耐心理疗沟通', '及时向子女反馈'],
-      specialties: ['高龄独居长者陪伴', '公园慢步散步', '社区代办与买药'],
+      specialties: ['代取代送', '排队办事', '临时跑腿'],
       certificates: [{ name: '高级养老护理员证书', issuer: '上海市人社局', verified: true, date: '2019年' }],
       workPhotos: [{ url: 'https://images.unsplash.com/photo-1581056771107-24ca5f033842?w=600&auto=format&fit=crop&q=80', caption: '社区小花园陪同长辈聊天' }],
       reviews: [{ id: 'rev-gap-1', author: '陈先生', rating: 5, date: '2026-08-09', serviceType: '长者日常陪伴', content: '顾阿姨很贴心，老母亲精神好了很多！' }]
@@ -552,7 +549,7 @@ export const ESCORT_PROFILES_BY_CITY: Record<string, EscortProfile[]> = {
         '全程轮椅陪同穿梭化验科与影像中心',
         '准确转述主治医生诊疗方案并同步子女'
       ],
-      specialties: ['华西医院全科室门诊就诊', '省医院疑难杂症导诊', '外地来蓉就诊全套陪同'],
+      specialties: ['医院全程陪诊', '排队挂号建档', '检查推椅与转运协助'],
       certificates: [
         { name: '急救员合格证书', issuer: '四川省红十字会', verified: true, date: '2021年' },
         { name: '养老护理职业技能等级证书', issuer: '成都市人社局', verified: true, date: '2020年' }
@@ -585,7 +582,7 @@ export const ESCORT_PROFILES_BY_CITY: Record<string, EscortProfile[]> = {
       noCriminalRecord: true,
       bio: '前三甲医院妇产科护士，擅长长者慢病就医、孕产妇产检陪同及小儿专科就诊陪伴。温柔细致，对排队、检查、药理说明十分耐心。',
       serviceCommitment: ['全程细心陪同', '手写详细服药提醒', '协助长辈医保刷卡'],
-      specialties: ['华西附二院/妇儿医院陪诊', '老年慢病门诊导诊', '异地医保结算代办'],
+      specialties: ['医院全程陪诊', '代取药及化验报告', '全流程住院陪护'],
       certificates: [{ name: '国家护士执业证书', issuer: '四川省卫健委', verified: true, date: '2020年' }],
       workPhotos: [{ url: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=600&auto=format&fit=crop&q=80', caption: '华西附二院陪同长辈检查' }],
       reviews: [{ id: 'rev-tm-1', author: '杨女士', rating: 5, date: '2026-08-10', serviceType: '华西二院检查陪护', content: '唐老师非常温柔有耐心，老人看病全程很放松！' }]
@@ -615,7 +612,7 @@ export const ESCORT_PROFILES_BY_CITY: Record<string, EscortProfile[]> = {
       noCriminalRecord: true,
       bio: '热爱萌宠，专业为成都各大园区与住宅提供上门喂养、陪伴互动与遛狗服务。细致认真，每次上门拍照录像全流程透明。',
       serviceCommitment: ['进门全流程录像', '喂粮换水消毒猫砂', '户外牵引防冲撞'],
-      specialties: ['上门喂猫咪', '中大型犬运动遛护', '宠物医院代跑腿送诊'],
+      specialties: ['上门喂养照料', '遛宠户外陪跑', '梳毛互动玩耍'],
       certificates: [{ name: '宠物健康护理员证书', issuer: '中国畜牧业协会', verified: true, date: '2023年' }],
       workPhotos: [{ url: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&auto=format&fit=crop&q=80', caption: '锦城湖公园安全遛犬' }],
       reviews: [{ id: 'rev-hqq-1', author: '钟先生', rating: 5, date: '2026-08-13', serviceType: '高新区上门喂猫', content: '青青姑娘非常细心，给猫猫梳了好多毛，特别满意！' }]
@@ -645,7 +642,7 @@ export const ESCORT_PROFILES_BY_CITY: Record<string, EscortProfile[]> = {
       noCriminalRecord: true,
       bio: '性格和蔼有耐心的老成都人，擅长陪同高龄长辈人民公园散步喝茶、谈心解闷、协助慢病买药及社区便民办事。',
       serviceCommitment: ['慢走看护防摔跌', '随身常备温水杯与应急药', '耐心沟通倾听'],
-      specialties: ['长者公园散步聊天', '慢病代配药代取件', '同城就医及便民跑腿'],
+      specialties: ['代取代送', '排队办事', '临时跑腿'],
       certificates: [{ name: '高级养老护理员', issuer: '成都市人社局', verified: true, date: '2021年' }],
       workPhotos: [{ url: 'https://images.unsplash.com/photo-1581056771107-24ca5f033842?w=600&auto=format&fit=crop&q=80', caption: '望江楼公园绿道散步陪伴' }],
       reviews: [{ id: 'rev-ljz-1', author: '罗女士', rating: 5, date: '2026-08-08', serviceType: '长者公园慢走散步', content: '廖师傅非常耐心热心，老人很开心！' }]
@@ -678,7 +675,7 @@ export const ESCORT_PROFILES_BY_CITY: Record<string, EscortProfile[]> = {
       noCriminalRecord: true,
       bio: '福州本地人，福州话与普通话流利。熟知福建协和医院、省立医院、附一医院及省肿瘤医院科室分布与就医流程。力气大、服务稳重，擅长轮椅推护。',
       serviceCommitment: ['准时到达院门迎候', '全程推轮椅护送做各项检查', '主治医嘱详尽梳理'],
-      specialties: ['福建协和/省立医院门诊陪诊', '高龄长者推护看护', '异地报告代取送'],
+      specialties: ['医院全程陪诊', '排队挂号建档', '检查推椅与转运协助'],
       certificates: [
         { name: '红十字急救员证', issuer: '福建省红十字会', verified: true, date: '2021年' },
         { name: '养老护理员证书', issuer: '福州市人社局', verified: true, date: '2020年' }
@@ -711,7 +708,7 @@ export const ESCORT_PROFILES_BY_CITY: Record<string, EscortProfile[]> = {
       noCriminalRecord: true,
       bio: '曾任三甲医院护士，对福建省立医院各项化验及胃肠镜、影像等检查预约非常熟悉，服务温和负责。',
       serviceCommitment: ['全程贴心陪诊', '细心记录医生处方', '协助老人使用智能机'],
-      specialties: ['省立医院/附一医院陪诊', '慢病复查全套陪护', '异地就诊建档代办'],
+      specialties: ['医院全程陪诊', '代取药及化验报告', '全流程住院陪护'],
       certificates: [{ name: '护士执业资格证书', issuer: '福建省卫健委', verified: true, date: '2020年' }],
       workPhotos: [{ url: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=600&auto=format&fit=crop&q=80', caption: '省立医院陪同就诊' }],
       reviews: [{ id: 'rev-cxl-1', author: '黄女士', rating: 5, date: '2026-08-11', serviceType: '省立医院老年科陪诊', content: '陈老师非常细致有耐心，感谢！' }]
@@ -741,7 +738,7 @@ export const ESCORT_PROFILES_BY_CITY: Record<string, EscortProfile[]> = {
       noCriminalRecord: true,
       bio: '专业为福州各大小区提供上门喂养、互动玩耍与安全遛犬，进门拍摄视频透明可查。',
       serviceCommitment: ['全流程录像报备', '细致添粮换水', '双绳牵引遛护'],
-      specialties: ['上门喂猫逗猫', '中大型犬户外遛跑', '宠物送医代办'],
+      specialties: ['上门喂养照料', '遛宠户外陪跑', '洗护接送与短期看护'],
       certificates: [{ name: '宠物训导师技能证书', issuer: '中国畜牧业协会', verified: true, date: '2023年' }],
       workPhotos: [{ url: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&auto=format&fit=crop&q=80', caption: '江滨公园遛狗' }],
       reviews: [{ id: 'rev-lk-1', author: '吴小姐', rating: 5, date: '2026-08-09', serviceType: '仓山区上门喂猫', content: '林师傅特别靠谱，视频拍得很全！' }]
@@ -771,7 +768,7 @@ export const ESCORT_PROFILES_BY_CITY: Record<string, EscortProfile[]> = {
       noCriminalRecord: true,
       bio: '热心细致的老福州人，常年陪同独居老人西湖公园散步、下棋谈心、协助社区配药及便民生活跑腿。',
       serviceCommitment: ['慢走安全看护', '随身常备温开水', '真诚交流倾听'],
-      specialties: ['长者公园散步', '慢病代取药', '社区代办跑腿'],
+      specialties: ['代取代送', '排队办事', '临时跑腿'],
       certificates: [{ name: '养老护理员证书', issuer: '福州市人社局', verified: true, date: '2021年' }],
       workPhotos: [{ url: 'https://images.unsplash.com/photo-1581056771107-24ca5f033842?w=600&auto=format&fit=crop&q=80', caption: '西湖公园绿道慢步陪伴' }],
       reviews: [{ id: 'rev-hgl-1', author: '郑先生', rating: 5, date: '2026-08-06', serviceType: '长者日常散步', content: '黄师傅耐心细致，给老人带来了很多欢笑！' }]
@@ -804,7 +801,7 @@ export const ESCORT_PROFILES_BY_CITY: Record<string, EscortProfile[]> = {
       noCriminalRecord: true,
       bio: '深耕昆明各大三甲医院就医陪诊6年，熟悉云大医院、省第一人民医院（昆华医院）名医预约与跨院检查流程。为人质朴热情，擅长推扶老人。',
       serviceCommitment: ['准时到达医院接候', '全程轮椅推护接驳', '如实记录医生嘱托并交付家属'],
-      specialties: ['云大医院/昆华医院门诊陪诊', '高龄行动不便患者推护', '全省各地州来昆就诊接待'],
+      specialties: ['医院全程陪诊', '排队挂号建档', '检查推椅与转运协助'],
       certificates: [
         { name: '红十字急救员证', issuer: '云南省红十字会', verified: true, date: '2021年' },
         { name: '养老护理员职业资格', issuer: '昆明市人社局', verified: true, date: '2020年' }
@@ -837,7 +834,7 @@ export const ESCORT_PROFILES_BY_CITY: Record<string, EscortProfile[]> = {
       noCriminalRecord: true,
       bio: '前三甲医院护士，精通延安医院心血管、骨科及内分泌检查流程，服务细致入微。',
       serviceCommitment: ['门诊看病全程陪同', '病历报告归类整理', '耐心沟通解疑'],
-      specialties: ['延安医院心内科导诊', '长者慢病配药提醒', '异地就诊代办'],
+      specialties: ['医院全程陪诊', '代取药及化验报告', '全流程住院陪护'],
       certificates: [{ name: '护士执业证书', issuer: '云南省卫健委', verified: true, date: '2020年' }],
       workPhotos: [{ url: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=600&auto=format&fit=crop&q=80', caption: '延安医院陪护就诊' }],
       reviews: [{ id: 'rev-ylf-1', author: '李女士', rating: 5, date: '2026-08-12', serviceType: '延安医院心内科门诊', content: '杨老师非常专业温和，父母看病很顺利！' }]
@@ -867,7 +864,7 @@ export const ESCORT_PROFILES_BY_CITY: Record<string, EscortProfile[]> = {
       noCriminalRecord: true,
       bio: '专业为昆明各小区提供上门定时喂养猫狗、户外安全遛犬及宠物代送就诊服务。',
       serviceCommitment: ['进门全景录像', '添粮换水消毒猫砂盆', '户外双绳牵引'],
-      specialties: ['上门喂猫遛狗', '宠物医院代跑腿', '幼宠细心陪护'],
+      specialties: ['上门喂养照料', '遛宠户外陪跑', '梳毛互动玩耍'],
       certificates: [{ name: '宠物训导师证书', issuer: '中国畜牧业协会', verified: true, date: '2023年' }],
       workPhotos: [{ url: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&auto=format&fit=crop&q=80', caption: '翠湖公园绿道遛犬' }],
       reviews: [{ id: 'rev-sy-1', author: '张小姐', rating: 5, date: '2026-08-10', serviceType: '上门喂猫遛狗', content: '小施特别有爱心，视频拍得很清晰！' }]
@@ -934,7 +931,7 @@ export const ESCORT_PROFILES_BY_CITY: Record<string, EscortProfile[]> = {
         '双语无障碍沟通与医嘱翻译整理',
         '全程轮椅推护与检查科室引导'
       ],
-      specialties: ['新医大一附院全流程陪诊', '双语就医沟通与医嘱整理', '全疆各地州来乌就医接待与推护'],
+      specialties: ['医院全程陪诊', '排队挂号建档', '检查推椅与转运协助'],
       certificates: [
         { name: '红十字救护员证书', issuer: '新疆红十字会', verified: true, date: '2021年' },
         { name: '养老护理职业技能等级证书', issuer: '乌鲁木齐市人社局', verified: true, date: '2020年' }
@@ -967,7 +964,7 @@ export const ESCORT_PROFILES_BY_CITY: Record<string, EscortProfile[]> = {
       noCriminalRecord: true,
       bio: '前三甲医院主管护士，精通自治区人民医院心血管、呼吸及内分泌科就诊流程，服务温和负责。',
       serviceCommitment: ['门诊看病全程陪同', '病历报告归类整理', '耐心细致解释医嘱'],
-      specialties: ['自治区人民医院导诊', '长者慢病就医陪护', '异地就诊建档代办'],
+      specialties: ['医院全程陪诊', '代取药及化验报告', '全流程住院陪护'],
       certificates: [{ name: '护士执业证书', issuer: '自治区卫健委', verified: true, date: '2019年' }],
       workPhotos: [{ url: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=600&auto=format&fit=crop&q=80', caption: '自治区人民医院陪诊' }],
       reviews: [{ id: 'rev-wxm-1', author: '刘女士', rating: 5, date: '2026-08-11', serviceType: '自治区医院老年门诊', content: '王老师非常专业细心，老人家很满意！' }]
@@ -997,7 +994,7 @@ export const ESCORT_PROFILES_BY_CITY: Record<string, EscortProfile[]> = {
       noCriminalRecord: true,
       bio: '热爱小动物，为乌鲁木齐各小区提供安全周到的上门喂养、猫犬互动与牵引遛护服务。',
       serviceCommitment: ['进门录像报备', '细致添粮换水清理', '户外双牵引保障'],
-      specialties: ['上门喂猫喂狗', '中大型犬运动遛跑', '宠物送医代办'],
+      specialties: ['上门喂养照料', '遛宠户外陪跑', '宠物送医就诊陪护'],
       certificates: [{ name: '宠物训导师技能证', issuer: '中国畜牧业协会', verified: true, date: '2023年' }],
       workPhotos: [{ url: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&auto=format&fit=crop&q=80', caption: '水磨沟公园遛犬' }],
       reviews: [{ id: 'rev-gln-1', author: '马先生', rating: 5, date: '2026-08-08', serviceType: '上门喂养两只猫', content: '古丽姑娘特别细心，服务特别到位！' }]
@@ -1122,10 +1119,10 @@ export function getEscortProfile(matchedEscort?: { name: string; phone?: string;
       '协助推轮椅、拿取重物、行动搀扶全程细心呵护'
     ],
     specialties: [
-      '三甲医院就医全程陪诊',
-      '轮椅推护与无障碍通道导航',
-      '检查化验全流程引导',
-      '慢病长者服药提醒与就诊记录'
+      '医院全程陪诊',
+      '排队挂号建档',
+      '代取药及化验报告',
+      '检查推椅与转运协助'
     ],
     certificates: [
       {

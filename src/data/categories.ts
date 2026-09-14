@@ -363,3 +363,55 @@ export function calculatePlatformPriceRange(
     label: totalMin + ' ~ ' + totalMax + ' 元'
   };
 }
+
+
+export function calculateCustomServicesPriceRange(
+  serviceNames: string[],
+  dur: string,
+  fallbackCatId: string = 'medical'
+) {
+  let key: 'hour1' | 'hour2' | 'hour2_5' | 'halfDay' | 'fullDay' = 'hour2_5';
+  if (dur.includes('1 小时')) key = 'hour1';
+  else if (dur.includes('2.0 小时')) key = 'hour2';
+  else if (dur.includes('2.5 小时')) key = 'hour2_5';
+  else if (dur.includes('4.0') || dur.includes('半天')) key = 'halfDay';
+  else if (dur.includes('8.0') || dur.includes('全天')) key = 'fullDay';
+
+  const allSubServices: SubServiceItem[] = [];
+  PLATFORM_CATEGORIES.forEach(c => allSubServices.push(...c.subServices));
+
+  // 找到匹配的小项
+  const matched = serviceNames
+    .map(name => allSubServices.find(s => s.name === name))
+    .filter(Boolean) as SubServiceItem[];
+
+  if (matched.length === 0) {
+    // 回退到默认分类第一项
+    return calculatePlatformPriceRange(fallbackCatId, dur, 1);
+  }
+
+  // 累加逻辑：第一项按原价，后续项叠加（每多选一项，增加其区间价的 70% 作为增项组合优惠，最低价与最高价均精确累加）
+  let totalMin = 0;
+  let totalMax = 0;
+  let totalDef = 0;
+
+  matched.forEach((item, index) => {
+    const p = item.basePrice[key];
+    if (index === 0) {
+      totalMin += p.min;
+      totalMax += p.max;
+      totalDef += p.def;
+    } else {
+      totalMin += Math.round(p.min * 0.7);
+      totalMax += Math.round(p.max * 0.7);
+      totalDef += Math.round(p.def * 0.7);
+    }
+  });
+
+  return {
+    min: totalMin,
+    max: totalMax,
+    def: String(totalDef),
+    label: `${totalMin} ~ ${totalMax} 元`
+  };
+}
