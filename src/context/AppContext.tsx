@@ -132,6 +132,27 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [prefilledPrompt, setPrefilledPrompt] = useState('');
   const [isCloudConnected, setIsCloudConnected] = useState(true);
   const [isCouponsSyncing, setIsCouponsSyncing] = useState(false);
+  const [favoriteEscortIds, setFavoriteEscortIds] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem("heban_fav_escorts");
+      return saved ? JSON.parse(saved) : ["escort-bj-01"];
+    } catch {
+      return ["escort-bj-01"];
+    }
+  });
+
+  const toggleFavoriteEscort = (id: string) => {
+    setFavoriteEscortIds(prev => {
+      const exists = prev.includes(id);
+      const next = exists ? prev.filter(item => item !== id) : [...prev, id];
+      try {
+        localStorage.setItem("heban_fav_escorts", JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+  };
+
+  const isEscortFavorite = (id: string) => favoriteEscortIds.includes(id);
 
   // Coupons state: initially only 1 single 8-fold coupon, any old mock coupons cleared
   const [coupons, setCoupons] = useState<CouponItem[]>(() => {
@@ -554,7 +575,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       useCoupon,
       resetCouponsToInitial,
       syncCouponsWithSupabase,
-      isCouponsSyncing
+      isCouponsSyncing,
+      favoriteEscortIds,
+      toggleFavoriteEscort,
+      isEscortFavorite
     }}>
       {children}
     </AppContext.Provider>

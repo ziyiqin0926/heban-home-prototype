@@ -9,6 +9,7 @@ import {
   Phone,
   Send,
   Check,
+  CheckCircle2,
   ChevronRight,
   ShieldCheck,
   Star,
@@ -44,7 +45,9 @@ export default function ServiceOrderPage({
   onCompleteOrder,
   onNavigateToCommunity
 }: ServiceOrderPageProps) {
-  const { toggleFavoriteEscort, isEscortFavorite } = useAppContext();
+  const context = useAppContext();
+  const toggleFavoriteEscort = context?.toggleFavoriteEscort || (() => {});
+  const isEscortFavorite = context?.isEscortFavorite || (() => false);
   const isMedical = type === 'medical';
   const allEscorts = getEscortsByCity(currentCity || '北京');
   const filteredEscorts = allEscorts.filter(e =>
