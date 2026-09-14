@@ -28,7 +28,8 @@ import {
   Ticket,
   Tag,
   BadgePercent,
-  Camera
+  Camera,
+  Heart
 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { Order, OrderStatus, EscortProfile, UserAddress, CouponItem } from '../types';
@@ -44,7 +45,7 @@ interface ProfileProps {
 }
 
 type FilterTab = 'all' | 'active' | 'completed' | 'cancelled';
-type ViewMode = 'menu' | 'orders' | 'coupons';
+type ViewMode = 'menu' | 'orders' | 'coupons' | 'favorites';
 
 const CANCEL_REASONS = [
   '需求已自行解决 / 无需陪护',
@@ -67,7 +68,10 @@ export default function Profile({ onNavigateToAgent, onNavigateToManual, initial
     completeOrder,
     syncAllToSupabase,
     setPrefilledPrompt,
-    coupons
+    coupons,
+    favoriteEscortIds,
+    toggleFavoriteEscort,
+    isEscortFavorite
   } = useAppContext();
 
   // Progressive Navigation State
@@ -273,6 +277,36 @@ export default function Profile({ onNavigateToAgent, onNavigateToManual, initial
                       </div>
                       <p className="text-xs text-slate-400 mt-0.5 sm:mt-1 truncate">
                         专属陪护优惠券 · 发布订单时可直接抵扣
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-1 text-rose-600 font-bold text-xs flex-shrink-0">
+                    <span className="hidden sm:inline">查看</span>
+                    <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 group-hover:text-rose-600 group-hover:translate-x-0.5 transition-all" />
+                  </div>
+                </button>
+
+                                {/* 3. Primary Entry: 我的收藏师傅 (关注金牌陪护师) */}
+                <button
+                  type="button"
+                  onClick={() => changeViewMode("favorites")}
+                  className="w-full p-3.5 sm:p-4 md:p-5 flex items-center justify-between hover:bg-rose-50/40 active:bg-rose-50 transition-all cursor-pointer group text-left border-t border-slate-100"
+                >
+                  <div className="flex items-center space-x-3 sm:space-x-3.5 min-w-0 flex-1 pr-2">
+                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-tr from-rose-500 to-pink-500 text-white flex items-center justify-center shadow-xs flex-shrink-0 group-hover:scale-105 transition-transform">
+                      <Heart className="w-5 h-5 fill-white" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center flex-wrap gap-1.5">
+                        <span className="text-sm md:text-base font-bold text-slate-800 group-hover:text-rose-600 transition-colors whitespace-nowrap">
+                          我的收藏
+                        </span>
+                        <span className="px-2 py-0.5 bg-rose-50 text-rose-700 text-[11px] md:text-xs font-bold rounded-full border border-rose-200 whitespace-nowrap">
+                          {favoriteEscortIds.length} 位金牌师傅
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-400 mt-0.5 sm:mt-1 truncate">
+                        已收藏的常约师傅 · 点单时优先指派
                       </p>
                     </div>
                   </div>
@@ -1085,7 +1119,103 @@ export default function Profile({ onNavigateToAgent, onNavigateToManual, initial
         </div>
       )}
 
-      {/* Escort Profile Modal */}
+      
+        {/* ============================================================ */}
+        {/* VIEW 4: MY FAVORITES (我的收藏师傅专区) */}
+        {/* ============================================================ */}
+        {viewMode === "favorites" && (
+          <div className="flex-1 flex flex-col min-h-0 bg-slate-50">
+            {/* 顶栏 */}
+            <header className="bg-white px-4 py-3 border-b border-slate-200/80 flex items-center justify-between sticky top-0 z-10 shadow-2xs">
+              <div className="flex items-center space-x-3">
+                <button
+                  type="button"
+                  onClick={() => changeViewMode("menu")}
+                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition-all cursor-pointer"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                </button>
+                <div className="flex items-center space-x-2">
+                  <h1 className="text-base font-extrabold text-slate-800">我的收藏</h1>
+                  <span className="px-2 py-0.5 rounded-full bg-rose-50 text-rose-600 text-xs font-bold border border-rose-200">
+                    {favoriteEscortIds.length} 位
+                  </span>
+                </div>
+              </div>
+            </header>
+
+            {/* 列表内容 */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-3 pb-24">
+              {favoriteEscortIds.length === 0 ? (
+                <div className="text-center py-16 bg-white rounded-2xl border border-slate-200 p-8 shadow-xs">
+                  <Heart className="w-12 h-12 text-slate-300 mx-auto stroke-1" />
+                  <p className="text-sm font-bold text-slate-700 mt-3">暂无收藏的师傅</p>
+                  <p className="text-xs text-slate-400 mt-1">
+                    在选师页面或师傅个人主页点击【收藏】，可在此快速回访与指定
+                  </p>
+                </div>
+              ) : (
+                favoriteEscortIds.map(id => {
+                  const escort = getEscortProfile(id);
+                  if (!escort) return null;
+                  return (
+                    <article
+                      key={id}
+                      onClick={() => setViewingEscortProfile(escort)}
+                      className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs hover:border-blue-300 transition-all cursor-pointer flex space-x-3.5 items-start relative group"
+                    >
+                      <img
+                        src={escort.avatar}
+                        alt={escort.name}
+                        className="w-16 h-16 rounded-2xl object-cover flex-shrink-0 border border-slate-100 shadow-2xs"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            <h3 className="text-base font-black text-slate-900">{escort.name}</h3>
+                            <span className="text-xs px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 font-bold border border-blue-100">
+                              {escort.gender} · {escort.age}岁
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleFavoriteEscort(id);
+                            }}
+                            className="p-1.5 rounded-full bg-rose-50 text-rose-500 hover:bg-rose-100 transition-all cursor-pointer"
+                            title="取消收藏"
+                          >
+                            <Heart className="w-4 h-4 fill-rose-500" />
+                          </button>
+                        </div>
+
+                        <p className="text-xs text-slate-600 font-medium mt-1 line-clamp-1">{escort.title}</p>
+
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          {(escort.specialties || [escort.tag]).slice(0, 3).map((tag, i) => (
+                            <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+
+                        <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                          <span>已服务 <strong className="text-slate-800 font-bold">{escort.serviceCount}+</strong> 次 · 好评率 <strong className="text-emerald-600 font-bold">99.8%</strong></span>
+                          <span className="text-blue-600 font-bold group-hover:translate-x-0.5 transition-transform flex items-center">
+                            查看主页 <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
+                          </span>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Escort Profile Modal */}
       {viewingEscortProfile && (
         <EscortProfileModal
           profile={viewingEscortProfile}

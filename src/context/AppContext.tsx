@@ -68,6 +68,9 @@ interface AppContextType {
   resetCouponsToInitial: () => Promise<void>;
   syncCouponsWithSupabase: () => Promise<number>;
   isCouponsSyncing: boolean;
+  favoriteEscortIds: string[];
+  toggleFavoriteEscort: (id: string) => void;
+  isEscortFavorite: (id: string) => boolean;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);

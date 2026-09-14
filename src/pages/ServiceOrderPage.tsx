@@ -1,3 +1,4 @@
+import { useAppContext } from '../context/AppContext';
 import React, { useState } from 'react';
 import {
   ArrowLeft,
@@ -43,6 +44,7 @@ export default function ServiceOrderPage({
   onCompleteOrder,
   onNavigateToCommunity
 }: ServiceOrderPageProps) {
+  const { toggleFavoriteEscort, isEscortFavorite } = useAppContext();
   const isMedical = type === 'medical';
   const allEscorts = getEscortsByCity(currentCity || '北京');
   const filteredEscorts = allEscorts.filter(e =>
@@ -680,10 +682,11 @@ export default function ServiceOrderPage({
               <div className="flex items-center space-x-2">
                 <button
                   type="button"
-                  onClick={() => alert("已收藏该师傅，将在【我的关注】中优先展示")}
-                  className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:text-rose-500 hover:bg-rose-50 transition-all cursor-pointer"
+                  onClick={() => viewingEscortProfile && toggleFavoriteEscort(viewingEscortProfile.id)}
+                  className={"w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer " + (viewingEscortProfile && isEscortFavorite(viewingEscortProfile.id) ? "bg-rose-50 text-rose-500" : "bg-slate-100 text-slate-600 hover:text-rose-500 hover:bg-rose-50")}
+                  title={viewingEscortProfile && isEscortFavorite(viewingEscortProfile.id) ? "取消收藏" : "收藏师傅"}
                 >
-                  <Heart className="w-4 h-4" />
+                  <Heart className={"w-4 h-4 " + (viewingEscortProfile && isEscortFavorite(viewingEscortProfile.id) ? "fill-rose-500" : "")} />
                 </button>
                 <button
                   type="button"
@@ -732,9 +735,9 @@ export default function ServiceOrderPage({
                     </div>
 
                     <div className="mt-2 flex items-center space-x-2">
-                      <div className="px-2 py-1 rounded-xl bg-slate-50 border border-slate-200 flex items-center space-x-1.5 text-xs text-slate-700 font-medium">
-                        <Volume2 className="w-3.5 h-3.5 text-blue-600 animate-pulse" />
-                        <span>实声认证 32s</span>
+                      <div className="px-2 py-1 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center space-x-1.5 text-xs text-emerald-700 font-bold">
+                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>平台实名认证</span>
                       </div>
                       <span className="text-[11px] text-slate-400">近30天履约率 100%</span>
                     </div>
@@ -754,35 +757,63 @@ export default function ServiceOrderPage({
                 </div>
               </div>
 
-              {/* 2. 价格与服务规格选择卡片 */}
+                            {/* 2. 价格与服务规格展示卡片（纯展示型看板，支持展示更多认证技能与板块） */}
               <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-xs space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="font-extrabold text-sm text-slate-900 flex items-center space-x-1.5">
+                  <div className="flex items-center space-x-1.5">
                     <Award className="w-4 h-4 text-blue-600" />
-                    <span>服务规格与资费</span>
-                  </span>
-                  <span className="text-xs text-rose-500 font-bold bg-rose-50 px-2 py-0.5 rounded-full border border-rose-100">
-                    新客首单立减20%
+                    <span className="font-extrabold text-sm text-slate-900">核心服务资费参考</span>
+                  </div>
+                  <span className="text-[11px] text-rose-500 font-bold bg-rose-50 px-2 py-0.5 rounded-full border border-rose-100">
+                    新客立减20% · 下单时选择
                   </span>
                 </div>
 
+                {/* 核心主打两大规格 (只读展示，不可点击，避免误触) */}
                 <div className="grid grid-cols-2 gap-2.5">
-                  <div className="p-3 rounded-xl border-2 border-blue-500 bg-blue-50/40 relative cursor-pointer">
-                    <span className="absolute top-0 right-0 bg-blue-600 text-white text-[9px] px-2 py-0.5 rounded-bl-lg font-bold">推荐</span>
+                  <div className="p-3 rounded-xl border border-blue-200 bg-blue-50/30 relative select-none">
+                    <span className="absolute top-0 right-0 bg-blue-600 text-white text-[9px] px-2 py-0.5 rounded-bl-lg font-bold">主流推荐</span>
                     <p className="font-bold text-xs text-slate-900">标准单次陪护 (半日)</p>
-                    <p className="text-[11px] text-slate-500 mt-0.5">门诊/基础遛护 · 4小时</p>
+                    <p className="text-[11px] text-slate-500 mt-0.5">门诊导引/上门照料 · 4小时</p>
                     <div className="mt-2 flex items-baseline space-x-1">
                       <span className="text-base font-black text-blue-600">¥168/半天</span>
                       <span className="text-[10px] text-slate-400 line-through">¥218</span>
                     </div>
                   </div>
 
-                  <div className="p-3 rounded-xl border border-slate-200 bg-white hover:border-slate-300 relative cursor-pointer">
+                  <div className="p-3 rounded-xl border border-slate-200 bg-slate-50/50 relative select-none">
                     <p className="font-bold text-xs text-slate-900">全天深度陪护</p>
-                    <p className="text-[11px] text-slate-500 mt-0.5">全流程陪伴 · 8小时</p>
+                    <p className="text-[11px] text-slate-500 mt-0.5">全程跟随陪护 · 8小时</p>
                     <div className="mt-2 flex items-baseline space-x-1">
                       <span className="text-base font-black text-slate-800">¥298</span>
                       <span className="text-[10px] text-slate-400">/全天</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 师傅多板块认证与拓展技能标签小卡片 */}
+                <div className="pt-2 border-t border-slate-100 space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-bold text-slate-800">师傅已认证跨板块技能：</span>
+                    <span className="text-[10px] text-slate-400">点下方立即指定进入需求单自选</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {(viewingEscortProfile.specialties || ["三甲医院全程陪诊", "异地代取化验单报告", "行动不便轮椅推护", "术后平稳看护复查"]).map((spec, i) => (
+                      <div
+                        key={i}
+                        className="p-2 rounded-xl bg-slate-50 border border-slate-200/70 flex items-center space-x-1.5 text-slate-700"
+                      >
+                        <Check className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                        <span className="text-[11px] font-medium truncate">{spec}</span>
+                      </div>
+                    ))}
+                    <div className="p-2 rounded-xl bg-slate-50 border border-dashed border-slate-300 flex items-center space-x-1.5 text-slate-500">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-500 flex-shrink-0" />
+                      <span className="text-[11px] truncate">支持按需个性化定制</span>
+                    </div>
+                    <div className="p-2 rounded-xl bg-slate-50 border border-dashed border-slate-300 flex items-center space-x-1.5 text-slate-500">
+                      <ShieldCheck className="w-3.5 h-3.5 text-blue-500 flex-shrink-0" />
+                      <span className="text-[11px] truncate">平台责任险全程兜底</span>
                     </div>
                   </div>
                 </div>
@@ -870,11 +901,15 @@ export default function ServiceOrderPage({
             <div className="sticky bottom-0 bg-white border-t border-slate-100 px-4 py-3 flex items-center space-x-3 shadow-lg">
               <button
                 type="button"
-                onClick={() => alert("已开启与【" + viewingEscortProfile.name + "】的在线即时沟通窗口，您可以提前沟通细节")}
-                className="px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center space-x-1.5 transition-all cursor-pointer flex-shrink-0"
+                onClick={() => {
+                  if (viewingEscortProfile) {
+                    toggleFavoriteEscort(viewingEscortProfile.id);
+                  }
+                }}
+                className={"px-4 py-3 rounded-xl font-bold text-xs flex items-center justify-center space-x-1.5 transition-all cursor-pointer flex-shrink-0 border " + (viewingEscortProfile && isEscortFavorite(viewingEscortProfile.id) ? "bg-rose-50 border-rose-200 text-rose-600 shadow-2xs" : "bg-slate-100 border-transparent hover:bg-slate-200 text-slate-700")}
               >
-                <MessageCircle className="w-4 h-4 text-slate-600" />
-                <span>聊一聊</span>
+                <Heart className={"w-4 h-4 " + (viewingEscortProfile && isEscortFavorite(viewingEscortProfile.id) ? "fill-rose-500 text-rose-500" : "text-slate-500")} />
+                <span>{viewingEscortProfile && isEscortFavorite(viewingEscortProfile.id) ? "已收藏" : "收藏师傅"}</span>
               </button>
 
               <button
