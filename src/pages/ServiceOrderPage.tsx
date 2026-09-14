@@ -64,6 +64,7 @@ export default function ServiceOrderPage({
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [isDispatchModalOpen, setIsDispatchModalOpen] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
+  const [selectedServices, setSelectedServices] = useState<string[]>([]);
 
   // 家庭档案库
   const familyProfiles = isMedical
