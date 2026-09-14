@@ -114,24 +114,20 @@ export default function ServiceOrderPage({
     ? ['市第一人民医院门诊大厅', '省中医院门诊大楼', '市妇幼保健院', '华西医院门诊部', '家中上门接送']
     : ['家中上门喂养', '同城宠物医院', '社区宠物公园', '接送至宠物洗护店', '指定寄养交接点'];
 
-// 平台服务时长定价参考区间（医陪 / 宠陪），后续支持后台动态配置
-  const getPriceRange = (dur: string) => {
-    if (isMedical) {
-      if (dur.includes("1 小时")) return { min: 60, max: 95, label: "60 ~ 95 元", def: "80" };
-      if (dur.includes("2.0 小时")) return { min: 120, max: 180, label: "120 ~ 180 元", def: "150" };
-      if (dur.includes("2.5 小时")) return { min: 150, max: 230, label: "150 ~ 230 元", def: "180" };
-      if (dur.includes("4.0")) return { min: 200, max: 320, label: "200 ~ 320 元", def: "260" };
-      if (dur.includes("8.0")) return { min: 380, max: 580, label: "380 ~ 580 元", def: "480" };
-      return { min: 100, max: 260, label: "100 ~ 260 元", def: "150" };
-    } else {
-      if (dur.includes("1 小时")) return { min: 35, max: 55, label: "35 ~ 55 元", def: "45" };
-      if (dur.includes("2.0 小时")) return { min: 60, max: 95, label: "60 ~ 95 元", def: "75" };
-      if (dur.includes("2.5 小时")) return { min: 75, max: 120, label: "75 ~ 120 元", def: "90" };
-      if (dur.includes("4.0")) return { min: 120, max: 190, label: "120 ~ 190 元", def: "150" };
-      if (dur.includes("8.0")) return { min: 220, max: 360, label: "220 ~ 360 元", def: "280" };
-      return { min: 45, max: 150, label: "45 ~ 150 元", def: "68" };
-    }
+  // 平台服务定价区间：根据勾选的二级服务小项和时长精确累加计算
+  const getPriceRange = (dur: string, servicesList: string[] = selectedServices) => {
+    return calculateCustomServicesPriceRange(servicesList, dur, isMedical ? 'medical' : 'pet');
   };
+
+  // 金额数值有效性及区间校验
+  const parseRewardAmount = (raw: string) => {
+    const num = parseInt(raw.replace(/[^0-9]/g, ''), 10);
+    return isNaN(num) ? null : num;
+  };
+
+  const currentPriceRange = getPriceRange(orderForm.duration, selectedServices);
+  const rewardAmount = parseRewardAmount(orderForm.reward);
+  const isRewardOutOfRange = rewardAmount !== null && (rewardAmount < currentPriceRange.min || rewardAmount > currentPriceRange.max);
 
   // 快捷报酬金额档位
   const rewardOptions = isMedical
