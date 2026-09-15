@@ -144,9 +144,12 @@ export default function ServiceOrderPage({
     useCoupon: true
   });
 
-  const currentPriceRange = getPriceRange(orderForm.duration, selectedServices);
-  const rewardAmount = parseRewardAmount(orderForm.reward);
-  const isRewardOutOfRange = rewardAmount !== null && (rewardAmount < currentPriceRange.min || rewardAmount > currentPriceRange.max);
+  const getCurrentPriceRange = () => getPriceRange(orderForm.duration, selectedServices);
+  const isRewardOutOfRange = () => {
+    const range = getCurrentPriceRange();
+    const amount = parseRewardAmount(orderForm.reward);
+    return amount !== null && (amount < range.min || amount > range.max);
+  };
 
   // 一键迁入家庭档案
   const handleApplyProfile = (profile: any) => {
@@ -713,7 +716,7 @@ export default function ServiceOrderPage({
                       平台定价区间:
                     </span>
                     <span className="text-[11px] font-black text-amber-700">
-                      {currentPriceRange.label}
+                      {getCurrentPriceRange().label}
                     </span>
                   </div>
 
@@ -722,7 +725,7 @@ export default function ServiceOrderPage({
                     required
                     value={orderForm.reward}
                     onChange={e => setOrderForm({ ...orderForm, reward: e.target.value })}
-                    placeholder={`必填（请在 ¥${currentPriceRange.min} ~ ¥${currentPriceRange.max} 内填写）`}
+                    placeholder={`必填（请在 ¥${getCurrentPriceRange().min} ~ ¥${getCurrentPriceRange().max} 内填写）`}
                     className={"w-full p-2.5 rounded-xl border bg-slate-50 focus:bg-white outline-none font-black text-slate-900 placeholder:text-slate-400 placeholder:font-normal placeholder:text-xs transition-all " + (
                       isRewardOutOfRange
                         ? "border-rose-500 bg-rose-50/40 text-rose-800 focus:border-rose-600 ring-1 ring-rose-300"
@@ -730,19 +733,19 @@ export default function ServiceOrderPage({
                     )}
                   />
 
-                  {isRewardOutOfRange && (
+                  {isRewardOutOfRange() && (
                     <div className="mt-1 flex items-center space-x-1 text-rose-600 text-[10px] font-bold">
                       <AlertCircle className="w-3 h-3 flex-shrink-0" />
-                      <span>超出平台指导价区间！须在 ¥{currentPriceRange.min} ~ ¥{currentPriceRange.max} 元内</span>
+                      <span>超出平台指导价区间！须在 ¥{getCurrentPriceRange().min} ~ ¥{getCurrentPriceRange().max} 元内</span>
                     </div>
                   )}
 
                   {/* 快速填入平台区间价格标签 */}
                   <div className="flex items-center space-x-1 mt-1.5 flex-wrap gap-y-1">
                     {[
-                      { label: "推荐 " + currentPriceRange.def + "元", val: currentPriceRange.def + " 元" },
-                      { label: "起步 " + currentPriceRange.min + "元", val: currentPriceRange.min + " 元" },
-                      { label: "顶格 " + currentPriceRange.max + "元", val: currentPriceRange.max + " 元" },
+                      { label: "推荐 " + getCurrentPriceRange().def + "元", val: getCurrentPriceRange().def + " 元" },
+                      { label: "起步 " + getCurrentPriceRange().min + "元", val: getCurrentPriceRange().min + " 元" },
+                      { label: "顶格 " + getCurrentPriceRange().max + "元", val: getCurrentPriceRange().max + " 元" },
                     ].map(item => (
                       <button
                         key={item.label}
@@ -849,7 +852,7 @@ export default function ServiceOrderPage({
 
                 <button
                   type="submit"
-                  disabled={orderSuccess || isRewardOutOfRange}
+                  disabled={orderSuccess || isRewardOutOfRange()}
                   className={"flex-1 py-3 rounded-xl font-bold text-xs flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-md text-white " + (selectedEscort ? "bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:bg-emerald-600" : "bg-orange-500 hover:bg-orange-600 active:bg-orange-700 disabled:bg-emerald-600")}
                 >
                   {orderSuccess ? (
@@ -1349,3 +1352,4 @@ export default function ServiceOrderPage({
     </div>
   );
 }
+
