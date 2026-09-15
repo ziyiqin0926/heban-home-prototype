@@ -125,10 +125,6 @@ export default function ServiceOrderPage({
     return isNaN(num) ? null : num;
   };
 
-  const currentPriceRange = getPriceRange(orderForm.duration, selectedServices);
-  const rewardAmount = parseRewardAmount(orderForm.reward);
-  const isRewardOutOfRange = rewardAmount !== null && (rewardAmount < currentPriceRange.min || rewardAmount > currentPriceRange.max);
-
   // 快捷报酬金额档位
   const rewardOptions = isMedical
     ? ['50元', '60元', '80元', '100元', '150元', '200元', '300元', '面议 / 线下协商']
@@ -147,6 +143,10 @@ export default function ServiceOrderPage({
     details: '',
     useCoupon: true
   });
+
+  const currentPriceRange = getPriceRange(orderForm.duration, selectedServices);
+  const rewardAmount = parseRewardAmount(orderForm.reward);
+  const isRewardOutOfRange = rewardAmount !== null && (rewardAmount < currentPriceRange.min || rewardAmount > currentPriceRange.max);
 
   // 一键迁入家庭档案
   const handleApplyProfile = (profile: any) => {
