@@ -32,6 +32,24 @@ export default function Directory({ onNavigateToAgent }: DirectoryProps) {
   const [directoryMode, setDirectoryMode] = useState<'classic' | 'weekly'>('classic');
   const activeCategory = categories.find(category => category.id === activeId) || categories[0];
   const ActiveIcon = activeCategory.icon;
+  const [cart, setCart] = useState<{ categoryId: string; items: string[] }>({ categoryId: '', items: [] });
+  const serviceImages = [
+    'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=300&q=80',
+    'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=300&q=80',
+    'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=300&q=80',
+    'https://images.unsplash.com/photo-1558788353-f76d92427f16?w=300&q=80',
+    'https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=300&q=80'
+  ];
+  const addToCart = (service: string) => {
+    if (cart.categoryId && cart.categoryId !== activeCategory.id) {
+      alert('购物车一次只能选择一个一级分类的服务，请先清空当前购物车。');
+      return;
+    }
+    setCart(prev => ({
+      categoryId: activeCategory.id,
+      items: prev.items.includes(service) ? prev.items : [...prev.items, service]
+    }));
+  };
 
   return (
     <div className="directory-page min-h-full">
@@ -89,14 +107,16 @@ export default function Directory({ onNavigateToAgent }: DirectoryProps) {
           </div>
 
           <div className="directory-service-list">
-            {activeCategory.services.map(service => (
-              <button key={service} type="button" className="directory-service" onClick={onNavigateToAgent}>
+            {activeCategory.services.map((service, index) => (
+              <article key={service} className="directory-service">
+                <img src={serviceImages[index % serviceImages.length]} alt="" />
                 <span>
                   <strong>{service}</strong>
-                <small>{directoryMode === 'classic' ? '和伴陪伴服务' : '本周优惠项目'}</small>
+                  <small>{directoryMode === 'classic' ? '和伴陪伴服务' : '本周优惠项目'}</small>
+                  <b>¥{[168, 120, 130, 200, 280][index % 5]} 起</b>
                 </span>
-                <Plus />
-              </button>
+                <button type="button" aria-label={`加入购物车：${service}`} onClick={() => addToCart(service)}><Plus /></button>
+              </article>
             ))}
           </div>
 
@@ -107,6 +127,13 @@ export default function Directory({ onNavigateToAgent }: DirectoryProps) {
           </button>
         </section>
       </main>
+      {cart.items.length > 0 && (
+        <button type="button" className="directory-cart" onClick={() => {
+          if (confirm(`购物车内有 ${cart.items.length} 项服务，进入下单？`)) onNavigateToAgent();
+        }}>
+        <span>🛒</span><b>{cart.items.length}</b><strong>¥{cart.items.length * 168}</strong>
+        </button>
+      )}
     </div>
   );
 }
