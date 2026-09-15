@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   Users,
+  Plus,
   MapPin,
   Sparkles,
   Search,
@@ -332,8 +333,8 @@ export default function Community({ onNavigateToAgent }: CommunityProps) {
         )}
       </div>
 
-      <button type="button" onClick={() => { setPublishSubmitted(false); setIsPublishOpen(true); }} className="fixed bottom-24 right-5 z-40 flex items-center gap-2 rounded-full bg-blue-600 px-4 py-3 text-sm font-black text-white shadow-lg hover:bg-blue-700">
-        <Sparkles className="h-4 w-4" />发布到平台审核
+      <button type="button" aria-label="发布服务动态" title="发布服务动态" onClick={() => { setPublishSubmitted(false); setIsPublishOpen(true); }} className="absolute bottom-24 right-5 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 p-0 text-white shadow-lg hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+        <Plus className="h-6 w-6" aria-hidden="true" />
       </button>
 
       {isPublishOpen && (
