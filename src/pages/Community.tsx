@@ -33,6 +33,9 @@ export default function Community({ onNavigateToAgent }: CommunityProps) {
     setCurrentCity,
     setPrefilledPrompt
   } = useAppContext();
+  const [isPublishOpen, setIsPublishOpen] = useState(false);
+  const [publishText, setPublishText] = useState('');
+  const [publishSubmitted, setPublishSubmitted] = useState(false);
 
   const [activeMainTab, setActiveMainTab] = useState<'feed' | 'leaderboard'>('feed');
   const [activeCategory, setActiveCategory] = useState('全部');
@@ -273,15 +276,6 @@ export default function Community({ onNavigateToAgent }: CommunityProps) {
                   className="w-full pl-9 pr-3 py-2.5 bg-white hover:bg-slate-50/80 focus:bg-white border border-slate-200/80 rounded-2xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-xs"
                 />
               </div>
-
-              <button
-                type="button"
-                onClick={onNavigateToAgent}
-                className="hidden sm:flex items-center space-x-1.5 px-4 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-xs font-bold transition-all shadow-xs flex-shrink-0 cursor-pointer"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>AI 智能发需求</span>
-              </button>
             </div>
 
             {/* Categories Bar */}
@@ -338,6 +332,22 @@ export default function Community({ onNavigateToAgent }: CommunityProps) {
         )}
       </div>
 
+      <button type="button" onClick={() => { setPublishSubmitted(false); setIsPublishOpen(true); }} className="fixed bottom-24 right-5 z-40 flex items-center gap-2 rounded-full bg-blue-600 px-4 py-3 text-sm font-black text-white shadow-lg hover:bg-blue-700">
+        <Sparkles className="h-4 w-4" />发布到平台审核
+      </button>
+
+      {isPublishOpen && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/35 sm:items-center" onClick={() => setIsPublishOpen(false)}>
+          <div className="w-full max-w-xl rounded-t-3xl bg-white p-5 shadow-2xl sm:rounded-3xl" onClick={e => e.stopPropagation()}>
+            <div className="mb-4 flex items-center justify-between"><h2 className="text-lg font-black text-slate-900">发布服务动态</h2><button type="button" onClick={() => setIsPublishOpen(false)} aria-label="关闭" className="text-2xl text-slate-400">×</button></div>
+            {publishSubmitted ? <div className="py-12 text-center text-sm font-bold text-blue-600">已提交平台审核，审核通过后将展示在同城社区</div> : <form onSubmit={e => { e.preventDefault(); setPublishSubmitted(true); }} className="space-y-3">
+              <textarea required value={publishText} onChange={e => setPublishText(e.target.value)} rows={7} placeholder="分享你的服务经历、真实案例或服务心得..." className="w-full resize-none rounded-2xl border border-slate-200 bg-slate-50 p-3 text-sm outline-none focus:border-blue-500 focus:bg-white" />
+              <div className="grid grid-cols-3 gap-2">{[1, 2, 3].map(i => <div key={i} className="flex aspect-square items-center justify-center rounded-xl border border-dashed border-slate-300 text-slate-400">＋ 图片</div>)}</div>
+              <p className="text-xs text-slate-400">内容提交后由平台审核，审核通过后公开展示。</p><button type="submit" className="w-full rounded-xl bg-blue-600 py-3 text-sm font-black text-white">提交平台审核</button>
+            </form>}
+          </div>
+        </div>
+      )}
       {/* Case Details Modal */}
       {selectedPost && (
         <CaseDetailModal
@@ -359,3 +369,4 @@ export default function Community({ onNavigateToAgent }: CommunityProps) {
     </div>
   );
 }
+
