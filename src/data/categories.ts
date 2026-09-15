@@ -402,7 +402,6 @@ export function calculateCustomServicesPriceRange(
       totalMax += p.max;
       totalDef += p.def;
     } else {
-      totalMin += Math.round(p.min * 0.7);
       totalMax += Math.round(p.max * 0.7);
       totalDef += Math.round(p.def * 0.7);
     }
