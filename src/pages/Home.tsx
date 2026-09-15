@@ -294,6 +294,50 @@ export default function Home({ onNavigateToAgent, onNavigateToCommunity, onNavig
     );
   }
 
+  if (activeBookingService === 'custom') {
+    const updateCustom = (key: keyof typeof customForm, value: string) =>
+      setCustomForm(prev => ({ ...prev, [key]: value }));
+    return (
+      <div className="home-page min-h-full">
+        <header className="topbar">
+          <button type="button" className="circle-button" aria-label="返回" onClick={() => setActiveBookingService(null)}>‹</button>
+          <div className="brand"><span className="brand-mark">和</span><span>发布自定义任务</span></div>
+          <span className="top-actions" />
+        </header>
+        <main className="p-4 space-y-3">
+          <section className="surface p-4">
+            <h1 className="text-xl font-black text-slate-900">说清楚需求，等待合适的人</h1>
+            <p className="text-xs text-slate-500 mt-1">任务提交后将进入官方审核，审核通过后发布到同城任务广场。</p>
+          </section>
+          <form className="surface p-4 space-y-3" onSubmit={handleCustomSubmit}>
+            {([
+              ['theme', '事件主题', '例如：代取文件、临时陪同、物品配送'],
+              ['eventTime', '期望时间', '请填写日期和具体时间点'],
+              ['location', '服务地点', '请填写集合或服务地点'],
+              ['targetPerson', '服务对象', '例如：本人、父亲、宠物'],
+              ['personRequirements', '人员要求', '例如：熟悉路线、细心、有相关经验']
+            ] as const).map(([key, label, placeholder]) => (
+              <label key={key} className="block text-xs font-bold text-slate-700">
+                {label}
+                <input required value={customForm[key]} onChange={e => updateCustom(key, e.target.value)} placeholder={placeholder}
+                  className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 font-normal text-slate-800 outline-none focus:border-blue-500 focus:bg-white" />
+              </label>
+            ))}
+            <label className="block text-xs font-bold text-slate-700">
+              需求详情
+              <textarea required value={customForm.details} onChange={e => updateCustom('details', e.target.value)}
+                placeholder="请描述要做什么、注意事项和交付要求" rows={5}
+                className="mt-1 w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 font-normal text-slate-800 outline-none focus:border-blue-500 focus:bg-white" />
+            </label>
+            <button type="submit" className="w-full rounded-xl bg-blue-600 py-3 text-sm font-black text-white">
+              {bookingSuccess ? '已提交，等待审核' : '提交任务'}
+            </button>
+          </form>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="home-page min-h-full">
       <div className="statusbar"><span>9:41</span><span>● ● ●</span></div>
