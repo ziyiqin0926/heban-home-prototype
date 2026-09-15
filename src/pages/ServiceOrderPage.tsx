@@ -597,7 +597,7 @@ export default function ServiceOrderPage({
                   <UserCheck className="w-4 h-4 text-blue-600" />
                   <span>一键导入全家档案（点击自动代填信息）：</span>
                 </div>
-                <span className="text-[10px] text-blue-600 font-medium">免重复手打</span>
+                <span className="text-[10px] text-blue-600 font-medium">进入档案编辑</span>
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {familyProfiles.map(profile => (
