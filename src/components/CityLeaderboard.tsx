@@ -92,7 +92,7 @@ export default function CityLeaderboard({
               {currentCity} · 金牌服务之星榜
             </h2>
             <p className="text-xs sm:text-sm text-amber-100 max-w-md">
-              根据{currentCity}本地平台真实履约接单量、服务准时率与雇主五星好评率实时排行
+              综合专业能力、履约责任与用户评价动态排名，优胜劣汰；订单全程可追溯，损害用户利益者一经核实立即清退。
             </p>
           </div>
 
