@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { AppProvider } from './context/AppContext';
+import { AppProvider, useAppContext } from './context/AppContext';
 import Layout from './components/Layout';
 import AiAgent from './pages/AiAgent';
 import Directory from './pages/Directory';
@@ -19,6 +19,7 @@ type ProfileView = 'menu' | 'orders' | 'coupons';
 function MainApp() {
   const [activeTab, setActiveTab] = useState('home');
   const [profileView, setProfileView] = useState<ProfileView>('menu');
+  const { setPrefilledPrompt } = useAppContext();
 
   const navigateToProfile = (view: ProfileView = 'menu') => {
     setProfileView(view);
@@ -32,6 +33,11 @@ function MainApp() {
           embedded
           onNavigateToDirectory={() => setActiveTab('directory')}
           onNavigateToPartner={() => setActiveTab('partner')}
+          onNavigateToAgent={() => {
+            setPrefilledPrompt('请根据我的档案和日程，帮我智能规划近期陪伴与服务安排');
+            setActiveTab('agent');
+          }}
+          onNavigateToProfile={navigateToProfile}
         />
       )}
       {activeTab === 'partner' && <BecomePartner onBack={() => setActiveTab('home')} />}
