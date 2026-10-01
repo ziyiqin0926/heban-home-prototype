@@ -9,16 +9,14 @@ import {
   ChevronDown,
   Trophy,
   Clock,
-  Coins,
-  Building2,
-  SlidersHorizontal,
-  Flame
+  Heart
 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { CommunityPost, EscortProfile } from '../types';
 import CityLeaderboard from '../components/CityLeaderboard';
 import EscortProfileModal from '../components/EscortProfileModal';
 import CaseDetailModal from '../components/CaseDetailModal';
+import './Community.css';
 
 interface CommunityProps {
   onNavigateToAgent: () => void;
@@ -59,10 +57,6 @@ export default function Community({ onNavigateToAgent }: CommunityProps) {
     return matchesCity && matchesCategory && matchesSearch;
   });
 
-  // Split into left and right columns for natural Xiaohongshu waterfall distribution
-  const leftColPosts = filteredPosts.filter((_, i) => i % 2 === 0);
-  const rightColPosts = filteredPosts.filter((_, i) => i % 2 === 1);
-
   const handlePostSimilar = (post: CommunityPost) => {
     const prompt = `我也需要在【${post.city || currentCity}】发布一个类似的【${post.type}】需求：地点在${post.location}，预计需要${post.estimatedDuration || '2-3小时'}，主要需求内容是：${post.description.slice(0, 45)}... 请帮我生成需求单`;
     setPrefilledPrompt(prompt);
@@ -78,171 +72,86 @@ export default function Community({ onNavigateToAgent }: CommunityProps) {
 
     const cardCover = post.coverImage || fallbackImage;
 
-    // Aspect ratio classes for responsive waterfall heights
-    const aspectClass = post.aspectRatio === 'square'
-      ? 'aspect-square'
-      : post.aspectRatio === 'wide'
-      ? 'aspect-[4/3]'
-      : 'aspect-[3/4]';
-
     return (
-      <div
+      <article
         key={post.id}
         onClick={() => setSelectedPost(post)}
-        className="group bg-white rounded-2xl md:rounded-3xl border border-slate-200/80 hover:border-blue-300 shadow-2xs hover:shadow-md transition-all duration-200 overflow-hidden cursor-pointer flex flex-col"
+        onKeyDown={event => {
+          if (event.key === 'Enter' || event.key === ' ') setSelectedPost(post);
+        }}
+        role="button"
+        tabIndex={0}
+        className="community-card"
       >
-        {/* Cover Photo Container */}
-        <div className={`relative w-full ${aspectClass} overflow-hidden bg-slate-100`}>
+        <div className="community-card-media">
           <img
             src={cardCover}
             alt={post.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="community-card-image"
             referrerPolicy="no-referrer"
           />
-
-          {/* Top Category Badge */}
-          <div className="absolute top-2 left-2 z-10">
-            <span className="px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold text-white bg-black/50 backdrop-blur-md border border-white/20 shadow-xs">
-              {post.type}
-            </span>
-          </div>
-
-          {/* City / District Tag */}
-          <div className="absolute bottom-2 left-2 z-10">
-            <span className="px-2 py-0.5 rounded-md text-[10px] text-white bg-black/40 backdrop-blur-xs font-medium">
-              {post.district}
-            </span>
-          </div>
+          <span className="community-card-type">{post.type}</span>
+          <span className="community-card-place"><MapPin size={11} />{post.district}</span>
         </div>
-
-        {/* Card Content */}
-        <div className="p-2.5 sm:p-3 flex flex-col flex-1 justify-between space-y-2">
-          {/* Topic Title (订单主题) */}
-          <h3 className="font-bold text-xs sm:text-sm text-slate-900 leading-snug line-clamp-2 group-hover:text-blue-600 transition-colors">
+        <div className="community-card-body">
+          <h3>
             {post.title}
           </h3>
-
-          {/* Bottom Bar: Publisher Avatar + Username on Left, Published time on Right */}
-          <div className="flex items-center justify-between pt-1 border-t border-slate-100/70 text-slate-500">
-            {/* Publisher info */}
-            <div className="flex items-center space-x-1.5 min-w-0 flex-1 pr-1">
+          <p>{post.description}</p>
+          <div className="community-card-meta">
+            <div className="community-card-author">
               {post.publisherAvatar ? (
                 <img
                   src={post.publisherAvatar}
                   alt={post.publisherName}
-                  className="w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full object-cover border border-slate-200 flex-shrink-0"
+                  className="community-avatar"
                   referrerPolicy="no-referrer"
                 />
               ) : (
-                <div className="w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full bg-blue-600 text-white font-bold text-[9px] flex items-center justify-center flex-shrink-0">
+                <div className="community-avatar community-avatar-fallback">
                   {post.publisherName.charAt(0)}
                 </div>
               )}
-              <span className="text-[11px] sm:text-xs text-slate-600 font-medium truncate">
-                {post.publisherName}
-              </span>
+              <span>{post.publisherName}</span>
             </div>
-
-            <span className="text-[10px] text-slate-400 font-medium flex-shrink-0">
-              {post.publishedTimeAgo || '刚刚'}
-            </span>
+            <span className="community-card-stats"><Heart size={12} />{post.likesCount}<Clock size={12} />{post.publishedTimeAgo || '刚刚'}</span>
           </div>
         </div>
-      </div>
+      </article>
     );
   };
 
   return (
-    <div className="community-page min-h-full flex flex-col">
-      {/* Top Header */}
-      <header className="community-header page-header px-4 py-3.5 md:px-8 md:py-4 sticky top-0 z-30">
-        <div className="max-w-5xl mx-auto w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2.5">
-              <div className="page-icon bg-[#10212b]">
-                <Users className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="flex items-center space-x-1.5">
-                  <h1 className="text-base md:text-lg font-bold text-slate-800">同城社区</h1>
-                  
-                  {/* City Switcher Pill */}
-                  <div className="relative">
-                    <button
-                      type="button"
-                      onClick={() => setIsCityDropdownOpen(!isCityDropdownOpen)}
-                      className="flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs font-bold transition-colors cursor-pointer border border-blue-200/70"
-                    >
-                      <MapPin className="w-3 h-3 text-blue-600" />
-                      <span>{currentCity}市</span>
-                      <ChevronDown className="w-3 h-3" />
-                    </button>
-
-                    {isCityDropdownOpen && (
-                      <div className="absolute left-0 mt-1.5 w-36 bg-white rounded-xl shadow-xl border border-slate-200 py-1 z-50 animate-in fade-in zoom-in-95 duration-100">
-                        <div className="px-3 py-1 text-[10px] font-bold text-slate-400 border-b border-slate-100">
-                          切换当前城市
-                        </div>
-                        <div className="max-h-48 overflow-y-auto">
-                          {CITIES.map(city => (
-                            <button
-                              key={city}
-                              type="button"
-                              onClick={() => {
-                                setCurrentCity(city);
-                                setIsCityDropdownOpen(false);
-                              }}
-                              className={`w-full text-left px-3 py-1.5 text-xs flex items-center justify-between hover:bg-blue-50 transition-colors cursor-pointer ${
-                                currentCity === city ? 'font-bold text-blue-600 bg-blue-50/50' : 'text-slate-700'
-                              }`}
-                            >
-                              <span>{city}市</span>
-                              {currentCity === city && <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <p className="text-xs text-slate-500">真实服务动态 · 邻里互助见证</p>
-              </div>
-            </div>
+    <div className="community-page community-redesign min-h-full">
+      <header className="community-topbar">
+        <div className="community-topbar-row">
+          <div className="community-brand">
+            <span className="community-brand-icon"><Users size={18} /></span>
+            <div><h1>同城社区</h1><p>真实服务动态 · 邻里互助见证</p></div>
           </div>
-
-          {/* Capsule Pill Tab Switcher */}
-          <div className="flex items-center justify-center sm:justify-end">
-            <div className="bg-slate-100/95 p-1 rounded-full inline-flex items-center shadow-inner border border-slate-200/80">
-              <button
-                type="button"
-                onClick={() => setActiveMainTab('feed')}
-                className={`px-5 py-1.5 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-                  activeMainTab === 'feed'
-                    ? 'bg-white text-slate-900 shadow-xs'
-                    : 'text-slate-500 hover:text-slate-800 font-medium'
-                }`}
-              >
-                同城社区
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveMainTab('leaderboard')}
-                className={`px-5 py-1.5 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center space-x-1 ${
-                  activeMainTab === 'leaderboard'
-                    ? 'bg-white text-slate-900 shadow-xs'
-                    : 'text-slate-500 hover:text-slate-800 font-medium'
-                }`}
-              >
-                <Trophy className={`w-3.5 h-3.5 ${activeMainTab === 'leaderboard' ? 'text-amber-500 fill-amber-500' : 'text-slate-400'}`} />
-                <span>同城排行榜</span>
-              </button>
-            </div>
+          <div className="relative">
+            <button type="button" onClick={() => setIsCityDropdownOpen(!isCityDropdownOpen)} className="community-city-button">
+              <MapPin size={14} /><span>{currentCity}市</span><ChevronDown size={14} />
+            </button>
+            {isCityDropdownOpen && (
+              <div className="community-city-menu">
+                <strong>切换当前城市</strong>
+                {CITIES.map(city => (
+                  <button key={city} type="button" onClick={() => { setCurrentCity(city); setIsCityDropdownOpen(false); }}>
+                    <span>{city}市</span>{currentCity === city && <CheckCircle2 size={14} />}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
+        </div>
+        <div className="community-tabs" role="tablist">
+          <button type="button" role="tab" aria-selected={activeMainTab === 'feed'} className={activeMainTab === 'feed' ? 'active' : ''} onClick={() => setActiveMainTab('feed')}>同城动态</button>
+          <button type="button" role="tab" aria-selected={activeMainTab === 'leaderboard'} className={activeMainTab === 'leaderboard' ? 'active' : ''} onClick={() => setActiveMainTab('leaderboard')}><Trophy size={14} />同城排行榜</button>
         </div>
       </header>
 
-      {/* Community Content Body */}
-      <div className="p-3.5 sm:p-5 md:p-7 flex-1 max-w-5xl mx-auto w-full pb-28 md:pb-12 space-y-5">
+      <main className="community-main">
         
         {/* LEADERBOARD VIEW */}
         {activeMainTab === 'leaderboard' ? (
@@ -252,88 +161,44 @@ export default function Community({ onNavigateToAgent }: CommunityProps) {
             onNavigateToAgent={onNavigateToAgent}
           />
         ) : (
-          /* CASE FEED VIEW (瀑布流展示) */
-          <div className="space-y-4">
-            <div className="community-intro">
-              <div>
-                <p className="community-eyebrow">CITY PULSE / {currentCity}市</p>
-                <h2>看看身边正在发生的陪护需求</h2>
-              </div>
-              <div className="community-count">
-                <strong>{filteredPosts.length}</strong>
-                <span>条动态</span>
-              </div>
-            </div>
+          <div className="community-feed">
+            <section className="community-pulse">
+              <div><span className="community-pulse-kicker">附近动态</span><h2>{currentCity} · 真实陪伴正在发生</h2><p>看看邻里如何完成一次安心的陪伴服务</p></div>
+              <div className="community-count"><strong>{filteredPosts.length}</strong><span>条动态</span></div>
+            </section>
 
-            {/* Search bar & AI Entry */}
-            <div className="community-toolbar flex items-center gap-2.5">
-              <div className="relative flex-1">
-                <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="搜索医院、案例主题或用户名..."
-                  className="w-full pl-9 pr-3 py-2.5 bg-white hover:bg-slate-50/80 focus:bg-white border border-slate-200/80 rounded-2xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-xs"
-                />
-              </div>
+            <div className="community-search">
+              <Search size={17} />
+              <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="搜索医院、服务主题或发布者" />
             </div>
-
-            {/* Categories Bar */}
-            <div className="flex items-center space-x-2 overflow-x-auto pb-1 scrollbar-none">
+            <div className="community-category-row">
               {CATEGORIES.map(cat => (
                 <button
                   key={cat}
                   type="button"
                   onClick={() => setActiveCategory(cat)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
-                    activeCategory === cat
-                      ? 'bg-blue-600 text-white shadow-xs'
-                      : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200/80'
-                  }`}
+                  className={activeCategory === cat ? 'active' : ''}
                 >
                   {cat}
                 </button>
               ))}
             </div>
 
-            {/* Waterfall Feed (Double Column Masonry) */}
             {filteredPosts.length === 0 ? (
-              <div className="bg-white rounded-3xl p-12 text-center border border-slate-200/80 shadow-xs space-y-3">
-                <div className="w-14 h-14 mx-auto bg-slate-100 text-slate-400 rounded-2xl flex items-center justify-center">
-                  <Search className="w-7 h-7" />
-                </div>
-                <h3 className="text-sm font-bold text-slate-800">暂未搜索到符合条件的动态</h3>
-                <p className="text-xs text-slate-400 max-w-xs mx-auto">
-                  您可以切换分类或更换关键词搜索，也可以通过 AI 智能发布您的陪护需求。
-                </p>
-                <button
-                  type="button"
-                  onClick={onNavigateToAgent}
-                  className="px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-xl shadow-xs hover:bg-blue-700 cursor-pointer inline-flex items-center space-x-1"
-                >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>发布陪护需求</span>
-                </button>
+              <div className="community-empty">
+                <Search size={26} />
+                <h3>暂未搜索到相关动态</h3>
+                <p>换个关键词或切换服务分类试试。</p>
+                <button type="button" onClick={onNavigateToAgent}><Sparkles size={15} />发布陪护需求</button>
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-2.5 sm:gap-4 items-start">
-                {/* Left Waterfall Column */}
-                <div className="flex flex-col gap-2.5 sm:gap-4">
-                  {leftColPosts.map(post => renderCaseCard(post))}
-                </div>
-
-                {/* Right Waterfall Column */}
-                <div className="flex flex-col gap-2.5 sm:gap-4">
-                  {rightColPosts.map(post => renderCaseCard(post))}
-                </div>
-              </div>
+              <div className="community-grid">{filteredPosts.map(post => renderCaseCard(post))}</div>
             )}
           </div>
         )}
-      </div>
+      </main>
 
-      <button type="button" aria-label="发布服务动态" title="发布服务动态" onClick={() => { setPublishSubmitted(false); setIsPublishOpen(true); }} className="absolute bottom-24 right-5 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 p-0 text-white shadow-lg hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+      <button type="button" aria-label="发布服务动态" title="发布服务动态" onClick={() => { setPublishSubmitted(false); setIsPublishOpen(true); }} className="community-publish-fab">
         <Plus className="h-6 w-6" aria-hidden="true" />
       </button>
 
