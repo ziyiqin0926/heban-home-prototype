@@ -36,7 +36,7 @@ function MainApp() {
         />
       )}
       {activeTab === 'directory' && (
-        <Directory onNavigateToAgent={() => setActiveTab('agent')} />
+        <Directory onNavigateToAgent={() => setActiveTab('agent')} onNavigateToProfile={() => navigateToProfile('orders')} />
       )}
       {activeTab === 'community' && <Community onNavigateToAgent={() => setActiveTab('agent')} />}
       {activeTab === 'profile' && (
