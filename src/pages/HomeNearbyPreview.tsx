@@ -51,9 +51,11 @@ interface HomeNearbyPreviewProps {
   embedded?: boolean;
   onNavigateToDirectory?: () => void;
   onNavigateToPartner?: () => void;
+  onNavigateToAgent?: () => void;
+  onNavigateToProfile?: (view?: 'menu' | 'orders' | 'coupons') => void;
 }
 
-export default function HomeNearbyPreview({ embedded = false, onNavigateToDirectory, onNavigateToPartner }: HomeNearbyPreviewProps) {
+export default function HomeNearbyPreview({ embedded = false, onNavigateToDirectory, onNavigateToPartner, onNavigateToAgent, onNavigateToProfile }: HomeNearbyPreviewProps) {
   const [distance, setDistance] = useState(5);
   const [city, setCity] = useState('成都 · 玉林片区');
   const [dialog, setDialog] = useState('');
@@ -84,7 +86,7 @@ export default function HomeNearbyPreview({ embedded = false, onNavigateToDirect
           <button className="np-fusion-action blue" onClick={() => onNavigateToDirectory ? onNavigateToDirectory() : open('发布需求')}><ActionIllustration kind="publish" /><strong>发布需求<span className="np-action-arrow" aria-hidden="true"><ChevronRight size={16} /></span></strong><small>说清需要，找到合适小伴师傅</small></button>
           <button className="np-fusion-action green" onClick={() => onNavigateToPartner ? onNavigateToPartner() : open('成为小伴')}><ActionIllustration kind="join" /><strong>成为小伴<span className="np-action-arrow" aria-hidden="true"><ChevronRight size={16} /></span></strong><small>认证你的技能，接单变现</small></button>
         </section>
-        <section className="np-fusion-quick" aria-label="快捷功能"><button onClick={() => open('我的档案')}><CalendarDays size={22} /><strong>档案与档期</strong><small>家庭日历 · 履约排期</small></button><button onClick={() => open('进程订单')}><FilePenLine size={22} /><strong>进程订单</strong><small>1 笔进行中</small></button><button onClick={() => open('优惠卡兑换')}><WalletCards size={22} /><strong>优惠卡兑换</strong><small>权益与积分兑换</small></button><button onClick={() => open('意见反馈群')}><MessageCircle size={22} /><strong>意见反馈群</strong><small>反馈扫码进群</small></button></section>
+        <section className="np-fusion-quick" aria-label="快捷功能"><button onClick={() => onNavigateToAgent ? onNavigateToAgent() : open('我的档案')}><CalendarDays size={22} /><strong>档案与档期</strong><small>AI 助手智能排期，定规划省心省力</small></button><button onClick={() => onNavigateToProfile ? onNavigateToProfile('orders') : open('进程订单')}><FilePenLine size={22} /><strong>进程订单</strong><small>1 笔进行中</small></button><button onClick={() => onNavigateToProfile ? onNavigateToProfile('coupons') : open('优惠卡兑换')}><WalletCards size={22} /><strong>优惠卡兑换</strong><small>权益与积分兑换</small></button><button onClick={() => open('意见反馈群')}><MessageCircle size={22} /><strong>意见反馈群</strong><small>反馈扫码进群</small></button></section>
       </section>
       <section className="np-providers" id="np-providers"><div className="np-section-heading"><div><h2>就近可约</h2><small>真实服务案例 · 选择合适的小伴</small></div><button onClick={() => open('附近小伴')}>查看全部<ChevronRight size={14} /></button></div><div className="np-provider-grid">{visible.map((p, index) => <button className={`np-provider ${index === 0 ? 'np-provider-priority' : ''}`} key={p.name} onClick={() => open(p.name)}><span className={`np-case-media ${p.tone}`}><b>{index === 0 ? '陪诊' : index === 1 ? '宠陪' : '跑腿'}</b><small>{index === 0 ? '医院全程陪伴' : index === 1 ? '上门照护记录' : '同城代办服务'}</small></span><span className="np-provider-info"><strong>{p.name}<em>{p.tag}</em></strong><span>{p.service}</span><small><MapPin size={12} />{p.distance} 公里 · <ShieldCheck size={12} />平台认证</small></span><span className="np-order-cta"><b>¥{p.price}起</b><i>{index === 0 ? '立即选TA' : '查看详情'}</i></span></button>)}</div></section>
       <section className="np-profile-tools" id="np-personal"><div className="np-section-title"><h2>我的和伴</h2><span>每个人都有自己的服务空间</span></div><div className="np-tool-grid">{shortcuts.map(({ label, sub, icon: Icon }) => <button key={label} onClick={() => open(label)}><Icon size={21} /><strong>{label}</strong><small>{sub}</small></button>)}</div></section>
