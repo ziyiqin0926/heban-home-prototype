@@ -47,7 +47,7 @@ function RollingNumber({ value }: { value: number }) {
   return <b className="np-rolling-number">{shown.toLocaleString()}</b>;
 }
 
-export default function HomeNearbyPreview() {
+export default function HomeNearbyPreview({ embedded = false }: { embedded?: boolean }) {
   const [distance, setDistance] = useState(5);
   const [city, setCity] = useState('成都 · 玉林片区');
   const [dialog, setDialog] = useState('');
@@ -59,7 +59,7 @@ export default function HomeNearbyPreview() {
   const open = (title: string) => { setDialog(title); setSent(false); };
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-  return <div className="nearby-preview">
+  return <div className={`nearby-preview${embedded ? ' nearby-preview-embedded' : ''}`}>
     <header className="np-header"><div className="np-brand"><span>和</span><strong>和伴</strong></div><button className="np-place" onClick={() => open('切换片区')}><MapPin size={14} />{city}<ChevronDown size={13} /></button><div className="np-head-actions"><button className="np-icon" aria-label="消息" title="消息" onClick={() => open('消息')}><Bell size={19} /></button></div></header>
     <main>
       <section className="np-fusion-home" aria-label="和伴首页核心区域">
