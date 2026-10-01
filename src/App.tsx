@@ -11,6 +11,7 @@ import Directory from './pages/Directory';
 import Community from './pages/Community';
 import Profile from './pages/Profile';
 import HomeNearbyPreview from './pages/HomeNearbyPreview';
+import BecomePartner from './pages/BecomePartner';
 import './pages/HomeNearbyPreview.css';
 
 type ProfileView = 'menu' | 'orders' | 'coupons';
@@ -27,8 +28,13 @@ function MainApp() {
   return (
     <Layout activeTab={activeTab} onTabChange={setActiveTab}>
       {activeTab === 'home' && (
-        <HomeNearbyPreview embedded />
+        <HomeNearbyPreview
+          embedded
+          onNavigateToDirectory={() => setActiveTab('directory')}
+          onNavigateToPartner={() => setActiveTab('partner')}
+        />
       )}
+      {activeTab === 'partner' && <BecomePartner onBack={() => setActiveTab('home')} />}
       {activeTab === 'agent' && (
         <AiAgent
           onNavigateToCommunity={() => setActiveTab('community')}

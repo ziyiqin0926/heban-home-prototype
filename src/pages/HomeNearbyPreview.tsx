@@ -47,7 +47,13 @@ function RollingNumber({ value }: { value: number }) {
   return <b className="np-rolling-number">{shown.toLocaleString()}</b>;
 }
 
-export default function HomeNearbyPreview({ embedded = false }: { embedded?: boolean }) {
+interface HomeNearbyPreviewProps {
+  embedded?: boolean;
+  onNavigateToDirectory?: () => void;
+  onNavigateToPartner?: () => void;
+}
+
+export default function HomeNearbyPreview({ embedded = false, onNavigateToDirectory, onNavigateToPartner }: HomeNearbyPreviewProps) {
   const [distance, setDistance] = useState(5);
   const [city, setCity] = useState('成都 · 玉林片区');
   const [dialog, setDialog] = useState('');
@@ -75,8 +81,8 @@ export default function HomeNearbyPreview({ embedded = false }: { embedded?: boo
         </div>
         <section className="np-fusion-welcome"><span className="np-fusion-avatar">和</span><strong>嗨，把今天交给好陪伴</strong><button onClick={() => open('我的日程')}>我的日程<ChevronRight size={14} /></button></section>
         <section className="np-fusion-actions" aria-label="核心操作">
-          <button className="np-fusion-action blue" onClick={() => open('发布需求')}><ActionIllustration kind="publish" /><strong>发布需求<span className="np-action-arrow" aria-hidden="true"><ChevronRight size={16} /></span></strong><small>说清需要，找到合适陪伴</small></button>
-          <button className="np-fusion-action green" onClick={() => open('成为小伴')}><ActionIllustration kind="join" /><strong>成为小伴<span className="np-action-arrow" aria-hidden="true"><ChevronRight size={16} /></span></strong><small>认证你的技能，接单变现</small></button>
+          <button className="np-fusion-action blue" onClick={() => onNavigateToDirectory ? onNavigateToDirectory() : open('发布需求')}><ActionIllustration kind="publish" /><strong>发布需求<span className="np-action-arrow" aria-hidden="true"><ChevronRight size={16} /></span></strong><small>说清需要，找到合适小伴师傅</small></button>
+          <button className="np-fusion-action green" onClick={() => onNavigateToPartner ? onNavigateToPartner() : open('成为小伴')}><ActionIllustration kind="join" /><strong>成为小伴<span className="np-action-arrow" aria-hidden="true"><ChevronRight size={16} /></span></strong><small>认证你的技能，接单变现</small></button>
         </section>
         <section className="np-fusion-quick" aria-label="快捷功能"><button onClick={() => open('我的档案')}><CalendarDays size={22} /><strong>档案与档期</strong><small>家庭日历 · 履约排期</small></button><button onClick={() => open('进程订单')}><FilePenLine size={22} /><strong>进程订单</strong><small>1 笔进行中</small></button><button onClick={() => open('优惠卡兑换')}><WalletCards size={22} /><strong>优惠卡兑换</strong><small>权益与积分兑换</small></button><button onClick={() => open('意见反馈群')}><MessageCircle size={22} /><strong>意见反馈群</strong><small>反馈扫码进群</small></button></section>
       </section>
