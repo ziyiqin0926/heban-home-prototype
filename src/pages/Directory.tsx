@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronRight, FileEdit, MapPin, PawPrint, Plus, ShieldCheck, Sparkles, Stethoscope, Ticket, TramFront, Waves } from 'lucide-react';
+import { ArrowRight, ChevronDown, ChevronRight, FileEdit, MapPin, PawPrint, ShieldCheck, ShoppingCart, Sparkles, Stethoscope, Ticket, TramFront, Waves, X } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
+import ManualPublishForm from '../components/ManualPublishForm';
 
 interface DirectoryProps {
   onNavigateToAgent: () => void;
@@ -23,16 +24,21 @@ const categories = PLATFORM_CATEGORIES.map(cat => ({
   tone: cat.tone,
   heading: cat.fullName,
   detail: cat.detail,
-  services: cat.subServices.map(s => s.name)
+  services: cat.subServices
 }));
+
+type DirectoryService = (typeof categories)[number]['services'][number];
 
 export default function Directory({ onNavigateToAgent }: DirectoryProps) {
   const { currentCity } = useAppContext();
   const [activeId, setActiveId] = useState(categories[0].id);
   const [directoryMode, setDirectoryMode] = useState<'classic' | 'weekly'>('classic');
+  const [customPublishOpen, setCustomPublishOpen] = useState(false);
+  const [detailService, setDetailService] = useState<DirectoryService | null>(null);
+  const [cartOpen, setCartOpen] = useState(false);
   const activeCategory = categories.find(category => category.id === activeId) || categories[0];
   const ActiveIcon = activeCategory.icon;
-  const [cart, setCart] = useState<{ categoryId: string; items: string[] }>({ categoryId: '', items: [] });
+  const [cart, setCart] = useState<{ categoryId: string; items: DirectoryService[] }>({ categoryId: '', items: [] });
   const serviceImages = [
     'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=300&q=80',
     'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=300&q=80',
@@ -40,16 +46,19 @@ export default function Directory({ onNavigateToAgent }: DirectoryProps) {
     'https://images.unsplash.com/photo-1558788353-f76d92427f16?w=300&q=80',
     'https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=300&q=80'
   ];
-  const addToCart = (service: string) => {
+  const addToCart = (service: DirectoryService) => {
     if (cart.categoryId && cart.categoryId !== activeCategory.id) {
       alert('购物车一次只能选择一个一级分类的服务，请先清空当前购物车。');
       return;
     }
     setCart(prev => ({
       categoryId: activeCategory.id,
-      items: prev.items.includes(service) ? prev.items : [...prev.items, service]
+      items: prev.items.some(item => item.id === service.id) ? prev.items : [...prev.items, service]
     }));
   };
+  const serviceImage = (index: number) => serviceImages[index % serviceImages.length];
+  const servicePrice = (index: number) => [168, 120, 130, 200, 280][index % 5];
+  const closeDetail = () => setDetailService(null);
 
   return (
     <div className="directory-page min-h-full">
@@ -73,7 +82,14 @@ export default function Directory({ onNavigateToAgent }: DirectoryProps) {
 
       <div className="directory-note">
         <ShieldCheck />
-        <span>一级分类浏览，暂不设置二级标签；点击服务即可让 AI 生成需求单。</span>
+        <div>
+          <strong>不确定选哪项？</strong>
+          <span>自定义发布任务，直接说清楚你的需求。</span>
+        </div>
+        <button type="button" onClick={() => setCustomPublishOpen(true)}>
+          自定义发布任务
+          <ArrowRight />
+        </button>
       </div>
 
       <main className="directory-browser">
@@ -108,31 +124,61 @@ export default function Directory({ onNavigateToAgent }: DirectoryProps) {
 
           <div className="directory-service-list">
             {activeCategory.services.map((service, index) => (
-              <article key={service} className="directory-service">
-                <img src={serviceImages[index % serviceImages.length]} alt="" />
+              <article key={service.id} className="directory-service" onClick={() => setDetailService(service)}>
+                <img src={serviceImage(index)} alt="" />
                 <span>
-                  <strong>{service}</strong>
-                  <small>{directoryMode === 'classic' ? '和伴陪伴服务' : '本周优惠项目'}</small>
-                  <b>¥{[168, 120, 130, 200, 280][index % 5]} 起</b>
+                  <strong>{service.name}</strong>
+                  <small>{service.desc}</small>
+                  <em>#{service.tag}</em>
+                  <b>¥{servicePrice(index)} 起</b>
                 </span>
-                <button type="button" aria-label={`加入购物车：${service}`} onClick={() => addToCart(service)}><Plus /></button>
+                <button type="button" className="directory-service-arrow" aria-label={`查看${service.name}详情`} onClick={event => { event.stopPropagation(); setDetailService(service); }}><ChevronRight /></button>
               </article>
             ))}
           </div>
 
-          <button type="button" className="directory-ai-cta" onClick={onNavigateToAgent}>
+          <button type="button" className="directory-ai-cta" onClick={() => setCustomPublishOpen(true)}>
             <Sparkles />
-            <span>没有找到合适的服务？个性化定制点这~</span>
+            <span>没有找到合适的服务？发布自定义任务</span>
             <ChevronRight />
           </button>
         </section>
       </main>
       {cart.items.length > 0 && (
-        <button type="button" className="directory-cart" onClick={() => {
-          if (confirm(`购物车内有 ${cart.items.length} 项服务，进入下单？`)) onNavigateToAgent();
-        }}>
-        <span>🛒</span><b>{cart.items.length}</b><strong>¥{cart.items.length * 168}</strong>
+        <button type="button" className="directory-cart" onClick={() => setCartOpen(true)}>
+        <ShoppingCart /><b>{cart.items.length}</b><strong>¥{cart.items.reduce((sum, _, index) => sum + servicePrice(index), 0)}</strong><ChevronRight />
         </button>
+      )}
+      {detailService && (
+        <div className="directory-modal-backdrop" onClick={closeDetail}>
+          <section className="directory-detail-modal" role="dialog" aria-modal="true" onClick={event => event.stopPropagation()}>
+            <header><h3>{detailService.name}</h3><button type="button" aria-label="关闭详情" onClick={closeDetail}><X /></button></header>
+            <img src={serviceImage(activeCategory.services.findIndex(service => service.id === detailService.id))} alt="" />
+            <p>{detailService.desc}</p>
+            <div className="directory-detail-meta"><span>#{detailService.tag}</span><strong>平台参考价 ¥{servicePrice(activeCategory.services.findIndex(service => service.id === detailService.id))} 起</strong></div>
+            <div className="directory-detail-actions">
+              <button type="button" onClick={() => { addToCart(detailService); closeDetail(); }}>加入购物车</button>
+              <button type="button" onClick={() => { addToCart(detailService); closeDetail(); onNavigateToAgent(); }}>立即下单<ArrowRight /></button>
+            </div>
+          </section>
+        </div>
+      )}
+      {cartOpen && (
+        <div className="directory-modal-backdrop" onClick={() => setCartOpen(false)}>
+          <section className="directory-cart-modal" role="dialog" aria-modal="true" onClick={event => event.stopPropagation()}>
+            <header><div><h3>服务购物车</h3><small>{activeCategory.heading} · {cart.items.length} 项</small></div><button type="button" aria-label="关闭购物车" onClick={() => setCartOpen(false)}><X /></button></header>
+            <div className="directory-cart-items">{cart.items.map(item => <div key={item.id}><span>{item.name}</span><strong>已选</strong></div>)}</div>
+            <div className="directory-cart-footer"><button type="button" onClick={() => { setCart({ categoryId: '', items: [] }); setCartOpen(false); }}>清空</button><button type="button" onClick={() => { setCartOpen(false); onNavigateToAgent(); }}>去下单<ArrowRight /></button></div>
+          </section>
+        </div>
+      )}
+      {customPublishOpen && (
+        <div className="directory-modal-backdrop" onClick={() => setCustomPublishOpen(false)}>
+          <section className="directory-custom-modal" role="dialog" aria-modal="true" onClick={event => event.stopPropagation()}>
+            <header><div><h3>自定义发布任务</h3><small>把需求说清楚，平台帮你匹配合适的小伴</small></div><button type="button" aria-label="关闭自定义发布任务" onClick={() => setCustomPublishOpen(false)}><X /></button></header>
+            <ManualPublishForm onPublishSuccess={() => {}} onNavigateToCommunity={onNavigateToAgent} onNavigateToProfile={onNavigateToAgent} />
+          </section>
+        </div>
       )}
     </div>
   );
