@@ -5,6 +5,7 @@ import ManualPublishForm from '../components/ManualPublishForm';
 
 interface DirectoryProps {
   onNavigateToAgent: () => void;
+  onNavigateToProfile?: () => void;
 }
 
 import { PLATFORM_CATEGORIES } from '../data/categories';
@@ -29,7 +30,7 @@ const categories = PLATFORM_CATEGORIES.map(cat => ({
 
 type DirectoryService = (typeof categories)[number]['services'][number];
 
-export default function Directory({ onNavigateToAgent }: DirectoryProps) {
+export default function Directory({ onNavigateToAgent, onNavigateToProfile }: DirectoryProps) {
   const { currentCity } = useAppContext();
   const [activeId, setActiveId] = useState(categories[0].id);
   const [directoryMode, setDirectoryMode] = useState<'classic' | 'weekly'>('classic');
@@ -176,7 +177,7 @@ export default function Directory({ onNavigateToAgent }: DirectoryProps) {
         <div className="directory-modal-backdrop" onClick={() => setCustomPublishOpen(false)}>
           <section className="directory-custom-modal" role="dialog" aria-modal="true" onClick={event => event.stopPropagation()}>
             <header><div><h3>自定义发布任务</h3><small>把需求说清楚，平台帮你匹配合适的小伴</small></div><button type="button" aria-label="关闭自定义发布任务" onClick={() => setCustomPublishOpen(false)}><X /></button></header>
-            <ManualPublishForm onPublishSuccess={() => {}} onNavigateToCommunity={onNavigateToAgent} onNavigateToProfile={onNavigateToAgent} />
+            <ManualPublishForm onPublishSuccess={() => {}} onNavigateToCommunity={onNavigateToAgent} onNavigateToProfile={onNavigateToProfile || onNavigateToAgent} />
           </section>
         </div>
       )}
