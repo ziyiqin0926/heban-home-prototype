@@ -33,6 +33,7 @@ function MainApp() {
           embedded
           onNavigateToDirectory={() => setActiveTab('directory')}
           onNavigateToPartner={() => setActiveTab('partner')}
+          onNavigateToCommunity={() => setActiveTab('community')}
           onNavigateToAgent={() => {
             setPrefilledPrompt('请根据我的档案和日程，帮我智能规划近期陪伴与服务安排');
             setActiveTab('agent');
