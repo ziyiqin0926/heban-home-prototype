@@ -6,7 +6,6 @@
 import React, { useState } from 'react';
 import { AppProvider } from './context/AppContext';
 import Layout from './components/Layout';
-import Home from './pages/Home';
 import AiAgent from './pages/AiAgent';
 import Directory from './pages/Directory';
 import Community from './pages/Community';
@@ -28,11 +27,7 @@ function MainApp() {
   return (
     <Layout activeTab={activeTab} onTabChange={setActiveTab}>
       {activeTab === 'home' && (
-        <Home
-          onNavigateToAgent={() => setActiveTab('agent')}
-          onNavigateToCommunity={() => setActiveTab('community')}
-          onNavigateToProfile={navigateToProfile}
-        />
+        <HomeNearbyPreview embedded />
       )}
       {activeTab === 'agent' && (
         <AiAgent
@@ -57,7 +52,7 @@ function MainApp() {
 }
 
 export default function App() {
-  if (window.location.pathname === '/' || window.location.pathname === '/preview/home-nearby') {
+  if (window.location.pathname === '/preview/home-nearby') {
     return <HomeNearbyPreview />;
   }
 
