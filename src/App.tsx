@@ -57,7 +57,7 @@ function MainApp() {
 }
 
 export default function App() {
-  if (window.location.pathname === '/preview/home-nearby') {
+  if (window.location.pathname === '/' || window.location.pathname === '/preview/home-nearby') {
     return <HomeNearbyPreview />;
   }
 
