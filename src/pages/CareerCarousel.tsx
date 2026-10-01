@@ -49,7 +49,7 @@ export default function CareerCarousel() {
       {careers.map((career, index) => <figure key={career.id} className={`np-career-slide ${index === active ? 'is-active' : ''}`}
         aria-hidden={index !== active} data-career={career.id}>
         <figcaption className="np-career-copy"><span>{career.eyebrow}</span><h1>{career.lines[0]}<br />{career.lines[1]}</h1><p>{career.detail}</p></figcaption>
-        <div className="np-career-art"><img src={`/ip/careers/${career.image}`} alt={`${career.title}职业小马`} width="512" height="512" draggable={false} /></div>
+        <div className="np-career-art"><img src={`${import.meta.env.BASE_URL}ip/careers/${career.image}`} alt={`${career.title}职业小马`} width="512" height="512" draggable={false} /></div>
       </figure>)}
     </div>
     <div className="np-career-controls">
