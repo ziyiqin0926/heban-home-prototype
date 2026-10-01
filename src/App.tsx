@@ -11,6 +11,8 @@ import AiAgent from './pages/AiAgent';
 import Directory from './pages/Directory';
 import Community from './pages/Community';
 import Profile from './pages/Profile';
+import HomeNearbyPreview from './pages/HomeNearbyPreview';
+import './pages/HomeNearbyPreview.css';
 
 type ProfileView = 'menu' | 'orders' | 'coupons';
 
@@ -55,6 +57,10 @@ function MainApp() {
 }
 
 export default function App() {
+  if (window.location.pathname === '/preview/home-nearby') {
+    return <HomeNearbyPreview />;
+  }
+
   return (
     <AppProvider>
       <MainApp />
