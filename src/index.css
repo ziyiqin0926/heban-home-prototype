@@ -627,6 +627,38 @@ select:focus-visible {
   color: var(--blue);
 }
 
+.directory-note > div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.directory-note strong {
+  color: #315277;
+  font-size: 12px;
+}
+
+.directory-note > button {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex: 0 0 auto;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--blue);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.directory-note > button svg {
+  width: 13px;
+  height: 13px;
+  color: currentColor;
+}
+
 .directory-list {
   display: grid;
   gap: 12px;
@@ -930,6 +962,14 @@ select:focus-visible {
   font-size: 12px;
 }
 
+.directory-service em {
+  display: block;
+  margin-top: 1px;
+  color: #7d91a8;
+  font-size: 9px;
+  font-style: normal;
+}
+
 .directory-service > button {
   width: 34px;
   height: 34px;
@@ -973,6 +1013,172 @@ select:focus-visible {
   background: white;
   color: #ef4444;
   font-size: 11px;
+}
+
+.directory-modal-backdrop {
+  position: fixed;
+  z-index: 60;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 12px;
+  background: rgba(18, 36, 58, .42);
+}
+
+.directory-detail-modal,
+.directory-cart-modal,
+.directory-custom-modal {
+  width: min(100%, 520px);
+  max-height: 90vh;
+  overflow: auto;
+  border: 1px solid #dce6f2;
+  border-radius: 22px 22px 12px 12px;
+  background: #fff;
+  box-shadow: 0 18px 60px rgba(27, 55, 90, .24);
+}
+
+.directory-detail-modal header,
+.directory-cart-modal header,
+.directory-custom-modal header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 18px 12px;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.directory-detail-modal header h3,
+.directory-cart-modal header h3,
+.directory-custom-modal header h3 {
+  margin: 0;
+  color: #243752;
+  font-size: 17px;
+}
+
+.directory-cart-modal header small,
+.directory-custom-modal header small {
+  display: block;
+  margin-top: 4px;
+  color: #91a0b1;
+  font-size: 10px;
+}
+
+.directory-detail-modal header button,
+.directory-cart-modal header button,
+.directory-custom-modal header button {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  border: 0;
+  border-radius: 50%;
+  color: #718198;
+  background: #f2f6fa;
+}
+
+.directory-detail-modal > img {
+  display: block;
+  width: calc(100% - 36px);
+  height: 170px;
+  margin: 18px;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+.directory-detail-modal > p {
+  margin: 0 18px;
+  color: #687b91;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.directory-detail-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 18px 0;
+  color: #7890a6;
+  font-size: 10px;
+}
+
+.directory-detail-meta strong {
+  color: #ef5550;
+  font-size: 14px;
+}
+
+.directory-detail-actions,
+.directory-cart-footer {
+  display: flex;
+  gap: 9px;
+  padding: 16px 18px 18px;
+}
+
+.directory-detail-actions button,
+.directory-cart-footer button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 40px;
+  flex: 1;
+  border: 0;
+  border-radius: 12px;
+  color: #2869d8;
+  background: #edf4ff;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.directory-detail-actions button:last-child,
+.directory-cart-footer button:last-child {
+  color: #fff;
+  background: #2869d8;
+}
+
+.directory-cart-items {
+  display: grid;
+  gap: 8px;
+  padding: 14px 18px 0;
+}
+
+.directory-cart-items > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 12px;
+  border: 1px solid #e7eef6;
+  border-radius: 12px;
+  color: #40536a;
+  font-size: 12px;
+}
+
+.directory-cart-items strong {
+  color: #2d8d6c;
+  font-size: 10px;
+}
+
+.directory-cart-footer button:first-child {
+  color: #8292a6;
+  background: #f3f6f9;
+}
+
+.directory-custom-modal {
+  max-height: 92vh;
+}
+
+.directory-custom-modal .manual-page {
+  max-height: calc(92vh - 72px);
+}
+
+@media (min-width: 640px) {
+  .directory-modal-backdrop {
+    align-items: center;
+  }
 }
 
 @media (min-width: 640px) {
