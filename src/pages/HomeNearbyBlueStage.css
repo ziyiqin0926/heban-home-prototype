@@ -98,3 +98,49 @@
   .nearby-preview .np-fusion-actions .np-fusion-action { min-height: 160px; padding: 7px 4px; }
   .nearby-preview .np-fusion-actions .np-fusion-action > .np-action-art { height: 59px; margin-bottom: 3px; transform: scale(.8); transform-origin: center top; }
 }
+
+.nearby-preview .np-community-contribute {
+  margin: 0 15px 14px;
+  padding: 12px;
+  border: 1px solid #d5e5f7;
+  border-radius: 13px;
+  background: linear-gradient(135deg, #f4f9ff, #edf7f5);
+}
+
+.nearby-preview .np-community-contribute-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nearby-preview .np-community-contribute-icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  border-radius: 10px;
+  color: #286bd1;
+  background: #dceaff;
+}
+
+.nearby-preview .np-community-contribute-head > div {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  gap: 3px;
+}
+
+.nearby-preview .np-community-contribute-head strong { color: #29415d; font-size: 11px; }
+.nearby-preview .np-community-contribute-head small { overflow: hidden; color: #8295aa; font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }
+.nearby-preview .np-community-contribute-head button { display: inline-flex; align-items: center; gap: 2px; border: 0; color: #286bd1; background: transparent; font-size: 9px; font-weight: 800; white-space: nowrap; }
+.nearby-preview .np-community-contribute-tags { display: flex; align-items: center; gap: 5px; margin-top: 10px; overflow: hidden; }
+.nearby-preview .np-community-contribute-tags span { padding: 4px 7px; border-radius: 8px; color: #4c739f; background: #fff; font-size: 8px; white-space: nowrap; }
+.nearby-preview .np-community-contribute-tags small { margin-left: auto; color: #8da0b3; font-size: 8px; white-space: nowrap; }
+
+@media (max-width: 375px) {
+  .nearby-preview .np-community-contribute { margin-inline: 12px; padding: 10px; }
+  .nearby-preview .np-community-contribute-head strong { font-size: 10px; }
+  .nearby-preview .np-community-contribute-head small,
+  .nearby-preview .np-community-contribute-tags small { font-size: 7px; }
+}
