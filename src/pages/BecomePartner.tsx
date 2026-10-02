@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { ArrowLeft, ArrowRight, BadgeCheck, BriefcaseBusiness, Check, ChevronRight, FileCheck2, MapPin, Phone, ShieldCheck, UserRound } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { ArrowLeft, ArrowRight, BadgeCheck, BriefcaseBusiness, CalendarDays, Check, ChevronRight, Clock3, FileCheck2, MapPin, Phone, ShieldCheck, Sparkles, UserRound } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
+import './BecomePartner.css';
 
 interface BecomePartnerProps {
   onBack: () => void;
@@ -17,7 +18,14 @@ export default function BecomePartner({ onBack }: BecomePartnerProps) {
   const { currentCity } = useAppContext();
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
+  const [heroSlide, setHeroSlide] = useState(0);
+  const [heroPaused, setHeroPaused] = useState(false);
   const [form, setForm] = useState({ name: '', phone: '', idNumber: '', wechat: '', skills: [] as string[] });
+  useEffect(() => {
+    if (heroPaused) return;
+    const timer = window.setInterval(() => setHeroSlide(current => (current + 1) % 2), 4000);
+    return () => window.clearInterval(timer);
+  }, [heroPaused]);
 
   const update = (key: keyof typeof form, value: string) => setForm(prev => ({ ...prev, [key]: value }));
   const toggleSkill = (id: string) => setForm(prev => ({
@@ -47,9 +55,18 @@ export default function BecomePartner({ onBack }: BecomePartnerProps) {
     <div className="partner-page">
       <header className="partner-header"><button type="button" onClick={onBack} aria-label="返回首页"><ArrowLeft /></button><strong>申请成为小伴</strong><span className="partner-header-status">平台认证</span></header>
       <main className="partner-main">
-        <section className="partner-hero">
-          <span className="partner-hero-icon"><BriefcaseBusiness /></span>
-          <div><span>和伴小伴师傅入驻</span><h1>把你的真实技能<br />变成可持续的服务</h1><p>完成基础实名与联系方式登记，先提交入驻申请。</p></div>
+        <section className="partner-hero-carousel" aria-label="成为小伴介绍" onMouseEnter={() => setHeroPaused(true)} onMouseLeave={() => setHeroPaused(false)} onFocusCapture={() => setHeroPaused(true)} onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setHeroPaused(false); }}>
+          <div className={`partner-hero partner-hero-slide ${heroSlide === 0 ? 'active' : ''}`}>
+            <span className="partner-hero-icon"><BriefcaseBusiness /></span>
+            <div><span>和伴小伴师傅入驻</span><h1>把你的真实技能<br />展示给大家，变成可持续的服务</h1><p>完善技能名片，让每一项真实能力都被看见。</p></div>
+            <div className="partner-skill-card" aria-hidden="true"><BadgeCheck size={14} /><strong>技能名片</strong><small>陪诊 · 宠陪 · 同城任务</small><i>已认证</i></div>
+          </div>
+          <div className={`partner-hero partner-hero-slide ${heroSlide === 1 ? 'active' : ''}`}>
+            <span className="partner-hero-icon"><CalendarDays /></span>
+            <div><span>和伴小伴师傅入驻</span><h1>多技能灵活接单<br />让每个时段都能创造价值</h1><p>按自己的时间安排服务，逐步积累口碑与收入。</p></div>
+            <div className="partner-calendar-card" aria-hidden="true"><CalendarDays size={42} /><div><span><Clock3 size={12} />上午 陪诊</span><span><Sparkles size={12} />下午 宠陪</span><span><Check size={12} />晚间 同城</span></div><img src={`${import.meta.env.BASE_URL}ip/heban-pony-transparent.png`} alt="" /></div>
+          </div>
+          <div className="partner-hero-dots">{[0, 1].map(index => <button key={index} type="button" aria-label={`查看第${index + 1}张介绍`} aria-pressed={heroSlide === index} onClick={() => setHeroSlide(index)}><span /></button>)}</div>
         </section>
 
         <div className="partner-steps" aria-label="入驻进度">
