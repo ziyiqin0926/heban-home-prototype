@@ -19,6 +19,7 @@ type ProfileView = 'menu' | 'orders' | 'coupons';
 function MainApp() {
   const [activeTab, setActiveTab] = useState('home');
   const [profileView, setProfileView] = useState<ProfileView>('menu');
+  const [directorySearch, setDirectorySearch] = useState('');
   const { setPrefilledPrompt } = useAppContext();
 
   const navigateToProfile = (view: ProfileView = 'menu') => {
@@ -31,7 +32,10 @@ function MainApp() {
       {activeTab === 'home' && (
         <HomeNearbyPreview
           embedded
-          onNavigateToDirectory={() => setActiveTab('directory')}
+          onNavigateToDirectory={(query = '') => {
+            setDirectorySearch(query);
+            setActiveTab('directory');
+          }}
           onNavigateToPartner={() => setActiveTab('partner')}
           onNavigateToCommunity={() => setActiveTab('community')}
           onNavigateToAgent={() => {
@@ -49,7 +53,7 @@ function MainApp() {
         />
       )}
       {activeTab === 'directory' && (
-        <Directory onNavigateToAgent={() => setActiveTab('agent')} onNavigateToProfile={() => navigateToProfile('orders')} />
+        <Directory initialQuery={directorySearch} onNavigateToAgent={() => setActiveTab('agent')} onNavigateToProfile={() => navigateToProfile('orders')} />
       )}
       {activeTab === 'community' && <Community onNavigateToAgent={() => setActiveTab('agent')} />}
       {activeTab === 'profile' && (

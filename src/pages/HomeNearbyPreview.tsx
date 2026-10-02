@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Bell, CalendarDays, ChevronDown, ChevronRight, FilePenLine, Home, MapPin, Plus, Send, ShieldCheck, Sparkles, UserRound, X, BadgeCheck, BriefcaseBusiness, WalletCards, MessageCircle } from 'lucide-react';
+import { Bell, CalendarDays, ChevronDown, ChevronRight, FilePenLine, Home, MapPin, Plus, Search, Send, ShieldCheck, Sparkles, UserRound, X, BadgeCheck, BriefcaseBusiness, WalletCards, MessageCircle } from 'lucide-react';
 import './HomeNearbyPreview.css';
 import './HomeNearbyBlueStage.css';
 import CareerCarousel from './CareerCarousel';
@@ -45,7 +45,7 @@ function RollingNumber({ value }: { value: number }) {
 
 interface HomeNearbyPreviewProps {
   embedded?: boolean;
-  onNavigateToDirectory?: () => void;
+  onNavigateToDirectory?: (query?: string) => void;
   onNavigateToPartner?: () => void;
   onNavigateToCommunity?: () => void;
   onNavigateToAgent?: () => void;
@@ -58,6 +58,7 @@ export default function HomeNearbyPreview({ embedded = false, onNavigateToDirect
   const [dialog, setDialog] = useState('');
   const [sent, setSent] = useState(false);
   const [draft, setDraft] = useState('');
+  const [serviceQuery, setServiceQuery] = useState('');
   const visible = providers.filter(p => distance === 99 || p.distance <= distance);
   const radius = radiusStats[distance];
   const availability = getAvailability(radius.available);
@@ -68,6 +69,11 @@ export default function HomeNearbyPreview({ embedded = false, onNavigateToDirect
     <header className="np-header"><div className="np-brand"><span>和</span><strong>和伴</strong></div><button className="np-place" onClick={() => open('切换片区')}><MapPin size={14} />{city}<ChevronDown size={13} /></button><div className="np-head-actions"><button className="np-icon" aria-label="消息" title="消息" onClick={() => open('消息')}><Bell size={19} /></button></div></header>
     <main>
       <section className="np-fusion-home" aria-label="和伴首页核心区域">
+        <form className="np-home-search" role="search" onSubmit={event => { event.preventDefault(); onNavigateToDirectory ? onNavigateToDirectory(serviceQuery.trim()) : open('服务搜索'); }}>
+          <Search size={17} aria-hidden="true" />
+          <input value={serviceQuery} onChange={event => setServiceQuery(event.target.value)} placeholder="输入服务关键词" aria-label="输入服务关键词" />
+          {serviceQuery && <button type="button" aria-label="清空搜索" onClick={() => setServiceQuery('')}><X size={14} /></button>}
+        </form>
         <div className="np-blue-stage">
         <section className="np-fusion-hero"><CareerCarousel /></section>
         <section className="np-presence" aria-label="附近服务数据">
