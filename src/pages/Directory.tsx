@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { ArrowRight, ChevronDown, ChevronRight, FileEdit, MapPin, PawPrint, ShieldCheck, ShoppingCart, Sparkles, Stethoscope, Ticket, TramFront, Waves, X } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { ArrowRight, ChevronDown, ChevronRight, FileEdit, MapPin, PawPrint, Search, ShieldCheck, ShoppingCart, Sparkles, Stethoscope, Ticket, TramFront, Waves, X } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import ManualPublishForm from '../components/ManualPublishForm';
 
 interface DirectoryProps {
   onNavigateToAgent: () => void;
   onNavigateToProfile?: () => void;
+  initialQuery?: string;
 }
 
 import { PLATFORM_CATEGORIES } from '../data/categories';
@@ -30,16 +31,25 @@ const categories = PLATFORM_CATEGORIES.map(cat => ({
 
 type DirectoryService = (typeof categories)[number]['services'][number];
 
-export default function Directory({ onNavigateToAgent, onNavigateToProfile }: DirectoryProps) {
+export default function Directory({ onNavigateToAgent, onNavigateToProfile, initialQuery = '' }: DirectoryProps) {
   const { currentCity } = useAppContext();
   const [activeId, setActiveId] = useState(categories[0].id);
   const [directoryMode, setDirectoryMode] = useState<'classic' | 'weekly'>('classic');
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [customPublishOpen, setCustomPublishOpen] = useState(false);
   const [detailService, setDetailService] = useState<DirectoryService | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
   const activeCategory = categories.find(category => category.id === activeId) || categories[0];
   const ActiveIcon = activeCategory.icon;
   const [cart, setCart] = useState<{ categoryId: string; items: DirectoryService[] }>({ categoryId: '', items: [] });
+  useEffect(() => setSearchQuery(initialQuery), [initialQuery]);
+  const searchResults = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return [];
+    return categories.flatMap(category => category.services
+      .filter(service => [category.title, category.heading, category.detail, service.name, service.desc, service.tag].some(value => value.toLowerCase().includes(query)))
+      .map(service => ({ category, service })));
+  }, [searchQuery]);
   const serviceImages = [
     'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=300&q=80',
     'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=300&q=80',
@@ -64,6 +74,11 @@ export default function Directory({ onNavigateToAgent, onNavigateToProfile }: Di
   return (
     <div className="directory-page min-h-full">
       <section className="directory-promo">
+        <div className="directory-search">
+          <Search />
+          <input value={searchQuery} onChange={event => setSearchQuery(event.target.value)} placeholder="输入服务关键词" aria-label="输入服务关键词" />
+          {searchQuery && <button type="button" aria-label="清空搜索" onClick={() => setSearchQuery('')}><X /></button>}
+        </div>
         <button type="button" className="directory-location">
           <MapPin />
           <strong>{currentCity}市</strong>
@@ -116,27 +131,28 @@ export default function Directory({ onNavigateToAgent, onNavigateToProfile }: Di
             <div>
               <span className={`directory-results-icon ${activeCategory.tone}`}><ActiveIcon /></span>
               <div>
-                <h2>{activeCategory.heading}</h2>
-                <p>{activeCategory.detail}</p>
+                <h2>{searchQuery.trim() ? `搜索结果${searchResults.length ? ` · ${searchResults.length} 项` : ''}` : activeCategory.heading}</h2>
+                <p>{searchQuery.trim() ? `匹配一级分类、服务项目与标签：${searchQuery}` : activeCategory.detail}</p>
               </div>
             </div>
             <small>{directoryMode === 'classic' ? '热门服务' : '本周精选'}</small>
           </div>
 
           <div className="directory-service-list">
-            {activeCategory.services.map((service, index) => (
-              <article key={service.id} className="directory-service" onClick={() => setDetailService(service)}>
+            {(searchQuery.trim() ? searchResults : activeCategory.services.map(service => ({ category: activeCategory, service }))).map(({ category, service }, index) => (
+              <article key={`${category.id}-${service.id}`} className="directory-service" onClick={() => { setActiveId(category.id); setDetailService(service); }}>
                 <img src={serviceImage(index)} alt="" />
                 <span>
                   <strong>{service.name}</strong>
                   <small>{service.desc}</small>
-                  <em>#{service.tag}</em>
+                  <em>{searchQuery.trim() ? `${category.title} · ` : ''}#{service.tag}</em>
                   <b>¥{servicePrice(index)} 起</b>
                 </span>
-                <button type="button" className="directory-service-arrow" aria-label={`查看${service.name}详情`} onClick={event => { event.stopPropagation(); setDetailService(service); }}><ChevronRight /></button>
+                <button type="button" className="directory-service-arrow" aria-label={`查看${service.name}详情`} onClick={event => { event.stopPropagation(); setActiveId(category.id); setDetailService(service); }}><ChevronRight /></button>
               </article>
             ))}
           </div>
+          {searchQuery.trim() && !searchResults.length && <div className="directory-search-empty">没有找到匹配服务，可尝试搜索“陪诊”“取药”“遛狗”或发布自定义任务。</div>}
 
           <button type="button" className="directory-ai-cta" onClick={() => setCustomPublishOpen(true)}>
             <Sparkles />

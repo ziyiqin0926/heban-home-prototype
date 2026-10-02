@@ -855,6 +855,33 @@ select:focus-visible {
   box-shadow: 0 3px 12px rgba(44, 74, 112, .08);
 }
 
+.directory-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 88%;
+  min-height: 42px;
+  margin: 0 auto 10px;
+  padding: 0 12px;
+  border: 1px solid #dce6f1;
+  border-radius: 13px;
+  color: #8aa0ba;
+  background: #f7faff;
+}
+
+.directory-search:focus-within {
+  border-color: #6e9fe5;
+  background: #fff;
+  box-shadow: 0 0 0 3px #6e9fe51c;
+}
+
+.directory-search > svg { width: 17px; height: 17px; flex: 0 0 17px; }
+.directory-search input { width: 100%; min-width: 0; border: 0; outline: 0; color: var(--ink); background: transparent; font-size: 12px; }
+.directory-search input::placeholder { color: #9aabbd; }
+.directory-search button { display: grid; place-items: center; flex: 0 0 22px; width: 22px; height: 22px; border: 0; border-radius: 50%; color: #8296ad; background: #eaf0f7; }
+.directory-search button svg { width: 13px; height: 13px; }
+.directory-search-empty { margin: 10px 0; padding: 18px 12px; border: 1px dashed #cbd9e8; border-radius: 10px; color: #8395aa; background: #f9fbfd; font-size: 11px; line-height: 1.6; text-align: center; }
+
 .directory-location {
   display: flex;
   align-items: center;
