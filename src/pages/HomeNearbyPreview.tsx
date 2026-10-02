@@ -46,13 +46,14 @@ function RollingNumber({ value }: { value: number }) {
 interface HomeNearbyPreviewProps {
   embedded?: boolean;
   onNavigateToDirectory?: (query?: string) => void;
+  onNavigateToPublish?: () => void;
   onNavigateToPartner?: () => void;
   onNavigateToCommunity?: () => void;
   onNavigateToAgent?: () => void;
   onNavigateToProfile?: (view?: 'menu' | 'orders' | 'coupons') => void;
 }
 
-export default function HomeNearbyPreview({ embedded = false, onNavigateToDirectory, onNavigateToPartner, onNavigateToCommunity, onNavigateToAgent, onNavigateToProfile }: HomeNearbyPreviewProps) {
+export default function HomeNearbyPreview({ embedded = false, onNavigateToDirectory, onNavigateToPublish, onNavigateToPartner, onNavigateToCommunity, onNavigateToAgent, onNavigateToProfile }: HomeNearbyPreviewProps) {
   const [distance, setDistance] = useState(5);
   const [city, setCity] = useState('成都 · 玉林片区');
   const [dialog, setDialog] = useState('');
@@ -103,7 +104,7 @@ export default function HomeNearbyPreview({ embedded = false, onNavigateToDirect
         </div>
         <section className="np-fusion-welcome"><span className="np-fusion-avatar">和</span><strong>嗨，把今天交给好陪伴</strong><button onClick={() => open('我的日程')}>我的日程<ChevronRight size={14} /></button></section>
         <section className="np-fusion-actions" aria-label="核心操作">
-          <button className="np-fusion-action blue" onClick={() => onNavigateToDirectory ? onNavigateToDirectory() : open('发布需求')}><ActionIllustration kind="publish" /><strong>发布需求<span className="np-action-arrow" aria-hidden="true"><ChevronRight size={16} /></span></strong><small>说清需要，找到合适小伴师傅</small></button>
+          <button className="np-fusion-action blue" onClick={() => onNavigateToPublish ? onNavigateToPublish() : onNavigateToDirectory ? onNavigateToDirectory() : open('发布需求')}><ActionIllustration kind="publish" /><strong>发布需求<span className="np-action-arrow" aria-hidden="true"><ChevronRight size={16} /></span></strong><small>说清需要，找到合适小伴师傅</small></button>
           <button className="np-fusion-action green" onClick={() => onNavigateToPartner ? onNavigateToPartner() : open('成为小伴')}><ActionIllustration kind="join" /><strong>成为小伴<span className="np-action-arrow" aria-hidden="true"><ChevronRight size={16} /></span></strong><small>认证你的技能，欢迎各位自由职业者来到发挥热爱的价值之地</small></button>
         </section>
         <section className="np-fusion-quick" aria-label="快捷功能"><button onClick={() => onNavigateToAgent ? onNavigateToAgent() : open('我的档案')}><CalendarDays size={22} /><strong>档案与档期</strong><small>AI 助手智能排期，定规划省心省力</small></button><button onClick={() => onNavigateToProfile ? onNavigateToProfile('orders') : open('进程订单')}><FilePenLine size={22} /><strong>进程订单</strong><small>1 笔进行中</small></button><button onClick={() => onNavigateToProfile ? onNavigateToProfile('coupons') : open('优惠卡兑换')}><WalletCards size={22} /><strong>优惠卡兑换</strong><small>权益与积分兑换</small></button><button onClick={() => open('意见反馈群')}><MessageCircle size={22} /><strong>意见反馈群</strong><small>反馈扫码进群</small></button></section>
@@ -119,7 +120,7 @@ export default function HomeNearbyPreview({ embedded = false, onNavigateToDirect
       </section>
       <section className="np-income"><div><span className="np-income-icon"><Sparkles size={20} /></span><span><strong>技能变现中心</strong><small>把已认证技能转成可报价服务</small></span></div><button onClick={() => open('技能钱包')}>查看收益<ChevronRight size={15} /></button></section>
     </main>
-    <div className="np-fixed"><button className="np-publish" aria-label="发布需求" onClick={() => open('发布需求')}><Plus size={24} /></button><nav className="np-nav">{[{ label: '首页', icon: Home, id: '' }, { label: '附近', icon: MapPin, id: 'np-providers' }, { label: '发布', icon: Plus, id: '' }, { label: '我的', icon: UserRound, id: 'np-personal' }].map(({ label, icon: Icon, id }) => <button key={label} className={label === '首页' ? 'active' : ''} onClick={() => id ? scrollTo(id) : label === '发布' ? open('发布需求') : document.querySelector('.nearby-preview')?.scrollTo({ top: 0, behavior: 'smooth' })}><Icon size={21} /><span>{label}</span></button>)}</nav></div>
+    <div className="np-fixed"><button className="np-publish" aria-label="发布需求" onClick={() => onNavigateToPublish ? onNavigateToPublish() : open('发布需求')}><Plus size={24} /></button><nav className="np-nav">{[{ label: '首页', icon: Home, id: '' }, { label: '附近', icon: MapPin, id: 'np-providers' }, { label: '发布', icon: Plus, id: '' }, { label: '我的', icon: UserRound, id: 'np-personal' }].map(({ label, icon: Icon, id }) => <button key={label} className={label === '首页' ? 'active' : ''} onClick={() => id ? scrollTo(id) : label === '发布' ? onNavigateToPublish ? onNavigateToPublish() : open('发布需求') : document.querySelector('.nearby-preview')?.scrollTo({ top: 0, behavior: 'smooth' })}><Icon size={21} /><span>{label}</span></button>)}</nav></div>
     {dialog && <div className="np-overlay" onClick={() => setDialog('')}><section role="dialog" aria-modal="true" className="np-sheet" onClick={e => e.stopPropagation()}><header><h2>{dialog}</h2><button className="np-icon" aria-label="关闭" onClick={() => setDialog('')}><X size={20} /></button></header>{dialog === '切换片区' ? <div className="np-city-options">{['成都 · 玉林片区', '成都 · 高新区', '北京 · 朝阳区'].map(place => <button key={place} onClick={() => { setCity(place); setDistance(99); setDialog(''); }}>{place}<ChevronRight size={16} /></button>)}</div> : dialog === '发布需求' ? sent ? <p role="status">已完成本地预览，未向平台提交。</p> : <form onSubmit={e => { e.preventDefault(); setSent(true); }}><textarea required value={draft} onChange={e => setDraft(e.target.value)} placeholder="说说你需要什么帮助…" /><small>独立预览，不产生真实订单。</small><button className="np-primary" type="submit"><Send size={16} />预览提交</button></form> : <><p>{dialog === '我的日程' ? '这里将管理个人档案、服务时间和进行中订单。' : '当前为首页独立体验稿，此入口尚未连接正式业务。'}</p><button className="np-primary" onClick={() => setDialog('')}>返回首页</button></>}</section></div>}
   </div>;
 }

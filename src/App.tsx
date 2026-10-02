@@ -12,6 +12,7 @@ import Community from './pages/Community';
 import Profile from './pages/Profile';
 import HomeNearbyPreview from './pages/HomeNearbyPreview';
 import BecomePartner from './pages/BecomePartner';
+import PublishRequest from './pages/PublishRequest';
 import './pages/HomeNearbyPreview.css';
 
 type ProfileView = 'menu' | 'orders' | 'coupons';
@@ -32,6 +33,7 @@ function MainApp() {
       {activeTab === 'home' && (
         <HomeNearbyPreview
           embedded
+          onNavigateToPublish={() => setActiveTab('publish')}
           onNavigateToDirectory={(query = '') => {
             setDirectorySearch(query);
             setActiveTab('directory');
@@ -46,6 +48,7 @@ function MainApp() {
         />
       )}
       {activeTab === 'partner' && <BecomePartner onBack={() => setActiveTab('home')} />}
+      {activeTab === 'publish' && <PublishRequest onBack={() => setActiveTab('home')} onNavigateToCommunity={() => setActiveTab('community')} />}
       {activeTab === 'agent' && (
         <AiAgent
           onNavigateToCommunity={() => setActiveTab('community')}
@@ -70,7 +73,11 @@ function MainApp() {
 
 export default function App() {
   if (window.location.pathname === '/preview/home-nearby') {
-    return <HomeNearbyPreview />;
+    return (
+      <AppProvider>
+        <PreviewHome />
+      </AppProvider>
+    );
   }
 
   return (
@@ -78,4 +85,12 @@ export default function App() {
       <MainApp />
     </AppProvider>
   );
+}
+
+function PreviewHome() {
+  const [view, setView] = useState<'home' | 'publish'>('home');
+  if (view === 'publish') {
+    return <PublishRequest onBack={() => setView('home')} onNavigateToCommunity={() => setView('home')} />;
+  }
+  return <HomeNearbyPreview onNavigateToPublish={() => setView('publish')} />;
 }
