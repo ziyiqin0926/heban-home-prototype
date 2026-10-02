@@ -88,9 +88,12 @@ export default function App() {
 }
 
 function PreviewHome() {
-  const [view, setView] = useState<'home' | 'publish'>('home');
+  const [view, setView] = useState<'home' | 'publish' | 'community'>('home');
   if (view === 'publish') {
-    return <PublishRequest onBack={() => setView('home')} onNavigateToCommunity={() => setView('home')} />;
+    return <PublishRequest onBack={() => setView('home')} onNavigateToCommunity={() => setView('community')} />;
+  }
+  if (view === 'community') {
+    return <Community onNavigateToAgent={() => setView('home')} />;
   }
   return <HomeNearbyPreview onNavigateToPublish={() => setView('publish')} />;
 }
