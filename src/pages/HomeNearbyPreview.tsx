@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Bell, CalendarDays, ChevronDown, ChevronRight, FilePenLine, Home, MapPin, Plus, Search, Send, ShieldCheck, Sparkles, UserRound, X, BadgeCheck, BriefcaseBusiness, WalletCards, MessageCircle } from 'lucide-react';
+import { Bell, CalendarDays, ChevronDown, ChevronRight, FilePenLine, Home, MapPin, Plus, Search, Send, ShieldCheck, Sparkles, UserRound, X, BadgeCheck, BriefcaseBusiness, WalletCards, MessageCircle, Star, RefreshCw } from 'lucide-react';
 import './HomeNearbyPreview.css';
 import './HomeNearbyBlueStage.css';
 import CareerCarousel from './CareerCarousel';
@@ -9,9 +9,9 @@ const providers = [
   { name: '周老师', distance: 1.7, service: '宠物陪伴 · 上门照顾', tag: '今日可约', price: '98', tone: 'green' },
   { name: '陈师傅', distance: 3.4, service: '同城跑腿 · 代办取送', tag: '3 分钟响应', price: '45', tone: 'gold' },
 ];
-const radiusStats: Record<number, { active: number; available: number; label: string }> = {
-  1: { active: 186, available: 24, label: '1公里内' }, 3: { active: 428, available: 68, label: '3公里内' },
-  5: { active: 1286, available: 328, label: '5公里内' }, 99: { active: 3680, available: 726, label: '全城' },
+const radiusStats: Record<number, { active: number; available: number; rating: number; label: string }> = {
+  1: { active: 186, available: 24, rating: 4.8, label: '1公里内' }, 3: { active: 428, available: 68, rating: 4.8, label: '3公里内' },
+  5: { active: 1286, available: 328, rating: 4.9, label: '5公里内' }, 99: { active: 3680, available: 726, rating: 4.9, label: '全城' },
 };
 const getAvailability = (available: number) => available < 50 ? { tone: 'critical', label: '服务者不足' } : available < 120 ? { tone: 'warning', label: '服务者紧张' } : { tone: 'ready', label: '服务者充足' };
 
@@ -59,9 +59,21 @@ export default function HomeNearbyPreview({ embedded = false, onNavigateToDirect
   const [sent, setSent] = useState(false);
   const [draft, setDraft] = useState('');
   const [serviceQuery, setServiceQuery] = useState('');
+  const [lastUpdatedAt, setLastUpdatedAt] = useState(() => Date.now() - 5 * 60 * 1000);
+  const [, setClock] = useState(() => Date.now());
   const visible = providers.filter(p => distance === 99 || p.distance <= distance);
   const radius = radiusStats[distance];
   const availability = getAvailability(radius.available);
+  useEffect(() => {
+    const refreshTimer = window.setInterval(() => setLastUpdatedAt(Date.now()), 5 * 60 * 1000);
+    const clockTimer = window.setInterval(() => setClock(Date.now()), 60 * 1000);
+    return () => {
+      window.clearInterval(refreshTimer);
+      window.clearInterval(clockTimer);
+    };
+  }, []);
+  const updatedMinutes = Math.max(0, Math.floor((Date.now() - lastUpdatedAt) / 60000));
+  const updatedLabel = updatedMinutes === 0 ? '刚刚更新' : `${updatedMinutes}分钟前更新`;
   const open = (title: string) => { setDialog(title); setSent(false); };
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
@@ -81,6 +93,11 @@ export default function HomeNearbyPreview({ embedded = false, onNavigateToDirect
           <div className="np-reach-row">
             <div className="np-presence-stats"><span><RollingNumber value={radius.active} /><small>正在使用和伴</small></span><span><RollingNumber value={radius.available} /><small>今日可约小伴</small></span></div>
             <div className="np-distance" aria-label="服务范围">{[5, 99].map(value => <button key={value} aria-pressed={distance === value} className={distance === value ? 'active' : ''} onClick={() => setDistance(value)}>{value === 99 ? '全城' : '附近5公里'}</button>)}</div>
+          </div>
+          <div className="np-presence-meta" aria-label="附近服务信任信息">
+            <span><ShieldCheck size={11} />服务者 {radius.available} 位</span>
+            <span><Star size={11} fill="currentColor" />综合评分 {radius.rating}</span>
+            <span><RefreshCw size={11} />{updatedLabel}</span>
           </div>
         </section>
         </div>
