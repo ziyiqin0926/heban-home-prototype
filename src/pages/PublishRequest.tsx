@@ -14,9 +14,10 @@ const timeOptions = ['今天 上午 10:00', '今天 下午 14:00', '今天 下�
 interface PublishRequestProps {
   onBack: () => void;
   onNavigateToCommunity: () => void;
+  embedded?: boolean;
 }
 
-export default function PublishRequest({ onBack, onNavigateToCommunity }: PublishRequestProps) {
+export default function PublishRequest({ onBack, onNavigateToCommunity, embedded = false }: PublishRequestProps) {
   const { addOrder, addOfficialCommunityPost, currentCity, userPhone } = useAppContext();
   const [query, setQuery] = useState('');
   const [type, setType] = useState(serviceTypes[0].id);
@@ -24,13 +25,12 @@ export default function PublishRequest({ onBack, onNavigateToCommunity }: Publis
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
   const [budget, setBudget] = useState(150);
+  const [budgetOpen, setBudgetOpen] = useState(false);
+  const [budgetConfirmed, setBudgetConfirmed] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   const selectedType = serviceTypes.find(item => item.id === type) || serviceTypes[0];
-  const submit = (event: FormEvent) => {
-    event.preventDefault();
-    if (!location.trim() || !description.trim()) return;
-
+  const commit = () => {
     const title = query.trim() || `${selectedType.label}服务需求`;
     const draft = {
       title,
@@ -64,10 +64,19 @@ export default function PublishRequest({ onBack, onNavigateToCommunity }: Publis
     });
     setSubmitted(true);
   };
+  const submit = (event: FormEvent) => {
+    event.preventDefault();
+    if (!location.trim() || !description.trim()) return;
+    if (!budgetConfirmed) {
+      setBudgetOpen(true);
+      return;
+    }
+    commit();
+  };
 
   if (submitted) {
     return (
-      <div className="publish-request">
+      <div className={`publish-request${embedded ? ' embedded' : ''}`}>
         <header className="publish-request-header">
           <button type="button" aria-label="返回首页" onClick={onBack}><ArrowLeft size={18} /></button>
           <strong>发布需求</strong>
@@ -91,7 +100,7 @@ export default function PublishRequest({ onBack, onNavigateToCommunity }: Publis
   }
 
   return (
-    <div className="publish-request">
+    <div className={`publish-request${embedded ? ' embedded' : ''}`}>
       <header className="publish-request-header">
         <button type="button" aria-label="返回首页" onClick={onBack}><ArrowLeft size={18} /></button>
         <div><strong>发布需求</strong><small>把需要说清楚，等待合适的小伴师傅</small></div>
@@ -128,14 +137,22 @@ export default function PublishRequest({ onBack, onNavigateToCommunity }: Publis
         </section>
 
         <section className="publish-section publish-budget">
-          <div className="publish-section-title"><span>04</span><div><strong>预算调整</strong><small>可在平台参考区间内灵活调整</small></div><b>¥{budget}</b></div>
-          <input aria-label="预算金额" type="range" min="50" max="500" step="10" value={budget} onChange={event => setBudget(Number(event.target.value))} />
-          <div className="publish-range-label"><span>¥50 起</span><span>参考 ¥150</span><span>¥500</span></div>
+          <div className="publish-section-title"><span>04</span><div><strong>预算调整</strong><small>提交前可按订单内容灵活调整</small></div><b>¥{budget}</b></div>
+          <button type="button" className="publish-budget-trigger" onClick={() => setBudgetOpen(true)}>调整价格区间<ArrowRight size={14} /></button>
         </section>
 
         <button type="submit" className="publish-submit"><Send size={17} />提交并推送到社区<ArrowRight size={16} /></button>
         <p className="publish-note"><Sparkles size={13} />系统会按关键词、服务时间、距离和预算匹配服务人员</p>
       </form>
+      {budgetOpen && <div className="publish-budget-backdrop" onClick={() => setBudgetOpen(false)}>
+        <section className="publish-budget-modal" role="dialog" aria-modal="true" onClick={event => event.stopPropagation()}>
+          <header><div><strong>调整预算</strong><small>结合服务内容和时长，选择合适的报价范围</small></div><button type="button" aria-label="关闭预算调整" onClick={() => setBudgetOpen(false)}>×</button></header>
+          <div className="publish-budget-value">¥{budget}</div>
+          <input aria-label="预算金额" type="range" min="50" max="500" step="10" value={budget} onChange={event => setBudget(Number(event.target.value))} />
+          <div className="publish-range-label"><span>¥50 起</span><span>参考 ¥150</span><span>¥500</span></div>
+          <button type="button" className="publish-primary" onClick={() => { setBudgetConfirmed(true); setBudgetOpen(false); commit(); }}>确认预算并提交<Send size={14} /></button>
+        </section>
+      </div>}
     </div>
   );
 }

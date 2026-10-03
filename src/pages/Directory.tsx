@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ArrowRight, ChevronDown, ChevronRight, FileEdit, MapPin, PawPrint, Search, ShieldCheck, ShoppingCart, Sparkles, Stethoscope, Ticket, TramFront, Waves, X } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
-import ManualPublishForm from '../components/ManualPublishForm';
+import PublishRequest from './PublishRequest';
 
 interface DirectoryProps {
   onNavigateToAgent: () => void;
@@ -192,8 +192,7 @@ export default function Directory({ onNavigateToAgent, onNavigateToProfile, init
       {customPublishOpen && (
         <div className="directory-modal-backdrop" onClick={() => setCustomPublishOpen(false)}>
           <section className="directory-custom-modal" role="dialog" aria-modal="true" onClick={event => event.stopPropagation()}>
-            <header><div><h3>自定义发布任务</h3><small>把需求说清楚，平台帮你匹配合适的小伴</small></div><button type="button" aria-label="关闭自定义发布任务" onClick={() => setCustomPublishOpen(false)}><X /></button></header>
-            <ManualPublishForm onPublishSuccess={() => {}} onNavigateToCommunity={onNavigateToAgent} onNavigateToProfile={onNavigateToProfile || onNavigateToAgent} />
+            <PublishRequest embedded onBack={() => setCustomPublishOpen(false)} onNavigateToCommunity={() => { setCustomPublishOpen(false); onNavigateToAgent(); }} />
           </section>
         </div>
       )}
