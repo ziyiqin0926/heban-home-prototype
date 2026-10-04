@@ -130,6 +130,7 @@ export interface CommunityPost {
   likesCount: number;
   isLiked?: boolean;
   isMine?: boolean;
+  isOrder?: boolean;
   isOfficialCase?: boolean;
   estimatedDuration?: string;
   budget?: string;
@@ -192,5 +193,4 @@ export interface CouponItem {
   createdAt?: string;
   updatedAt?: string;
 }
-
 

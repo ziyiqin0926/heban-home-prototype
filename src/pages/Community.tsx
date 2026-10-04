@@ -140,7 +140,7 @@ export default function Community({ onNavigateToAgent }: CommunityProps) {
         }}
         role="button"
         tabIndex={0}
-        className="community-card"
+        className={`community-card${post.isOrder ? ' community-card-order' : ''}`}
       >
         <div className="community-card-media">
           <img
@@ -151,6 +151,7 @@ export default function Community({ onNavigateToAgent }: CommunityProps) {
           />
           <span className="community-card-type">{post.type}</span>
           <span className="community-card-place"><MapPin size={11} />{post.district}</span>
+          {post.isOrder && <span className="community-order-badge">我的待匹配订单</span>}
         </div>
         <div className="community-card-body">
           <h3>

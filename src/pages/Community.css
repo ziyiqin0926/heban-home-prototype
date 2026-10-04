@@ -336,6 +336,9 @@
 }
 
 .community-card:hover .community-card-image { transform: scale(1.035); }
+.community-card-order { grid-column: 1 / -1; border: 2px solid #4b8bea; box-shadow: 0 10px 24px #2f73e82b; }
+.community-card-order .community-card-media { aspect-ratio: 16 / 7; }
+.community-order-badge { position: absolute; top: 8px; right: 8px; padding: 5px 8px; border-radius: 8px; color: #fff; background: #2f73e8e8; font-size: 9px; font-weight: 800; }
 .community-card-type,
 .community-card-place {
   position: absolute;
