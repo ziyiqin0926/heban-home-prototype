@@ -63,6 +63,7 @@ function MainApp() {
         <Profile
           onNavigateToAgent={() => setActiveTab('agent')}
           onNavigateToManual={() => setActiveTab('agent')}
+          onNavigateToPartner={() => setActiveTab('partner')}
           initialView={profileView}
           onViewChange={setProfileView}
         />
@@ -96,7 +97,7 @@ function PreviewHome() {
     return <Community onNavigateToAgent={() => setView('home')} />;
   }
   if (view === 'profile') {
-    return <Profile onNavigateToAgent={() => setView('home')} initialView="menu" />;
+    return <Profile onNavigateToAgent={() => setView('home')} onNavigateToPartner={() => setView('partner')} initialView="menu" />;
   }
   if (view === 'partner') {
     return <BecomePartner onBack={() => setView('home')} />;
