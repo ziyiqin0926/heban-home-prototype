@@ -48,7 +48,7 @@ function MainApp() {
         />
       )}
       {activeTab === 'partner' && <BecomePartner onBack={() => setActiveTab('home')} />}
-      {activeTab === 'publish' && <PublishRequest onBack={() => setActiveTab('home')} onNavigateToCommunity={() => setActiveTab('community')} />}
+      {activeTab === 'publish' && <PublishRequest onBack={() => setActiveTab('home')} onNavigateToCommunity={() => setActiveTab('community')} onNavigateToProfile={() => navigateToProfile('menu')} />}
       {activeTab === 'agent' && (
         <AiAgent
           onNavigateToCommunity={() => setActiveTab('community')}
@@ -63,6 +63,7 @@ function MainApp() {
         <Profile
           onNavigateToAgent={() => setActiveTab('agent')}
           onNavigateToManual={() => setActiveTab('agent')}
+          onNavigateToPartner={() => setActiveTab('partner')}
           initialView={profileView}
           onViewChange={setProfileView}
         />
@@ -88,15 +89,18 @@ export default function App() {
 }
 
 function PreviewHome() {
-  const [view, setView] = useState<'home' | 'publish' | 'partner' | 'community'>('home');
+  const [view, setView] = useState<'home' | 'publish' | 'partner' | 'community' | 'profile'>('home');
   if (view === 'publish') {
-    return <PublishRequest onBack={() => setView('home')} onNavigateToCommunity={() => setView('community')} />;
+    return <PublishRequest onBack={() => setView('home')} onNavigateToCommunity={() => setView('community')} onNavigateToProfile={() => setView('profile')} />;
   }
   if (view === 'community') {
     return <Community onNavigateToAgent={() => setView('home')} />;
   }
+  if (view === 'profile') {
+    return <Profile onNavigateToAgent={() => setView('home')} onNavigateToPartner={() => setView('partner')} initialView="menu" />;
+  }
   if (view === 'partner') {
     return <BecomePartner onBack={() => setView('home')} />;
   }
-  return <HomeNearbyPreview onNavigateToPublish={() => setView('publish')} onNavigateToPartner={() => setView('partner')} />;
+  return <HomeNearbyPreview onNavigateToPublish={() => setView('publish')} onNavigateToPartner={() => setView('partner')} onNavigateToProfile={() => setView('profile')} />;
 }

@@ -29,7 +29,18 @@ import {
   Tag,
   BadgePercent,
   Camera,
-  Heart
+  Heart,
+  Settings,
+  Headphones,
+  Gift,
+  WalletCards,
+  BadgeCheck,
+  BriefcaseBusiness,
+  CalendarDays,
+  ImagePlus,
+  Award,
+  Wallet,
+  UserRound
 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { Order, OrderStatus, EscortProfile, UserAddress, CouponItem } from '../types';
@@ -40,6 +51,7 @@ import MyCoupons from '../components/MyCoupons';
 interface ProfileProps {
   onNavigateToAgent?: () => void;
   onNavigateToManual?: () => void;
+  onNavigateToPartner?: () => void;
   initialView?: ViewMode;
   onViewChange?: (view: ViewMode) => void;
 }
@@ -55,7 +67,7 @@ const CANCEL_REASONS = [
   '其他原因'
 ];
 
-export default function Profile({ onNavigateToAgent, onNavigateToManual, initialView = 'menu', onViewChange }: ProfileProps) {
+export default function Profile({ onNavigateToAgent, onNavigateToManual, onNavigateToPartner, initialView = 'menu', onViewChange }: ProfileProps) {
   const {
     userPhone,
     setUserPhone,
@@ -76,6 +88,7 @@ export default function Profile({ onNavigateToAgent, onNavigateToManual, initial
 
   // Progressive Navigation State
   const [viewMode, setViewMode] = useState<ViewMode>(initialView);
+  const [profileRole, setProfileRole] = useState<'user' | 'escort'>('user');
   const [activeTab, setActiveTab] = useState<FilterTab>('all');
   const [selectedOrderDetail, setSelectedOrderDetail] = useState<Order | null>(null);
   const [viewingEscortProfile, setViewingEscortProfile] = useState<EscortProfile | null>(null);
@@ -189,228 +202,200 @@ export default function Profile({ onNavigateToAgent, onNavigateToManual, initial
         {/* ============================================================ */}
         {viewMode === 'menu' ? (
           <>
-            {/* User Card Header */}
-            <header className="profile-hero px-6 py-8 md:px-10 md:py-10 md:rounded-b-3xl text-white relative overflow-hidden shadow-md flex-shrink-0">
-              <div className="absolute -top-12 -right-12 w-48 h-48 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
-              
-              <div className="flex items-center justify-between relative z-10">
-                <div className="flex items-center space-x-4">
-                  <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-md border border-white/30 shadow-inner flex-shrink-0 relative">
+            <header className="bg-slate-950 px-5 pt-5 pb-6 md:px-8 md:pt-7 md:pb-8 text-white relative overflow-hidden flex-shrink-0">
+              <div className="absolute inset-x-0 bottom-0 h-20 bg-indigo-950/60 pointer-events-none"></div>
+              <div className="relative z-10 flex items-start justify-between gap-4">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-300 to-indigo-500 flex items-center justify-center shadow-lg flex-shrink-0">
                     <UserIcon className="w-8 h-8 text-white" />
                   </div>
-                  <div>
-                    <div className="flex items-center space-x-2 flex-wrap gap-y-1">
-                      <h1 className="text-xl md:text-2xl font-bold">
-                        和伴用户
-                      </h1>
-                      <span className="bg-white/25 text-[11px] font-semibold px-2.5 py-0.5 rounded-full backdrop-blur-xs">
-                        {userPhone ? `${userPhone.slice(0, 3)}****${userPhone.slice(-4)}` : '已绑定手机'}
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h1 className="text-xl md:text-2xl font-black tracking-tight">和伴用户</h1>
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-400/15 border border-emerald-300/30 px-2 py-0.5 text-[10px] font-bold text-emerald-200">
+                        <BadgeCheck className="w-3 h-3" /> 已认证
                       </span>
                     </div>
-                    <p className="text-blue-100 text-xs md:text-sm mt-1">
-                      专业陪诊 · 长者就医陪伴 · 邻里互助服务
+                    <p className="mt-1 text-xs text-slate-300 truncate">
+                      唯一 ID：HB-{userPhone ? userPhone.slice(-6) : '0826'} · {userPhone ? `${userPhone.slice(0, 3)}****${userPhone.slice(-4)}` : '待绑定手机号'}
                     </p>
+                    <p className="mt-2 text-[11px] text-cyan-200">把需求交给和伴，把时间留给生活</p>
                   </div>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => showToast('个人主页编辑入口已保留，后续接入资料编辑')}
+                  className="w-9 h-9 rounded-xl border border-white/15 bg-white/10 flex items-center justify-center text-slate-200 hover:bg-white/15 active:scale-95 transition-transform"
+                  title="编辑个人主页"
+                >
+                  <Settings className="w-4 h-4" />
+                </button>
               </div>
-            </header>
 
-            {/* Main Profile Body */}
-            <div className="profile-body p-4 md:p-6 space-y-4 -mt-3 md:-mt-6 relative z-20 flex-1 pb-28 md:pb-12">
-              
-              {/* Progressive Menu Items List */}
-              <div className="profile-menu-card bg-white rounded-2xl shadow-xs border border-slate-200/80 overflow-hidden divide-y divide-slate-100">
-                
-                {/* 1. Primary Entry: 我的需求订单 (Clickable into Dedicated Orders Page) */}
+              <div className="relative z-10 mt-5 grid grid-cols-3 gap-2.5 text-center">
+                <div className="rounded-xl bg-white/8 border border-white/10 py-2.5">
+                  <strong className="block text-lg font-black">{orders.length}</strong>
+                  <span className="text-[10px] text-slate-300">全部订单</span>
+                </div>
+                <div className="rounded-xl bg-white/8 border border-white/10 py-2.5">
+                  <strong className="block text-lg font-black">{activeCount}</strong>
+                  <span className="text-[10px] text-slate-300">进行中</span>
+                </div>
+                <div className="rounded-xl bg-white/8 border border-white/10 py-2.5">
+                  <strong className="block text-lg font-black">{completedCount}</strong>
+                  <span className="text-[10px] text-slate-300">已完成</span>
+                </div>
+              </div>
+
+              <div className="relative z-10 mt-4 flex rounded-xl bg-white/10 p-1 border border-white/10">
                 <button
                   type="button"
-                  onClick={() => changeViewMode('orders')}
-                  className="w-full p-3.5 sm:p-4 md:p-5 flex items-center justify-between hover:bg-blue-50/40 active:bg-blue-50 transition-all cursor-pointer group text-left"
+                  onClick={() => setProfileRole('user')}
+                  className={`flex-1 rounded-lg py-2 text-xs font-bold transition-colors ${profileRole === 'user' ? 'bg-white text-slate-900' : 'text-slate-300 hover:text-white'}`}
                 >
-                  <div className="flex items-center space-x-3 sm:space-x-3.5 min-w-0 flex-1 pr-2">
-                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-xs flex-shrink-0 group-hover:scale-105 transition-transform">
-                      <ClipboardList className="w-5 h-5" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center flex-wrap gap-1.5">
-                        <span className="text-sm md:text-base font-bold text-slate-800 group-hover:text-blue-600 transition-colors whitespace-nowrap">
-                          我的订单
-                        </span>
-                        <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[11px] md:text-xs font-bold rounded-full border border-blue-200 whitespace-nowrap">
-                          {orders.length} 笔订单
-                        </span>
-                        {activeCount > 0 && (
-                          <span className="px-2 py-0.5 bg-amber-50 text-amber-700 text-[11px] md:text-xs font-bold rounded-full border border-amber-200 whitespace-nowrap animate-pulse">
-                            {activeCount} 进行中
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-xs text-slate-400 mt-0.5 sm:mt-1 truncate">
-                        查看已发布订单与陪诊接单进展
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-1 text-blue-600 font-bold text-xs flex-shrink-0">
-                    <span className="hidden sm:inline">查看全部</span>
-                    <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />
-                  </div>
+                  用户中心
                 </button>
-
-                {/* 2. Primary Entry: 我的优惠券 (统一8折福利专享) */}
-                <button
-                  type="button"
-                  onClick={() => changeViewMode('coupons')}
-                  className="w-full p-3.5 sm:p-4 md:p-5 flex items-center justify-between hover:bg-rose-50/40 active:bg-rose-50 transition-all cursor-pointer group text-left"
-                >
-                  <div className="flex items-center space-x-3 sm:space-x-3.5 min-w-0 flex-1 pr-2">
-                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-tr from-rose-500 via-orange-500 to-amber-500 text-white flex items-center justify-center shadow-xs flex-shrink-0 group-hover:scale-105 transition-transform">
-                      <Ticket className="w-5 h-5" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center flex-wrap gap-1.5">
-                        <span className="text-sm md:text-base font-bold text-slate-800 group-hover:text-rose-600 transition-colors whitespace-nowrap">
-                          我的优惠券
-                        </span>
-                        <span className="px-2 py-0.5 bg-rose-50 text-rose-700 text-[11px] md:text-xs font-bold rounded-full border border-rose-200 whitespace-nowrap">
-                          {coupons.filter(c => c.status === 'available').length} 张可用
-                        </span>
-                      </div>
-                      <p className="text-xs text-slate-400 mt-0.5 sm:mt-1 truncate">
-                        专属陪护优惠券 · 发布订单时可直接抵扣
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-1 text-rose-600 font-bold text-xs flex-shrink-0">
-                    <span className="hidden sm:inline">查看</span>
-                    <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 group-hover:text-rose-600 group-hover:translate-x-0.5 transition-all" />
-                  </div>
-                </button>
-
-                                {/* 3. Primary Entry: 我的收藏师傅 (关注金牌陪护师) */}
-                <button
-                  type="button"
-                  onClick={() => changeViewMode("favorites")}
-                  className="w-full p-3.5 sm:p-4 md:p-5 flex items-center justify-between hover:bg-rose-50/40 active:bg-rose-50 transition-all cursor-pointer group text-left border-t border-slate-100"
-                >
-                  <div className="flex items-center space-x-3 sm:space-x-3.5 min-w-0 flex-1 pr-2">
-                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-tr from-rose-500 to-pink-500 text-white flex items-center justify-center shadow-xs flex-shrink-0 group-hover:scale-105 transition-transform">
-                      <Heart className="w-5 h-5 fill-white" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center flex-wrap gap-1.5">
-                        <span className="text-sm md:text-base font-bold text-slate-800 group-hover:text-rose-600 transition-colors whitespace-nowrap">
-                          我的收藏
-                        </span>
-                        <span className="px-2 py-0.5 bg-rose-50 text-rose-700 text-[11px] md:text-xs font-bold rounded-full border border-rose-200 whitespace-nowrap">
-                          {favoriteEscortIds.length} 位金牌师傅
-                        </span>
-                      </div>
-                      <p className="text-xs text-slate-400 mt-0.5 sm:mt-1 truncate">
-                        已收藏的常约师傅 · 点单时优先指派
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-1 text-rose-600 font-bold text-xs flex-shrink-0">
-                    <span className="hidden sm:inline">查看</span>
-                    <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 group-hover:text-rose-600 group-hover:translate-x-0.5 transition-all" />
-                  </div>
-                </button>
-
-                {/* 3. Unified Contact & Address Entry */}
                 <button
                   type="button"
                   onClick={() => {
-                    setUnifiedPhone(userPhone);
-                    setUnifiedBackupPhone(backupPhone);
-                    setUnifiedAddress(userAddress);
-                    setIsEditingContactAddress(true);
+                    setProfileRole('escort');
+                    if (onNavigateToPartner) onNavigateToPartner();
+                    else showToast('小伴师傅端入口已准备');
                   }}
-                  className="w-full p-3.5 sm:p-4 flex items-center justify-between hover:bg-slate-50 active:bg-slate-100 transition-colors cursor-pointer text-left border-t border-slate-100/80"
+                  className={`flex-1 rounded-lg py-2 text-xs font-bold transition-colors ${profileRole === 'escort' ? 'bg-cyan-300 text-slate-950' : 'text-slate-300 hover:text-white'}`}
                 >
-                  <div className="flex items-center space-x-3 sm:space-x-3.5 min-w-0 flex-1 pr-2">
-                    <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 flex-shrink-0">
-                      <MapPin className="w-4 h-4" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <span className="text-xs sm:text-sm font-bold block text-slate-800 whitespace-nowrap">通讯地址</span>
-                      <span className="text-[11px] text-slate-400 block mt-0.5 truncate">
-                        主号: {userPhone} {backupPhone ? `| 备用: ${backupPhone}` : ''} | 地址: {userAddress.province}{userAddress.city}{userAddress.district}{userAddress.street} {userAddress.detail}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-1 flex-shrink-0">
-                    <span className="text-xs font-medium text-slate-500 hidden sm:inline">管理</span>
-                    <ChevronRight className="w-4 h-4 text-slate-400" />
-                  </div>
+                  小伴师傅端
                 </button>
-
-                {/* 5. Family Health Profile */}
-                <div className="w-full p-3.5 sm:p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
-                  <div className="flex items-center space-x-3 sm:space-x-3.5 min-w-0 flex-1 pr-2">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 flex-shrink-0">
-                      <FileText className="w-4 h-4" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <span className="text-xs sm:text-sm font-bold block text-slate-800 whitespace-nowrap">就诊人与长者健康备注</span>
-                      <span className="text-[11px] text-slate-400 block mt-0.5 truncate">已保存 2 位家庭就医成员档案信息</span>
-                    </div>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-slate-400 flex-shrink-0" />
-                </div>
-
-                {/* 6. Supabase Cloud Database Status */}
-                <div className="w-full p-3.5 sm:p-4 bg-slate-50/60 hover:bg-slate-50 transition-colors space-y-2.5">
-                  <div className="flex items-center justify-between flex-wrap gap-2">
-                    <div className="flex items-center space-x-3 sm:space-x-3.5 min-w-0 flex-1 pr-2">
-                      <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200/80 flex items-center justify-center text-emerald-600 flex-shrink-0">
-                        <Database className="w-4 h-4" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center flex-wrap gap-1.5">
-                          <span className="text-xs sm:text-sm font-bold block text-slate-800 whitespace-nowrap">
-                            Supabase 云端数据库
-                          </span>
-                          <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-md border border-emerald-300 whitespace-nowrap">
-                            已连接
-                          </span>
-                        </div>
-                        <span className="text-[11px] text-slate-400 block mt-0.5 truncate">
-                          需求订单与社区帖子实时持久化
-                        </span>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={handleManualSync}
-                      disabled={isSyncing}
-                      className="flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer disabled:opacity-50 transition-all flex-shrink-0 ml-auto sm:ml-0"
-                      title="点击将当前所有需求与数据立即推送到 Supabase"
-                    >
-                      <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
-                      <span>{isSyncing ? '同步中...' : '立即同步'}</span>
-                    </button>
-                  </div>
-
-                  {syncResult && (
-                    <div className="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-xs flex items-center justify-between animate-in fade-in duration-150">
-                      <div className="flex items-center space-x-1.5">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                        <span className="font-medium">{syncResult}</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
               </div>
+            </header>
 
-              {/* Disclaimer & Offline Settlement */}
-              <div className="bg-amber-50 rounded-2xl p-4 flex items-start space-x-3 border border-amber-200/60 shadow-xs">
-                <ShieldAlert className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <h4 className="text-amber-900 text-xs md:text-sm font-bold mb-1">信息撮合与线下结算保障</h4>
-                  <p className="text-amber-800 text-xs leading-relaxed font-medium">
-                    和伴仅提供信息智能解析、需求发布与陪护撮合服务，平台内不设任何线上资金充值或抽成。所有服务劳务报酬请您在服务完成后与陪护师在线下当面结清。
-                  </p>
+            <div className="profile-body bg-slate-50 p-4 md:p-6 space-y-4 flex-1 pb-28 md:pb-12">
+              <section className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+                <div className="px-4 pt-4 flex items-center justify-between">
+                  <div>
+                    <h2 className="text-sm font-black text-slate-900">订单中心</h2>
+                    <p className="text-[11px] text-slate-400 mt-0.5">查看已发布、已接单与履约进程</p>
+                  </div>
+                  <button type="button" onClick={() => changeViewMode('orders')} className="text-xs font-bold text-indigo-600 flex items-center gap-0.5">
+                    全部订单 <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
                 </div>
+                <div className="grid grid-cols-4 divide-x divide-slate-100 mt-4 border-t border-slate-100">
+                  {[
+                    { label: '已发布', count: orders.filter(o => o.status === 'pending').length, icon: ClipboardList, color: 'text-amber-500' },
+                    { label: '已接单', count: orders.filter(o => o.status === 'accepted').length, icon: BadgeCheck, color: 'text-emerald-500' },
+                    { label: '履约中', count: activeCount, icon: Clock, color: 'text-indigo-500' },
+                    { label: '已完成', count: completedCount, icon: Check, color: 'text-slate-500' }
+                  ].map(({ label, count, icon: Icon, color }) => (
+                    <button key={label} type="button" onClick={() => changeViewMode('orders')} className="py-3.5 flex flex-col items-center gap-1 hover:bg-slate-50 active:bg-slate-100 transition-colors">
+                      <Icon className={`w-5 h-5 ${color}`} />
+                      <strong className="text-sm text-slate-800">{count}</strong>
+                      <span className="text-[10px] text-slate-400 whitespace-nowrap">{label}</span>
+                    </button>
+                  ))}
+                </div>
+              </section>
+
+              <section className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <h2 className="text-sm font-black text-slate-900">我的服务空间</h2>
+                    <p className="text-[11px] text-slate-400 mt-0.5">档案、偏好、日程和常用对象</p>
+                  </div>
+                  <UserRound className="w-4 h-4 text-indigo-500" />
+                </div>
+                <div className="grid grid-cols-4 gap-2">
+                  {[
+                    { label: '个人档案', hint: '资料与联系人', icon: FileText, tone: 'bg-indigo-50 text-indigo-600', action: () => { setUnifiedPhone(userPhone); setUnifiedBackupPhone(backupPhone); setUnifiedAddress(userAddress); setIsEditingContactAddress(true); } },
+                    { label: '偏好日程', hint: '可约时间', icon: CalendarDays, tone: 'bg-cyan-50 text-cyan-600', action: () => showToast('档案与日程入口已准备') },
+                    { label: '收藏小伴', hint: `${favoriteEscortIds.length} 位`, icon: Heart, tone: 'bg-rose-50 text-rose-500', action: () => changeViewMode('favorites') },
+                    { label: '任务奖励', hint: '待领取', icon: Gift, tone: 'bg-amber-50 text-amber-600', action: () => showToast('任务与奖励中心即将开放') }
+                  ].map(({ label, hint, icon: Icon, tone, action }) => (
+                    <button key={label} type="button" onClick={action} className="min-w-0 rounded-xl border border-slate-100 p-2.5 text-center hover:border-indigo-200 hover:bg-indigo-50/30 active:scale-[.98] transition-all">
+                      <span className={`mx-auto flex h-9 w-9 items-center justify-center rounded-xl ${tone}`}>
+                        <Icon className={`w-4 h-4 ${label === '收藏小伴' ? 'fill-current' : ''}`} />
+                      </span>
+                      <strong className="mt-2 block truncate text-[11px] text-slate-800">{label}</strong>
+                      <span className="mt-0.5 block truncate text-[10px] text-slate-400">{hint}</span>
+                    </button>
+                  ))}
+                </div>
+              </section>
+
+              <section className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <h2 className="text-sm font-black text-slate-900">权益与资产</h2>
+                    <p className="text-[11px] text-slate-400 mt-0.5">优惠券、积分与平台奖励</p>
+                  </div>
+                  <Wallet className="w-4 h-4 text-amber-500" />
+                </div>
+                <div className="grid grid-cols-4 gap-2">
+                  {[
+                    { label: '优惠券', value: `${coupons.filter(c => c.status === 'available').length} 张`, icon: Ticket, tone: 'text-rose-500', action: () => changeViewMode('coupons') },
+                    { label: '积分', value: '0 分', icon: Award, tone: 'text-amber-500', action: () => showToast('积分明细正在接入') },
+                    { label: '分享奖励', value: '待领取', icon: Gift, tone: 'text-emerald-500', action: () => showToast('分享订单可获得平台奖励') },
+                    { label: '服务钱包', value: '查看', icon: WalletCards, tone: 'text-indigo-500', action: () => showToast('服务钱包入口已准备') }
+                  ].map(({ label, value, icon: Icon, tone, action }) => (
+                    <button key={label} type="button" onClick={action} className="rounded-xl py-2 text-center hover:bg-slate-50 active:scale-[.98] transition-all">
+                      <Icon className={`mx-auto w-5 h-5 ${tone}`} />
+                      <strong className="mt-1.5 block text-xs text-slate-800">{value}</strong>
+                      <span className="mt-0.5 block text-[10px] text-slate-400">{label}</span>
+                    </button>
+                  ))}
+                </div>
+              </section>
+
+              <section className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button type="button" onClick={() => showToast('内容创作中心即将开放投稿与服务名片')} className="text-left rounded-2xl border border-cyan-200 bg-cyan-50/70 p-4 hover:bg-cyan-50 active:scale-[.99] transition-all">
+                  <div className="flex items-center justify-between">
+                    <span className="w-9 h-9 rounded-xl bg-cyan-500 text-white flex items-center justify-center"><ImagePlus className="w-4 h-4" /></span>
+                    <ChevronRight className="w-4 h-4 text-cyan-600" />
+                  </div>
+                  <strong className="mt-3 block text-sm text-slate-900">个人内容创作中心</strong>
+                  <p className="mt-1 text-[11px] leading-relaxed text-slate-500">发布服务案例、心得与个人名片，获得平台分享奖励</p>
+                </button>
+                <button type="button" onClick={() => showToast('客服会尽快为你安排人工跟进')} className="text-left rounded-2xl border border-indigo-200 bg-indigo-50/70 p-4 hover:bg-indigo-50 active:scale-[.99] transition-all">
+                  <div className="flex items-center justify-between">
+                    <span className="w-9 h-9 rounded-xl bg-indigo-500 text-white flex items-center justify-center"><Headphones className="w-4 h-4" /></span>
+                    <ChevronRight className="w-4 h-4 text-indigo-600" />
+                  </div>
+                  <strong className="mt-3 block text-sm text-slate-900">联系客服</strong>
+                  <p className="mt-1 text-[11px] leading-relaxed text-slate-500">订单、档案或匹配问题，可进入人工协助</p>
+                </button>
+              </section>
+
+              <section className="rounded-2xl bg-slate-900 p-4 text-white flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <BriefcaseBusiness className="w-4 h-4 text-cyan-300" />
+                    <strong className="text-sm">成为小伴师傅</strong>
+                  </div>
+                  <p className="text-[11px] text-slate-300 mt-1">认证技能，展示服务名片，连接更多真实需求</p>
+                </div>
+                <button type="button" onClick={() => onNavigateToPartner ? onNavigateToPartner() : showToast('小伴师傅端入口已准备')} className="flex-shrink-0 rounded-xl bg-cyan-300 px-3 py-2 text-xs font-black text-slate-950 hover:bg-cyan-200 active:scale-95 transition-transform">
+                  进入师傅端
+                </button>
+              </section>
+
+              <div className="rounded-2xl border border-emerald-200 bg-emerald-50/70 p-3.5 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2 min-w-0">
+                  <Database className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                  <div className="min-w-0">
+                    <strong className="block text-xs text-emerald-950">云端数据同步</strong>
+                    <span className="block truncate text-[10px] text-emerald-700">订单与社区内容持续保存</span>
+                  </div>
+                </div>
+                <button type="button" onClick={handleManualSync} disabled={isSyncing} className="flex items-center gap-1 rounded-lg bg-emerald-600 px-2.5 py-1.5 text-[10px] font-bold text-white disabled:opacity-50 active:scale-95 transition-transform">
+                  <RefreshCw className={`w-3 h-3 ${isSyncing ? 'animate-spin' : ''}`} />
+                  {isSyncing ? '同步中' : '立即同步'}
+                </button>
+              </div>
+              {syncResult && <div className="rounded-xl bg-emerald-100 px-3 py-2 text-[11px] text-emerald-800">{syncResult}</div>}
+
+              <div className="flex items-start gap-2 rounded-xl bg-amber-50 p-3 text-[10px] leading-relaxed text-amber-800 border border-amber-200/70">
+                <ShieldAlert className="w-4 h-4 flex-shrink-0 text-amber-600" />
+                <span>和伴提供信息解析、需求发布与陪护撮合服务，服务劳务报酬请在服务完成后与陪护师线下结清。</span>
               </div>
             </div>
           </>
