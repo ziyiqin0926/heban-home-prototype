@@ -220,7 +220,7 @@ export default function PublishRequest({ onBack, onNavigateToCommunity, onNaviga
   };
   const shareOrder = async () => {
     const shareText = `和伴服务订单：${title}｜${time}｜${location}｜${serviceTarget}`;
-    const shareHint = '分享至朋友圈和群，进入高曝光率高速匹配通道。';
+    const shareHint = '分享至 3 个群聊，可获高曝光速率匹配。';
     try {
       if (navigator.share) {
         await navigator.share({ title: '和伴服务订单', text: `${shareText}\n${shareHint}` });
@@ -309,9 +309,13 @@ export default function PublishRequest({ onBack, onNavigateToCommunity, onNaviga
           <span />
         </header>
         <main className="publish-result">
+          <div className="publish-community-ribbon" aria-label="社区共建活动">
+            <strong>美好社区生活 · 你我共建</strong>
+            <span>分享订单得跨领域消费折扣积分</span>
+          </div>
           <div className="publish-result-icon"><CheckCircle2 size={32} /></div>
           <h1>需求已进入匹配</h1>
-          <p>订单已推送到社区广场，系统会根据事件内容、时间、地点和人物自动匹配合适的小伴师傅。</p>
+          <p>订单已推送到社区广场，系统会根据事件内容、时间、地点和人物自动匹配合适的小伴师傅。请注意查看订单状态。</p>
           <div className="publish-order-status" aria-label="订单进程">
             <div className="publish-order-status-track">
               {orderSteps.map((step, index) => <div key={step} className={`publish-order-step${index <= orderStatusIndex ? ' complete' : ''}${index === orderStatusIndex ? ' current' : ''}`}><span>{index < orderStatusIndex ? <CheckCircle2 size={13} /> : index + 1}</span><small>{step}</small></div>)}
@@ -326,7 +330,10 @@ export default function PublishRequest({ onBack, onNavigateToCommunity, onNaviga
             {budget.trim() && <b>预算参考 ¥{budget.trim()}</b>}
           </div>
           {formError && <p className="publish-share-message" role="status">{formError}</p>}
-          <button type="button" className="publish-secondary" onClick={shareOrder}><Share2 size={15} />分享订单</button>
+          <button type="button" className="publish-secondary publish-share-button" onClick={shareOrder}>
+            <Share2 size={15} />
+            <span><strong>分享订单</strong><small>3个群聊 · 高曝光速率匹配</small></span>
+          </button>
           <button type="button" className="publish-primary" onClick={onNavigateToCommunity}>去社区查看匹配<ArrowRight size={16} /></button>
           <button type="button" className="publish-secondary" onClick={() => setSubmitted(false)}>调整需求再发一条</button>
         </main>

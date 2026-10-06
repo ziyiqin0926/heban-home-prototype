@@ -110,7 +110,10 @@
 .publish-submit { position: sticky; bottom: 12px; z-index: 3; display: flex; align-items: center; justify-content: center; gap: 7px; min-height: 50px; border: 0; border-radius: 13px; background: #2f73e8; color: #fff; box-shadow: 0 10px 24px #2f73e855; font-size: 12px; font-weight: 800; }
 .publish-submit:active, .publish-primary:active, .publish-secondary:active { transform: scale(.98); }
 .publish-note { display: flex; align-items: center; justify-content: center; gap: 4px; margin: -3px 0 0; color: #8a9aae; font-size: 8px; }
-.publish-result { display: grid; justify-items: center; gap: 12px; padding: 48px 20px 118px; text-align: center; }
+.publish-result { position: relative; display: grid; justify-items: center; gap: 12px; padding: 48px 20px 118px; text-align: center; overflow: hidden; }
+.publish-community-ribbon { position: absolute; top: 17px; right: -54px; display: grid; gap: 2px; width: 190px; padding: 6px 10px; transform: rotate(8deg); border: 1px solid #efd38a; color: #89651f; background: #fff7df; box-shadow: 0 5px 14px #c38f2a1c; text-align: center; }
+.publish-community-ribbon strong { font-size: 8px; line-height: 1.25; }
+.publish-community-ribbon span { font-size: 7px; line-height: 1.25; }
 .publish-result-icon { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: #e9f8f0; color: #1ca16a; }
 .publish-result h1 { margin: 0; font-size: 20px; }
 .publish-result p { max-width: 330px; margin: 0; color: #7f8da0; font-size: 11px; line-height: 1.7; }
@@ -133,6 +136,9 @@
 .publish-primary, .publish-secondary { display: flex; align-items: center; justify-content: center; gap: 5px; width: 100%; min-height: 42px; border-radius: 11px; font-size: 11px; font-weight: 700; }
 .publish-primary { border: 0; background: #2f73e8; color: #fff; }
 .publish-secondary { border: 1px solid #dfe7f1; background: #fff; color: #66768b; }
+.publish-share-button > span { display: grid; gap: 2px; text-align: left; }
+.publish-share-button strong { color: #526b89; font-size: 11px; }
+.publish-share-button small { color: #8fa0b4; font-size: 8px; font-weight: 500; }
 .publish-review-backdrop { position: fixed; z-index: 50; inset: 0; display: grid; place-items: center; padding: 14px; background: #172e4666; }
 .publish-review { width: min(100%, 402px); max-height: min(700px, calc(100dvh - 28px)); overflow-y: auto; display: grid; justify-items: stretch; gap: 12px; padding: 18px 14px; border: 1px solid #dce7f4; border-radius: 20px; background: #f5f8fc; box-shadow: 0 20px 70px #152a4a40; }
 .publish-receipt { position: relative; display: grid; gap: 13px; padding: 17px 15px; border: 1px solid #dce7f4; border-radius: 15px; background: #fff; box-shadow: 0 8px 24px #29466d0d; }
