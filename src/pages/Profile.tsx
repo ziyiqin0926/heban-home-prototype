@@ -47,6 +47,8 @@ import { Order, OrderStatus, EscortProfile, UserAddress, CouponItem } from '../t
 import EscortProfileModal from '../components/EscortProfileModal';
 import { getEscortProfile } from '../data/escortProfiles';
 import MyCoupons from '../components/MyCoupons';
+import ScheduleCalendar from '../components/ScheduleCalendar';
+import FamilyProfiles from '../components/FamilyProfiles';
 
 interface ProfileProps {
   onNavigateToAgent?: () => void;
@@ -105,6 +107,8 @@ export default function Profile({ onNavigateToAgent, onNavigateToManual, onNavig
   const [cancellingOrder, setCancellingOrder] = useState<Order | null>(null);
   const [selectedReason, setSelectedReason] = useState(CANCEL_REASONS[0]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [showScheduleCalendar, setShowScheduleCalendar] = useState(false);
+  const [showFamilyProfiles, setShowFamilyProfiles] = useState(false);
 
   const changeViewMode = (nextView: ViewMode) => {
     setViewMode(nextView);
@@ -117,6 +121,8 @@ export default function Profile({ onNavigateToAgent, onNavigateToManual, onNavig
       setToastMessage(null);
     }, 4000);
   };
+
+  const openScheduleCalendar = () => setShowScheduleCalendar(true);
 
   const handleManualSync = async () => {
     setIsSyncing(true);
@@ -205,13 +211,13 @@ export default function Profile({ onNavigateToAgent, onNavigateToManual, onNavig
   const serviceSpaceItems = isEscortMode
     ? [
         { label: '服务档案', hint: '技能与资质', icon: FileText, tone: 'bg-indigo-50 text-indigo-600', action: () => showToast('服务档案编辑入口已准备') },
-        { label: '接单日程', hint: '可接时间', icon: CalendarDays, tone: 'bg-cyan-50 text-cyan-600', action: () => showToast('接单日程入口已准备') },
+        { label: '接单日程', hint: '可接时间', icon: CalendarDays, tone: 'bg-cyan-50 text-cyan-600', action: openScheduleCalendar },
         { label: '服务动态', hint: '案例与心得', icon: ImagePlus, tone: 'bg-rose-50 text-rose-500', action: () => showToast('服务动态发布入口已准备') },
         { label: '任务奖励', hint: '待领取', icon: Gift, tone: 'bg-amber-50 text-amber-600', action: () => showToast('任务与奖励中心即将开放') }
       ]
     : [
         { label: '个人档案', hint: '资料与联系人', icon: FileText, tone: 'bg-indigo-50 text-indigo-600', action: () => { setUnifiedPhone(userPhone); setUnifiedBackupPhone(backupPhone); setUnifiedAddress(userAddress); setIsEditingContactAddress(true); } },
-        { label: '偏好日程', hint: '可约时间', icon: CalendarDays, tone: 'bg-cyan-50 text-cyan-600', action: () => showToast('档案与日程入口已准备') },
+        { label: '偏好日程', hint: '可约时间', icon: CalendarDays, tone: 'bg-cyan-50 text-cyan-600', action: openScheduleCalendar },
         { label: '收藏小伴', hint: `${favoriteEscortIds.length} 位`, icon: Heart, tone: 'bg-rose-50 text-rose-500', action: () => changeViewMode('favorites') },
         { label: '任务奖励', hint: '待领取', icon: Gift, tone: 'bg-amber-50 text-amber-600', action: () => showToast('任务与奖励中心即将开放') }
       ];
@@ -238,6 +244,18 @@ export default function Profile({ onNavigateToAgent, onNavigateToManual, onNavig
           <span>{toastMessage}</span>
         </div>
       )}
+      {showScheduleCalendar && (
+        <ScheduleCalendar
+          onClose={() => setShowScheduleCalendar(false)}
+          onOpenAgent={(prompt) => {
+            setShowScheduleCalendar(false);
+            setPrefilledPrompt(prompt);
+            onNavigateToAgent?.();
+          }}
+          onOpenProfile={() => { setShowScheduleCalendar(false); setShowFamilyProfiles(true); }}
+        />
+      )}
+      {showFamilyProfiles && <FamilyProfiles onClose={() => setShowFamilyProfiles(false)} />}
 
       <div className="w-full max-w-4xl flex flex-col flex-1">
         {/* ============================================================ */}
