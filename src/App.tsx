@@ -13,6 +13,7 @@ import Profile from './pages/Profile';
 import HomeNearbyPreview from './pages/HomeNearbyPreview';
 import BecomePartner from './pages/BecomePartner';
 import PublishRequest from './pages/PublishRequest';
+import ScheduleCalendar from './components/ScheduleCalendar';
 import './pages/HomeNearbyPreview.css';
 
 type ProfileView = 'menu' | 'orders' | 'coupons';
@@ -39,6 +40,7 @@ function MainApp() {
             setActiveTab('directory');
           }}
           onNavigateToPartner={() => setActiveTab('partner')}
+          onNavigateToSchedule={() => setActiveTab('schedule')}
           onNavigateToCommunity={() => setActiveTab('community')}
           onNavigateToAgent={() => {
             setPrefilledPrompt('请根据我的档案和日程，帮我智能规划近期陪伴与服务安排');
@@ -48,6 +50,7 @@ function MainApp() {
         />
       )}
       {activeTab === 'partner' && <BecomePartner onBack={() => setActiveTab('home')} />}
+      {activeTab === 'schedule' && <ScheduleCalendar standalone onClose={() => setActiveTab('home')} onOpenAgent={prompt => { setPrefilledPrompt(prompt); setActiveTab('agent'); }} onOpenProfile={() => setActiveTab('profile')} />}
       {activeTab === 'publish' && <PublishRequest onBack={() => setActiveTab('home')} onNavigateToCommunity={() => setActiveTab('community')} onNavigateToProfile={() => navigateToProfile('menu')} />}
       {activeTab === 'agent' && (
         <AiAgent
@@ -89,7 +92,8 @@ export default function App() {
 }
 
 function PreviewHome() {
-  const [view, setView] = useState<'home' | 'publish' | 'partner' | 'community' | 'profile'>('home');
+  const [view, setView] = useState<'home' | 'publish' | 'partner' | 'schedule' | 'agent' | 'community' | 'profile'>('home');
+  const { setPrefilledPrompt } = useAppContext();
   if (view === 'publish') {
     return <PublishRequest onBack={() => setView('home')} onNavigateToCommunity={() => setView('community')} onNavigateToProfile={() => setView('profile')} />;
   }
@@ -102,5 +106,11 @@ function PreviewHome() {
   if (view === 'partner') {
     return <BecomePartner onBack={() => setView('home')} />;
   }
-  return <HomeNearbyPreview onNavigateToPublish={() => setView('publish')} onNavigateToPartner={() => setView('partner')} onNavigateToProfile={() => setView('profile')} />;
+  if (view === 'schedule') {
+    return <ScheduleCalendar standalone onClose={() => setView('home')} onOpenAgent={prompt => { setPrefilledPrompt(prompt); setView('agent'); }} onOpenProfile={() => setView('profile')} />;
+  }
+  if (view === 'agent') {
+    return <AiAgent onNavigateToCommunity={() => setView('community')} onNavigateToProfile={() => setView('profile')} />;
+  }
+  return <HomeNearbyPreview onNavigateToPublish={() => setView('publish')} onNavigateToPartner={() => setView('partner')} onNavigateToSchedule={() => setView('schedule')} onNavigateToProfile={() => setView('profile')} />;
 }

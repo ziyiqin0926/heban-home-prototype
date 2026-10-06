@@ -19,7 +19,13 @@ import {
   Sparkles,
   UserCheck,
   Users,
-  X
+  X,
+  List,
+  Grid3X3,
+  Columns3,
+  Rows3,
+  MoreVertical,
+  Plus as PlusIcon
 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import ServiceOrderPage from './ServiceOrderPage';
@@ -43,6 +49,8 @@ export default function Home({ onNavigateToAgent, onNavigateToCommunity, onNavig
   const [showCommunityGroupModal, setShowCommunityGroupModal] = useState(false);
   const [selectedDay, setSelectedDay] = useState(12);
   const [isMonthDropdownOpen, setIsMonthDropdownOpen] = useState(false);
+  const [scheduleView, setScheduleView] = useState<'month' | '3day' | 'day' | 'list'>('month');
+  const [isScheduleMenuOpen, setIsScheduleMenuOpen] = useState(false);
   
   const [activeSubPage, setActiveSubPage] = useState<'medical' | 'pet' | null>(null);
   const [activeBookingService, setActiveBookingService] = useState<'medical' | 'pet' | 'custom' | null>(null);
@@ -231,6 +239,21 @@ export default function Home({ onNavigateToAgent, onNavigateToCommunity, onNavig
     { name: '五', day: 13 },
     { name: '六', day: 14 },
     { name: '日', day: 15 }
+  ];
+
+  const calendarDays = Array.from({ length: 35 }, (_, index) => index + 1);
+  const visibleDays = scheduleView === '3day'
+    ? [selectedDay, selectedDay + 1, selectedDay + 2]
+    : [selectedDay];
+  const allScheduleTasks = Object.entries(scheduleData)
+    .flatMap(([day, tasks]) => (tasks as any[]).map(task => ({ ...task, day: Number(day) })))
+    .sort((a, b) => a.day - b.day);
+  const dateLabel = (day: number) => `3月${day}日${day === 12 ? ' · 今天' : ''}`;
+  const viewOptions = [
+    { id: 'list' as const, label: '列表', icon: List },
+    { id: 'month' as const, label: '月', icon: Grid3X3 },
+    { id: '3day' as const, label: '3日', icon: Columns3 },
+    { id: 'day' as const, label: '日', icon: Rows3 }
   ];
 
   const handleUpdateTask = (updated: any) => {
@@ -485,110 +508,96 @@ export default function Home({ onNavigateToAgent, onNavigateToCommunity, onNavig
               </button>
             </div>
 
-            {/* 月份下拉选择栏 */}
-            <div className="schedule-dropdown-bar">
-              <button
-                type="button"
-                className="schedule-month-select"
-                onClick={() => setIsMonthDropdownOpen(!isMonthDropdownOpen)}
-              >
-                <span>2026年 3月（第 2 周）</span>
-                {isMonthDropdownOpen ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
+            <div className="schedule-calendar-toolbar">
+              <button type="button" className="schedule-month-select" onClick={() => setIsMonthDropdownOpen(!isMonthDropdownOpen)}>
+                <span>2026年 3月</span>
+                {isMonthDropdownOpen ? <ChevronUp /> : <ChevronDown />}
               </button>
-              <div className="schedule-month-badge">共 {(scheduleData[selectedDay] || []).length} 项日程</div>
+              <div className="schedule-toolbar-actions">
+                <button type="button" className="schedule-today-btn" onClick={() => setSelectedDay(12)}>今天</button>
+                <button type="button" className="schedule-icon-btn" aria-label="新增日程" onClick={() => openAgent('请帮我新增一个档期任务')}><PlusIcon /></button>
+                <button type="button" className="schedule-icon-btn" aria-label="更多日历设置" onClick={() => setIsScheduleMenuOpen(!isScheduleMenuOpen)}><MoreVertical /></button>
+              </div>
             </div>
 
-            {/* 下拉展开面板（支持快速切换周/月视界） */}
             {isMonthDropdownOpen && (
               <div className="schedule-dropdown-content">
-                <div className="schedule-dropdown-item active" onClick={() => setIsMonthDropdownOpen(false)}>
-                  <span>📅 2026年3月 第二周 (03/09 - 03/15)</span>
-                  <span className="text-blue-600 font-bold text-xs">当前周</span>
-                </div>
-                <div className="schedule-dropdown-item" onClick={() => { alert('已切换到下周排期规划'); setIsMonthDropdownOpen(false); }}>
-                  <span>📅 2026年3月 第三周 (03/16 - 03/22)</span>
-                  <span className="text-slate-400 text-xs">查看待办</span>
-                </div>
-                <div className="schedule-dropdown-item" onClick={() => { alert('已切换到整月视图'); setIsMonthDropdownOpen(false); }}>
-                  <span>🗓️ 3月整月家庭健康大日历</span>
-                  <span className="text-slate-400 text-xs">月度统计</span>
+                <button type="button" className="schedule-dropdown-item active" onClick={() => { setScheduleView('month'); setIsMonthDropdownOpen(false); }}>
+                  <span>2026年3月 · 本月排期</span><span>当前</span>
+                </button>
+                <button type="button" className="schedule-dropdown-item" onClick={() => { setSelectedDay(12); setScheduleView('list'); setIsMonthDropdownOpen(false); }}>
+                  <span>今天 · 3月12日</span><span>查看日程</span>
+                </button>
+              </div>
+            )}
+
+            <div className="schedule-view-switcher">
+              {viewOptions.map(({ id, label, icon: Icon }) => (
+                <button key={id} type="button" className={scheduleView === id ? 'active' : ''} onClick={() => { setScheduleView(id); setIsScheduleMenuOpen(false); }}>
+                  <Icon /><span>{label}</span>
+                </button>
+              ))}
+            </div>
+
+            {isScheduleMenuOpen && (
+              <div className="schedule-view-menu">
+                {viewOptions.map(({ id, label, icon: Icon }) => (
+                  <button key={id} type="button" className={scheduleView === id ? 'active' : ''} onClick={() => { setScheduleView(id); setIsScheduleMenuOpen(false); }}>
+                    <Icon /><span>{label === '月' ? '月视图' : label === '3日' ? '三日视图' : label === '日' ? '单日视图' : '列表视图'}</span>
+                    {scheduleView === id && <span>✓</span>}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {scheduleView === 'month' && (
+              <div className="schedule-month-grid">
+                <div className="schedule-week-labels">{['一', '二', '三', '四', '五', '六', '日'].map(day => <span key={day}>{day}</span>)}</div>
+                <div className="schedule-month-cells">
+                  {calendarDays.map(day => {
+                    const count = (scheduleData[day] || []).length;
+                    return (
+                      <button key={day} type="button" className={`schedule-month-cell ${selectedDay === day ? 'active' : ''} ${day === 12 ? 'today' : ''}`} onClick={() => { setSelectedDay(day); setScheduleView('day'); }}>
+                        <b>{day}</b>
+                        {count > 0 && <span className="schedule-cell-bars"><i /><i className={count > 1 ? 'warm' : ''} /><i className={count > 2 ? 'green' : ''} /></span>}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}
 
-            {/* 日历周视图（带有记录标记点，点击即可联动切换日期） */}
-            <div className="schedule-week-bar">
-              {weekDays.map(item => {
-                const count = (scheduleData[item.day] || []).length;
-                const isSelected = selectedDay === item.day;
-                const hasRecord = count > 0;
-                return (
-                  <button
-                    key={item.day}
-                    type="button"
-                    onClick={() => setSelectedDay(item.day)}
-                    className={`schedule-week-day ${item.isPast ? 'past' : ''} ${isSelected ? 'active' : ''}`}
-                    title={`查看 3月${item.day}日 任务列表`}
-                  >
-                    <span className="text-[11px]">{item.name}</span>
-                    <b className="text-[13px]">{item.day}</b>
-                    {hasRecord && (
-                      <span className={`schedule-dot ${isSelected ? 'dot-active' : 'dot-recorded'}`} />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* 当日档案与任务列表（参考滴答清单排布，可点击进入详情/修改） */}
-            <div className="schedule-list">
-              <div className="schedule-section-label">
-                <span>
-                  3月{selectedDay}日 {selectedDay === 12 ? '今天' : selectedDay < 12 ? '往期记录' : '未来预约'} · 任务排布 ({(scheduleData[selectedDay] || []).length})
-                </span>
-                <span className="schedule-tag">
-                  {selectedDay === 12 ? 'AI 联动履约中' : '清单日历排期'}
-                </span>
-              </div>
-
-              {(scheduleData[selectedDay] || []).length === 0 ? (
-                <div className="p-8 text-center text-slate-400 text-xs bg-slate-50 rounded-2xl border border-dashed border-slate-200">
-                  当天暂无排期或备忘
-                </div>
-              ) : (
-                (scheduleData[selectedDay] || []).map((task: any) => (
-                  <div
-                    key={task.id}
-                    onClick={() => setEditingTask({ ...task })}
-                    className={`schedule-card ${task.status === 'accepted' ? 'schedule-card-green' : task.status === 'completed' ? 'schedule-card-gray' : 'schedule-card-blue'} schedule-clickable`}
-                    title={task.canEdit ? '点击查看或编辑此任务内容' : '该订单已被服务者接单锁定，不可更改内容'}
-                  >
-                    <div className="schedule-card-time">
-                      <Clock className="schedule-card-time-icon" />
-                      <span>{task.time}</span>
-                      <span className={`schedule-status-tag ${task.status === 'accepted' ? 'green' : task.status === 'completed' ? 'gray' : ''}`}>
-                        {task.statusLabel}
-                      </span>
-                      {task.canEdit ? (
-                        <span className="schedule-edit-hint">点击可修改 ›</span>
-                      ) : (
-                        <span className="schedule-lock-hint">🔒 已接单锁定</span>
-                      )}
-                    </div>
-                    <div className="schedule-card-main">
-                      <h4>{task.title}</h4>
-                      <p>{task.note}</p>
-                    </div>
-                    {task.details && (
-                      <div className="schedule-card-foot">
-                        <span>{task.details}</span>
+            {scheduleView !== 'month' && scheduleView !== 'list' && (
+              <div className="schedule-timeline">
+                {visibleDays.map(day => (
+                  <section key={day} className="schedule-timeline-day">
+                    <button type="button" className={`schedule-timeline-date ${selectedDay === day ? 'active' : ''}`} onClick={() => setSelectedDay(day)}>
+                      <strong>{day}</strong><span>{dateLabel(day)}</span>
+                    </button>
+                    {(scheduleData[day] || []).length === 0 ? <div className="schedule-empty">当天暂无排期</div> : (scheduleData[day] || []).map((task: any) => (
+                      <div key={task.id} onClick={() => setEditingTask({ ...task })} className={`schedule-timeline-row ${task.status === 'accepted' ? 'green' : task.status === 'completed' ? 'gray' : ''}`}>
+                        <span className="schedule-time-label">{task.time.split(' ')[0]}</span>
+                        <div className="schedule-timeline-card"><strong>{task.title}</strong><span>{task.note}</span><em>{task.statusLabel}</em></div>
                       </div>
-                    )}
-                  </div>
-                ))
-              )}
+                    ))}
+                  </section>
+                ))}
+              </div>
+            )}
 
-              {/* 家庭档案快捷卡 */}
+            {scheduleView === 'list' && (
+              <div className="schedule-list schedule-list-view">
+                <div className="schedule-section-label"><span>全部日程 · {allScheduleTasks.length} 项</span><span className="schedule-tag">按日期排列</span></div>
+                {allScheduleTasks.map((task: any) => (
+                  <div key={`${task.day}-${task.id}`} onClick={() => { setSelectedDay(task.day); setEditingTask({ ...task }); }} className={`schedule-card ${task.status === 'accepted' ? 'schedule-card-green' : task.status === 'completed' ? 'schedule-card-gray' : 'schedule-card-blue'} schedule-clickable`}>
+                    <div className="schedule-card-time"><Clock className="schedule-card-time-icon" /><span>{dateLabel(task.day)} · {task.time}</span><span className="schedule-status-tag">{task.statusLabel}</span></div>
+                    <div className="schedule-card-main"><h4>{task.title}</h4><p>{task.note}</p></div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="schedule-list schedule-bottom-content">
               <div className="schedule-archive-box">
                 <div className="schedule-archive-header">
                   <UserCheck className="schedule-archive-icon" />
@@ -612,7 +621,6 @@ export default function Home({ onNavigateToAgent, onNavigateToCommunity, onNavig
               </div>
             </div>
 
-            {/* 底部 AI 排期唤起 */}
             <div className="schedule-sheet-footer">
               <button
                 type="button"

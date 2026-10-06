@@ -58,9 +58,10 @@ interface ScheduleCalendarProps {
   onClose: () => void;
   onOpenAgent?: (prompt: string) => void;
   onOpenProfile?: () => void;
+  standalone?: boolean;
 }
 
-export default function ScheduleCalendar({ onClose, onOpenAgent, onOpenProfile }: ScheduleCalendarProps) {
+export default function ScheduleCalendar({ onClose, onOpenAgent, onOpenProfile, standalone = false }: ScheduleCalendarProps) {
   const today = useMemo(() => new Date(), []);
   const scheduleData = useMemo(() => buildScheduleData(today), [today]);
   const initialDate = useMemo(() => findInitialScheduleDate(today, Object.keys(scheduleData)), [scheduleData, today]);
@@ -102,8 +103,8 @@ export default function ScheduleCalendar({ onClose, onOpenAgent, onOpenProfile }
   };
 
   return (
-    <div className="schedule-modal-overlay" onClick={onClose}>
-      <section className="schedule-modal-sheet schedule-calendar-workspace" onClick={event => event.stopPropagation()} aria-label="档案与档期日历">
+    <div className={`schedule-modal-overlay ${standalone ? 'schedule-page-overlay' : ''}`} onClick={standalone ? undefined : onClose}>
+      <section className={`schedule-modal-sheet schedule-calendar-workspace ${standalone ? 'schedule-page-sheet' : ''}`} onClick={event => event.stopPropagation()} aria-label="档案与档期日历">
         <div className="schedule-sheet-header">
           <div className="schedule-sheet-title">
             <Calendar className="schedule-title-icon" />
