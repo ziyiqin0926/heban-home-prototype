@@ -183,8 +183,51 @@ export default function Profile({ onNavigateToAgent, onNavigateToManual, onNavig
   });
 
   const activeCount = orders.filter(o => o.status === 'pending' || o.status === 'accepted').length;
+  const publishedCount = orders.filter(o => o.status !== 'cancelled').length;
+  const pendingCount = orders.filter(o => o.status === 'pending').length;
+  const fulfillingCount = orders.filter(o => o.status === 'accepted').length;
   const completedCount = orders.filter(o => o.status === 'completed').length;
   const cancelledCount = orders.filter(o => o.status === 'cancelled').length;
+  const isEscortMode = profileRole === 'escort';
+  const orderMetrics = isEscortMode
+    ? [
+        { label: '待接单', count: 0, icon: ClipboardList, color: 'text-amber-500' },
+        { label: '已接单', count: 0, icon: BadgeCheck, color: 'text-emerald-500' },
+        { label: '履约中', count: 0, icon: Clock, color: 'text-indigo-500' },
+        { label: '已完成', count: 0, icon: Check, color: 'text-slate-500' }
+      ]
+    : [
+        { label: '已发布', count: publishedCount, icon: ClipboardList, color: 'text-amber-500' },
+        { label: '待接单', count: pendingCount, icon: Clock, color: 'text-orange-500' },
+        { label: '履约中', count: fulfillingCount, icon: BadgeCheck, color: 'text-indigo-500' },
+        { label: '已完成', count: completedCount, icon: Check, color: 'text-slate-500' }
+      ];
+  const serviceSpaceItems = isEscortMode
+    ? [
+        { label: '服务档案', hint: '技能与资质', icon: FileText, tone: 'bg-indigo-50 text-indigo-600', action: () => showToast('服务档案编辑入口已准备') },
+        { label: '接单日程', hint: '可接时间', icon: CalendarDays, tone: 'bg-cyan-50 text-cyan-600', action: () => showToast('接单日程入口已准备') },
+        { label: '服务动态', hint: '案例与心得', icon: ImagePlus, tone: 'bg-rose-50 text-rose-500', action: () => showToast('服务动态发布入口已准备') },
+        { label: '任务奖励', hint: '待领取', icon: Gift, tone: 'bg-amber-50 text-amber-600', action: () => showToast('任务与奖励中心即将开放') }
+      ]
+    : [
+        { label: '个人档案', hint: '资料与联系人', icon: FileText, tone: 'bg-indigo-50 text-indigo-600', action: () => { setUnifiedPhone(userPhone); setUnifiedBackupPhone(backupPhone); setUnifiedAddress(userAddress); setIsEditingContactAddress(true); } },
+        { label: '偏好日程', hint: '可约时间', icon: CalendarDays, tone: 'bg-cyan-50 text-cyan-600', action: () => showToast('档案与日程入口已准备') },
+        { label: '收藏小伴', hint: `${favoriteEscortIds.length} 位`, icon: Heart, tone: 'bg-rose-50 text-rose-500', action: () => changeViewMode('favorites') },
+        { label: '任务奖励', hint: '待领取', icon: Gift, tone: 'bg-amber-50 text-amber-600', action: () => showToast('任务与奖励中心即将开放') }
+      ];
+  const assetItems = isEscortMode
+    ? [
+        { label: '待结算', value: '0 元', icon: Wallet, tone: 'text-rose-500', action: () => showToast('服务结算明细正在接入') },
+        { label: '平台积分', value: '0 分', icon: Award, tone: 'text-amber-500', action: () => showToast('积分明细正在接入') },
+        { label: '分享奖励', value: '待领取', icon: Gift, tone: 'text-emerald-500', action: () => showToast('发布服务动态可获得平台奖励') },
+        { label: '服务钱包', value: '查看', icon: WalletCards, tone: 'text-indigo-500', action: () => showToast('服务钱包入口已准备') }
+      ]
+    : [
+        { label: '优惠券', value: `${coupons.filter(c => c.status === 'available').length} 张`, icon: Ticket, tone: 'text-rose-500', action: () => changeViewMode('coupons') },
+        { label: '积分', value: '0 分', icon: Award, tone: 'text-amber-500', action: () => showToast('积分明细正在接入') },
+        { label: '分享奖励', value: '待领取', icon: Gift, tone: 'text-emerald-500', action: () => showToast('分享订单可获得平台奖励') },
+        { label: '服务钱包', value: '查看', icon: WalletCards, tone: 'text-indigo-500', action: () => showToast('服务钱包入口已准备') }
+      ];
 
   return (
     <div className="profile-page min-h-full flex flex-col items-center">
@@ -211,7 +254,7 @@ export default function Profile({ onNavigateToAgent, onNavigateToManual, onNavig
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h1 className="text-xl md:text-2xl font-black tracking-tight">和伴用户</h1>
+                      <h1 className="text-xl md:text-2xl font-black tracking-tight">{isEscortMode ? '小伴师傅' : '和伴用户'}</h1>
                       <span className="inline-flex items-center gap-1 rounded-full bg-emerald-400/15 border border-emerald-300/30 px-2 py-0.5 text-[10px] font-bold text-emerald-200">
                         <BadgeCheck className="w-3 h-3" /> 已认证
                       </span>
@@ -219,7 +262,9 @@ export default function Profile({ onNavigateToAgent, onNavigateToManual, onNavig
                     <p className="mt-1 text-xs text-slate-300 truncate">
                       唯一 ID：HB-{userPhone ? userPhone.slice(-6) : '0826'} · {userPhone ? `${userPhone.slice(0, 3)}****${userPhone.slice(-4)}` : '待绑定手机号'}
                     </p>
-                    <p className="mt-2 text-[11px] text-cyan-200">把需求交给和伴，把时间留给生活</p>
+                    <p className="mt-2 text-[11px] text-cyan-200">
+                      {isEscortMode ? '展示真实技能，连接附近的服务需求' : '把需求交给和伴，把时间留给生活'}
+                    </p>
                   </div>
                 </div>
                 <button
@@ -234,16 +279,16 @@ export default function Profile({ onNavigateToAgent, onNavigateToManual, onNavig
 
               <div className="relative z-10 mt-5 grid grid-cols-3 gap-2.5 text-center">
                 <div className="rounded-xl bg-white/8 border border-white/10 py-2.5">
-                  <strong className="block text-lg font-black">{orders.length}</strong>
-                  <span className="text-[10px] text-slate-300">全部订单</span>
+                  <strong className="block text-lg font-black">{isEscortMode ? 0 : publishedCount}</strong>
+                  <span className="text-[10px] text-slate-300">{isEscortMode ? '可接订单' : '已发布'}</span>
                 </div>
                 <div className="rounded-xl bg-white/8 border border-white/10 py-2.5">
-                  <strong className="block text-lg font-black">{activeCount}</strong>
-                  <span className="text-[10px] text-slate-300">进行中</span>
+                  <strong className="block text-lg font-black">{isEscortMode ? 0 : pendingCount}</strong>
+                  <span className="text-[10px] text-slate-300">{isEscortMode ? '已接订单' : '待接单'}</span>
                 </div>
                 <div className="rounded-xl bg-white/8 border border-white/10 py-2.5">
-                  <strong className="block text-lg font-black">{completedCount}</strong>
-                  <span className="text-[10px] text-slate-300">已完成</span>
+                  <strong className="block text-lg font-black">{isEscortMode ? 0 : fulfillingCount}</strong>
+                  <span className="text-[10px] text-slate-300">{isEscortMode ? '服务完成' : '履约中'}</span>
                 </div>
               </div>
 
@@ -257,11 +302,7 @@ export default function Profile({ onNavigateToAgent, onNavigateToManual, onNavig
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    setProfileRole('escort');
-                    if (onNavigateToPartner) onNavigateToPartner();
-                    else showToast('小伴师傅端入口已准备');
-                  }}
+                  onClick={() => setProfileRole('escort')}
                   className={`flex-1 rounded-lg py-2 text-xs font-bold transition-colors ${profileRole === 'escort' ? 'bg-cyan-300 text-slate-950' : 'text-slate-300 hover:text-white'}`}
                 >
                   小伴师傅端
@@ -274,19 +315,16 @@ export default function Profile({ onNavigateToAgent, onNavigateToManual, onNavig
                 <div className="px-4 pt-4 flex items-center justify-between">
                   <div>
                     <h2 className="text-sm font-black text-slate-900">订单中心</h2>
-                    <p className="text-[11px] text-slate-400 mt-0.5">查看已发布、已接单与履约进程</p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">
+                      {isEscortMode ? '查看可接订单、已接单与履约进程' : '查看已发布、待接单与履约进程'}
+                    </p>
                   </div>
                   <button type="button" onClick={() => changeViewMode('orders')} className="text-xs font-bold text-indigo-600 flex items-center gap-0.5">
                     全部订单 <ChevronRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
                 <div className="grid grid-cols-4 divide-x divide-slate-100 mt-4 border-t border-slate-100">
-                  {[
-                    { label: '已发布', count: orders.filter(o => o.status === 'pending').length, icon: ClipboardList, color: 'text-amber-500' },
-                    { label: '已接单', count: orders.filter(o => o.status === 'accepted').length, icon: BadgeCheck, color: 'text-emerald-500' },
-                    { label: '履约中', count: activeCount, icon: Clock, color: 'text-indigo-500' },
-                    { label: '已完成', count: completedCount, icon: Check, color: 'text-slate-500' }
-                  ].map(({ label, count, icon: Icon, color }) => (
+                  {orderMetrics.map(({ label, count, icon: Icon, color }) => (
                     <button key={label} type="button" onClick={() => changeViewMode('orders')} className="py-3.5 flex flex-col items-center gap-1 hover:bg-slate-50 active:bg-slate-100 transition-colors">
                       <Icon className={`w-5 h-5 ${color}`} />
                       <strong className="text-sm text-slate-800">{count}</strong>
@@ -299,18 +337,15 @@ export default function Profile({ onNavigateToAgent, onNavigateToManual, onNavig
               <section className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-4">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <h2 className="text-sm font-black text-slate-900">我的服务空间</h2>
-                    <p className="text-[11px] text-slate-400 mt-0.5">档案、偏好、日程和常用对象</p>
+                    <h2 className="text-sm font-black text-slate-900">{isEscortMode ? '我的接单空间' : '我的服务空间'}</h2>
+                    <p className="text-[11px] text-slate-400 mt-0.5">
+                      {isEscortMode ? '服务档案、接单日程、动态与奖励' : '档案、偏好、日程和常用对象'}
+                    </p>
                   </div>
                   <UserRound className="w-4 h-4 text-indigo-500" />
                 </div>
                 <div className="grid grid-cols-4 gap-2">
-                  {[
-                    { label: '个人档案', hint: '资料与联系人', icon: FileText, tone: 'bg-indigo-50 text-indigo-600', action: () => { setUnifiedPhone(userPhone); setUnifiedBackupPhone(backupPhone); setUnifiedAddress(userAddress); setIsEditingContactAddress(true); } },
-                    { label: '偏好日程', hint: '可约时间', icon: CalendarDays, tone: 'bg-cyan-50 text-cyan-600', action: () => showToast('档案与日程入口已准备') },
-                    { label: '收藏小伴', hint: `${favoriteEscortIds.length} 位`, icon: Heart, tone: 'bg-rose-50 text-rose-500', action: () => changeViewMode('favorites') },
-                    { label: '任务奖励', hint: '待领取', icon: Gift, tone: 'bg-amber-50 text-amber-600', action: () => showToast('任务与奖励中心即将开放') }
-                  ].map(({ label, hint, icon: Icon, tone, action }) => (
+                  {serviceSpaceItems.map(({ label, hint, icon: Icon, tone, action }) => (
                     <button key={label} type="button" onClick={action} className="min-w-0 rounded-xl border border-slate-100 p-2.5 text-center hover:border-indigo-200 hover:bg-indigo-50/30 active:scale-[.98] transition-all">
                       <span className={`mx-auto flex h-9 w-9 items-center justify-center rounded-xl ${tone}`}>
                         <Icon className={`w-4 h-4 ${label === '收藏小伴' ? 'fill-current' : ''}`} />
@@ -331,12 +366,7 @@ export default function Profile({ onNavigateToAgent, onNavigateToManual, onNavig
                   <Wallet className="w-4 h-4 text-amber-500" />
                 </div>
                 <div className="grid grid-cols-4 gap-2">
-                  {[
-                    { label: '优惠券', value: `${coupons.filter(c => c.status === 'available').length} 张`, icon: Ticket, tone: 'text-rose-500', action: () => changeViewMode('coupons') },
-                    { label: '积分', value: '0 分', icon: Award, tone: 'text-amber-500', action: () => showToast('积分明细正在接入') },
-                    { label: '分享奖励', value: '待领取', icon: Gift, tone: 'text-emerald-500', action: () => showToast('分享订单可获得平台奖励') },
-                    { label: '服务钱包', value: '查看', icon: WalletCards, tone: 'text-indigo-500', action: () => showToast('服务钱包入口已准备') }
-                  ].map(({ label, value, icon: Icon, tone, action }) => (
+                  {assetItems.map(({ label, value, icon: Icon, tone, action }) => (
                     <button key={label} type="button" onClick={action} className="rounded-xl py-2 text-center hover:bg-slate-50 active:scale-[.98] transition-all">
                       <Icon className={`mx-auto w-5 h-5 ${tone}`} />
                       <strong className="mt-1.5 block text-xs text-slate-800">{value}</strong>
@@ -352,8 +382,10 @@ export default function Profile({ onNavigateToAgent, onNavigateToManual, onNavig
                     <span className="w-9 h-9 rounded-xl bg-cyan-500 text-white flex items-center justify-center"><ImagePlus className="w-4 h-4" /></span>
                     <ChevronRight className="w-4 h-4 text-cyan-600" />
                   </div>
-                  <strong className="mt-3 block text-sm text-slate-900">个人内容创作中心</strong>
-                  <p className="mt-1 text-[11px] leading-relaxed text-slate-500">发布服务案例、心得与个人名片，获得平台分享奖励</p>
+                  <strong className="mt-3 block text-sm text-slate-900">{isEscortMode ? '服务内容创作中心' : '订单分享中心'}</strong>
+                  <p className="mt-1 text-[11px] leading-relaxed text-slate-500">
+                    {isEscortMode ? '发布服务案例、心得与个人名片，获得平台分享奖励' : '分享订单到朋友圈和群，加速匹配合适的小伴师傅'}
+                  </p>
                 </button>
                 <button type="button" onClick={() => showToast('客服会尽快为你安排人工跟进')} className="text-left rounded-2xl border border-indigo-200 bg-indigo-50/70 p-4 hover:bg-indigo-50 active:scale-[.99] transition-all">
                   <div className="flex items-center justify-between">
@@ -369,12 +401,14 @@ export default function Profile({ onNavigateToAgent, onNavigateToManual, onNavig
                 <div className="min-w-0">
                   <div className="flex items-center gap-1.5">
                     <BriefcaseBusiness className="w-4 h-4 text-cyan-300" />
-                    <strong className="text-sm">成为小伴师傅</strong>
+                    <strong className="text-sm">{isEscortMode ? '返回用户中心' : '成为小伴师傅'}</strong>
                   </div>
-                  <p className="text-[11px] text-slate-300 mt-1">认证技能，展示服务名片，连接更多真实需求</p>
+                  <p className="text-[11px] text-slate-300 mt-1">
+                    {isEscortMode ? '切换回用户身份，发布和管理陪伴需求' : '认证技能，展示服务名片，连接更多真实需求'}
+                  </p>
                 </div>
-                <button type="button" onClick={() => onNavigateToPartner ? onNavigateToPartner() : showToast('小伴师傅端入口已准备')} className="flex-shrink-0 rounded-xl bg-cyan-300 px-3 py-2 text-xs font-black text-slate-950 hover:bg-cyan-200 active:scale-95 transition-transform">
-                  进入师傅端
+                <button type="button" onClick={() => isEscortMode ? setProfileRole('user') : setProfileRole('escort')} className="flex-shrink-0 rounded-xl bg-cyan-300 px-3 py-2 text-xs font-black text-slate-950 hover:bg-cyan-200 active:scale-95 transition-transform">
+                  {isEscortMode ? '返回用户端' : '进入师傅端'}
                 </button>
               </section>
 
