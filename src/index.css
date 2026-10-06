@@ -75,6 +75,7 @@ select:focus-visible {
 }
 
 .app-scroll {
+  min-height: 0;
   scrollbar-width: thin;
   scrollbar-color: #cbd5e1 transparent;
 }

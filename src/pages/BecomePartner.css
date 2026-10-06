@@ -1,23 +1,86 @@
-.partner-hero-carousel { position: relative; min-height: 174px; overflow: hidden; }
-.partner-hero-slide { position: absolute; inset: 0; opacity: 0; transform: translateX(14px); pointer-events: none; transition: opacity 360ms ease-out, transform 360ms ease-out; }
-.partner-hero-slide.active { opacity: 1; transform: translateX(0); pointer-events: auto; }
-.partner-hero > div:first-of-type { min-width: 0; position: relative; z-index: 1; }
+.partner-hero-carousel { position: relative; display: grid; min-height: 0; overflow: hidden; }
+.partner-hero-slide { position: relative; grid-area: 1 / 1; opacity: 0; visibility: hidden; transform: translateX(14px); pointer-events: none; transition: opacity 220ms ease-out, transform 220ms ease-out, visibility 0s linear 220ms; }
+.partner-hero-slide.active { z-index: 1; opacity: 1; visibility: visible; transform: translateX(0); pointer-events: auto; transition-delay: 0s; }
+.partner-hero > div:first-of-type { min-width: 0; position: relative; z-index: 1; padding-right: 2px; }
 .partner-hero h1, .partner-hero p { overflow-wrap: anywhere; }
-.partner-skill-card, .partner-calendar-card { position: absolute; right: 15px; bottom: 13px; width: 142px; border: 1px solid #ffffff45; border-radius: 13px; background: #ffffff1c; backdrop-filter: blur(8px); }
-.partner-skill-card { display: grid; grid-template-columns: 22px 1fr; gap: 3px 6px; padding: 10px; color: #fff; transform: rotate(-4deg); }
+.partner-hero .partner-skill-card, .partner-hero .partner-calendar-card { position: relative; right: auto; bottom: auto; width: auto; border: 1px solid #ffffff45; border-radius: 12px; background: #ffffff1c; backdrop-filter: blur(8px); }
+.partner-skill-card { display: grid; grid-template-columns: 20px 1fr; gap: 3px 5px; padding: 8px; color: #fff; transform: rotate(-2deg); }
 .partner-skill-card > svg { grid-row: 1 / 3; margin-top: 2px; color: #ffd875; }
-.partner-skill-card strong { font-size: 11px; }
-.partner-skill-card small { color: #dceaff; font-size: 8px; line-height: 1.4; }
+.partner-skill-card strong { font-size: 10px; }
+.partner-skill-card small { color: #dceaff; font-size: 7px; line-height: 1.35; }
 .partner-skill-card i { grid-column: 2; justify-self: start; padding: 2px 5px; border-radius: 5px; color: #286bd1; background: #fff; font-size: 7px; font-style: normal; }
-.partner-calendar-card { height: 112px; padding: 8px; color: #fff; transform: rotate(3deg); background: #ffffff1c; }
+.partner-calendar-card { height: 92px; padding: 7px; color: #fff; transform: rotate(2deg); background: #ffffff1c; }
 .partner-calendar-card > svg { position: absolute; top: 8px; right: 8px; color: #bfe0ff; }
-.partner-calendar-card > div { display: grid; gap: 5px; width: 82px; margin-top: 3px; }
+.partner-calendar-card > div { display: grid; gap: 4px; width: 76px; margin-top: 3px; }
 .partner-calendar-card > div span { display: flex; align-items: center; gap: 3px; padding: 3px 4px; border-radius: 5px; background: #ffffff22; font-size: 7px; white-space: nowrap; }
 .partner-calendar-card > div span:nth-child(2) { background: #ffffff32; }
 .partner-calendar-card > div span:nth-child(3) { background: #ffd87535; }
-.partner-calendar-card img { position: absolute; right: -10px; bottom: -15px; width: 76px; height: 76px; object-fit: contain; }
+.partner-calendar-card img { position: absolute; right: -8px; bottom: -12px; width: 64px; height: 64px; object-fit: contain; }
 .partner-hero-dots { position: absolute; right: 18px; bottom: 5px; z-index: 2; display: flex; gap: 5px; }
 .partner-hero-dots button { display: grid; place-items: center; width: 18px; height: 16px; padding: 0; border: 0; background: transparent; }
 .partner-hero-dots span { width: 5px; height: 5px; border-radius: 50%; background: #ffffff7a; }
 .partner-hero-dots button[aria-pressed="true"] span { width: 15px; border-radius: 4px; background: #fff; }
+
+@media (max-width: 560px) {
+  .partner-hero {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    align-items: start;
+    gap: 10px 12px;
+    min-height: 0;
+    padding: 16px 14px 30px;
+  }
+
+  .partner-hero-icon {
+    position: relative;
+    grid-column: 1;
+    grid-row: 1;
+    width: 42px;
+    height: 42px;
+    border-radius: 13px;
+  }
+
+  .partner-hero-icon svg {
+    width: 23px;
+    height: 23px;
+  }
+
+  .partner-hero > div:first-of-type {
+    grid-column: 2;
+    grid-row: 1;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .partner-hero h1 {
+    max-width: 100%;
+    margin-top: 6px;
+    font-size: 19px;
+    line-height: 1.22;
+    letter-spacing: 0;
+  }
+
+  .partner-hero p {
+    max-width: 235px;
+    margin-top: 5px;
+    font-size: 10px;
+    line-height: 1.45;
+  }
+
+  .partner-hero .partner-skill-card,
+  .partner-hero .partner-calendar-card {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: end;
+    width: min(100%, 184px) !important;
+    margin-top: 2px;
+  }
+
+  .partner-hero-dots {
+    right: 15px;
+    bottom: 7px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) { .partner-hero-slide { transition: none; transform: none; } }
