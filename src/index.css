@@ -1790,9 +1790,10 @@ select:focus-visible {
 }
 
 .partner-hero {
-  display: flex;
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) 142px;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   padding: 18px 16px;
   border-radius: 18px;
   color: #fff;
@@ -1812,6 +1813,15 @@ select:focus-visible {
 }
 
 .partner-hero-icon svg { width: 27px; height: 27px; }
+.partner-hero .partner-skill-card,
+.partner-hero .partner-calendar-card {
+  position: relative;
+  right: auto;
+  bottom: auto;
+  grid-column: 3;
+  grid-row: 1;
+  width: auto;
+}
 .partner-hero > div > span { font-size: 10px; color: #dbeaff; }
 .partner-hero h1 { margin: 5px 0 6px; color: #fff; font-size: 21px; line-height: 1.25; }
 .partner-hero p { margin: 0; color: #dbeaff; font-size: 10px; }
@@ -1847,6 +1857,22 @@ select:focus-visible {
 }
 
 .partner-form-section { display: grid; gap: 13px; }
+.partner-upload-group { display: grid; gap: 8px; }
+.partner-upload-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.partner-upload-heading strong { color: #52657c; font-size: 11px; }
+.partner-upload-heading span { color: #91a0b2; font-size: 9px; text-align: right; }
+.partner-upload-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+.partner-upload-grid-single { grid-template-columns: minmax(0, 1fr); }
+.partner-upload-tile { position: relative; display: grid; justify-items: center; gap: 4px; min-height: 112px; padding: 10px; overflow: hidden; border: 1px dashed #b9cde5; border-radius: 12px; color: #52657c; background: #f8fbff; text-align: center; cursor: pointer; }
+.partner-upload-tile input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.partner-upload-tile img { width: 100%; height: 64px; object-fit: cover; border-radius: 8px; }
+.partner-upload-icon { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 11px; color: #286bd1; background: #eaf3ff; }
+.partner-upload-icon svg { width: 20px; height: 20px; }
+.partner-upload-tile strong { font-size: 11px; }
+.partner-upload-tile small { color: #91a0b2; font-size: 9px; line-height: 1.3; }
+.partner-upload-tile i { position: absolute; top: 7px; right: 7px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 7px; color: #286bd1; background: #eaf3ff; font-style: normal; }
+.partner-upload-tile i svg { width: 12px; height: 12px; }
+.partner-upload-tile.uploaded { border-style: solid; border-color: #71b08f; background: #f3fbf6; }
 .partner-section-title { display: flex; align-items: flex-start; gap: 9px; padding-bottom: 4px; }
 .partner-section-title > svg { width: 21px; height: 21px; margin-top: 1px; color: #286bd1; }
 .partner-section-title h2 { margin: 0; font-size: 16px; }

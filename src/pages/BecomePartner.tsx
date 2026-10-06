@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowLeft, ArrowRight, BadgeCheck, BriefcaseBusiness, CalendarDays, Check, ChevronRight, Clock3, FileCheck2, MapPin, Phone, ShieldCheck, Sparkles, UserRound } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BadgeCheck, BriefcaseBusiness, CalendarDays, Check, ChevronRight, Clock3, FileCheck2, ImagePlus, IdCard, MapPin, Phone, ShieldCheck, Sparkles, Upload, UserRound } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import './BecomePartner.css';
 
@@ -21,6 +21,8 @@ export default function BecomePartner({ onBack }: BecomePartnerProps) {
   const [heroSlide, setHeroSlide] = useState(0);
   const [heroPaused, setHeroPaused] = useState(false);
   const [form, setForm] = useState({ name: '', phone: '', idNumber: '', wechat: '', skills: [] as string[] });
+  const [identityFiles, setIdentityFiles] = useState<{ front: File | null; back: File | null; showcase: File | null }>({ front: null, back: null, showcase: null });
+  const [identityPreviews, setIdentityPreviews] = useState<{ front: string; back: string; showcase: string }>({ front: '', back: '', showcase: '' });
   useEffect(() => {
     if (heroPaused) return;
     const timer = window.setInterval(() => setHeroSlide(current => (current + 1) % 2), 4000);
@@ -33,8 +35,27 @@ export default function BecomePartner({ onBack }: BecomePartnerProps) {
     skills: prev.skills.includes(id) ? prev.skills.filter(item => item !== id) : [...prev.skills, id],
   }));
   const canContinue = step === 1
-    ? Boolean(form.name.trim() && /^1[3-9]\d{9}$/.test(form.phone.replace(/\s+/g, '')) && form.idNumber.trim())
+    ? Boolean(form.name.trim() && /^1[3-9]\d{9}$/.test(form.phone.replace(/\s+/g, '')) && identityFiles.front && identityFiles.back && identityFiles.showcase)
     : form.skills.length > 0;
+  const handleIdentityFile = (kind: keyof typeof identityFiles, file?: File) => {
+    if (!file || !file.type.startsWith('image/')) return;
+    const preview = URL.createObjectURL(file);
+    setIdentityFiles(prev => ({ ...prev, [kind]: file }));
+    setIdentityPreviews(prev => {
+      if (prev[kind]) URL.revokeObjectURL(prev[kind]);
+      return { ...prev, [kind]: preview };
+    });
+  };
+
+  const renderUploadTile = (kind: keyof typeof identityFiles, title: string, hint: string, Icon: typeof IdCard) => (
+    <label className={`partner-upload-tile ${identityFiles[kind] ? 'uploaded' : ''}`}>
+      <input type="file" accept="image/*" onChange={event => handleIdentityFile(kind, event.target.files?.[0])} />
+      {identityPreviews[kind] ? <img src={identityPreviews[kind]} alt={`${title}预览`} /> : <span className="partner-upload-icon"><Icon /></span>}
+      <strong>{identityFiles[kind] ? '已上传' : title}</strong>
+      <small>{identityFiles[kind] ? identityFiles[kind]?.name : hint}</small>
+      <i><Upload /></i>
+    </label>
+  );
 
   if (submitted) {
     return (
@@ -80,7 +101,20 @@ export default function BecomePartner({ onBack }: BecomePartnerProps) {
           {step === 1 && <div className="partner-form-section">
             <div className="partner-section-title"><UserRound /><div><h2>填写实名信息</h2><p>用于平台身份核验，不会公开展示。</p></div></div>
             <label>真实姓名<input value={form.name} onChange={e => update('name', e.target.value)} placeholder="请输入本人姓名" /></label>
-            <label>身份证号<input value={form.idNumber} onChange={e => update('idNumber', e.target.value)} placeholder="请输入身份证号码" /></label>
+            <label>身份证号（选填）<input value={form.idNumber} onChange={e => update('idNumber', e.target.value)} placeholder="照片清晰时可不填写" /></label>
+            <div className="partner-upload-group">
+              <div className="partner-upload-heading"><strong>身份证照片</strong><span>请上传身份证正反面，用于实名核验</span></div>
+              <div className="partner-upload-grid">
+                {renderUploadTile('front', '身份证正面', '人像面', IdCard)}
+                {renderUploadTile('back', '身份证反面', '国徽面', IdCard)}
+              </div>
+            </div>
+            <div className="partner-upload-group">
+              <div className="partner-upload-heading"><strong>个人展示照片</strong><span>用于技能名片展示，可更换</span></div>
+              <div className="partner-upload-grid partner-upload-grid-single">
+                {renderUploadTile('showcase', '上传个人照片', '建议清晰半身照', ImagePlus)}
+              </div>
+            </div>
             <label>手机号码<input value={form.phone} onChange={e => update('phone', e.target.value)} placeholder="请输入常用手机号" inputMode="tel" /></label>
             {form.phone && !/^1[3-9]\d{9}$/.test(form.phone.replace(/\s+/g, '')) && <small className="partner-error">请输入有效的 11 位手机号码</small>}
             <label>当前服务城市<div className="partner-readonly"><MapPin />{currentCity}市<ChevronRight /></div></label>
@@ -94,7 +128,7 @@ export default function BecomePartner({ onBack }: BecomePartnerProps) {
 
           {step === 3 && <div className="partner-form-section">
             <div className="partner-section-title"><FileCheck2 /><div><h2>确认并提交申请</h2><p>请确认下面信息真实有效。</p></div></div>
-            <div className="partner-summary"><p><span>姓名</span><strong>{form.name}</strong></p><p><span>联系电话</span><strong>{form.phone}</strong></p><p><span>服务城市</span><strong>{currentCity}市</strong></p><p><span>申请技能</span><strong>{form.skills.map(id => skills.find(skill => skill.id === id)?.label).join('、')}</strong></p></div>
+            <div className="partner-summary"><p><span>姓名</span><strong>{form.name}</strong></p><p><span>联系电话</span><strong>{form.phone}</strong></p><p><span>服务城市</span><strong>{currentCity}市</strong></p><p><span>身份证照片</span><strong>{identityFiles.front && identityFiles.back ? '正反面已上传' : '未完成'}</strong></p><p><span>个人展示照片</span><strong>{identityFiles.showcase ? '已上传' : '未完成'}</strong></p><p><span>申请技能</span><strong>{form.skills.map(id => skills.find(skill => skill.id === id)?.label).join('、')}</strong></p></div>
             <div className="partner-consent"><ShieldCheck /><span>我确认提交的信息真实有效，并同意平台后续联系我完成认证。</span></div>
           </div>}
 
