@@ -114,6 +114,7 @@ export interface Order {
 
 export interface CommunityPost {
   id: string;
+  orderId?: string;
   title: string;
   type: string;
   city?: string;
@@ -193,4 +194,3 @@ export interface CouponItem {
   createdAt?: string;
   updatedAt?: string;
 }
-

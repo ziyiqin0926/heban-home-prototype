@@ -35,6 +35,7 @@ export const INITIAL_SINGLE_80_COUPON: CouponItem = {
 interface AppContextType {
   orders: Order[];
   addOrder: (draft: DraftOrder) => Order;
+  updateOrder: (id: string, updates: Partial<Pick<Order, 'title' | 'time' | 'location' | 'description' | 'budget' | 'phone'>>) => boolean;
   cancelOrder: (id: string) => void;
   completeOrder: (id: string) => void;
   chatMessages: ChatMessage[];
@@ -402,6 +403,33 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     return newOrder;
   };
 
+  const updateOrder = (id: string, updates: Partial<Pick<Order, 'title' | 'time' | 'location' | 'description' | 'budget' | 'phone'>>): boolean => {
+    const existingOrder = orders.find(order => order.id === id);
+    if (!existingOrder || existingOrder.status !== 'pending') return false;
+    const updatedOrder: Order = { ...existingOrder, ...updates };
+    setOrders(prev => prev.map(order => order.id === id ? updatedOrder : order));
+    insertSupabaseOrder(updatedOrder);
+
+    const linkedPosts = communityPosts.filter(post => post.orderId === id);
+    setCommunityPosts(prev => prev.map(post => post.orderId === id ? {
+        ...post,
+        title: updatedOrder.title || post.title,
+        time: updatedOrder.time || post.time,
+        location: updatedOrder.location || post.location,
+        description: updatedOrder.description || post.description,
+        budget: updatedOrder.budget ?? post.budget,
+      } : post));
+    linkedPosts.forEach(post => insertSupabaseCommunityPost({
+      ...post,
+      title: updatedOrder.title || post.title,
+      time: updatedOrder.time || post.time,
+      location: updatedOrder.location || post.location,
+      description: updatedOrder.description || post.description,
+      budget: updatedOrder.budget ?? post.budget,
+    }));
+    return true;
+  };
+
   const cancelOrder = (id: string) => {
     // 保留在个人中心的订单记录（标记为已取消状态）
     setOrders(prev => prev.map(order => {
@@ -543,6 +571,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     <AppContext.Provider value={{
       orders,
       addOrder,
+      updateOrder,
       cancelOrder,
       completeOrder,
       chatMessages,

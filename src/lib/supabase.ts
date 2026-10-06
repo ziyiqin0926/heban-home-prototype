@@ -212,6 +212,9 @@ export async function getSupabaseCommunityPosts(): Promise<CommunityPost[] | nul
 
       return {
         id: row.id,
+        orderId: row.order_id || row.orderId,
+        isMine: row.is_mine ?? Boolean(row.order_id || row.orderId),
+        isOrder: row.is_order ?? Boolean(row.order_id || row.orderId),
         title: row.title,
         type: row.type || row.order_type || '医疗陪诊',
         city: city,
@@ -259,6 +262,7 @@ export async function insertSupabaseCommunityPost(post: CommunityPost): Promise<
 
     const payload: any = {
       id: post.id,
+      order_id: post.orderId || null,
       title: post.title,
       type: post.type,
       order_type: post.type,
@@ -294,6 +298,12 @@ export async function insertSupabaseCommunityPost(post: CommunityPost): Promise<
     if (error && error.message && error.message.includes("'city'")) {
       console.warn('[Supabase] ⚠️ city column not in community_posts schema, retrying with city in district...');
       delete payload.city;
+      const retryResult = await supabase.from('community_posts').upsert(payload);
+      error = retryResult.error;
+    }
+
+    if (error && error.message && error.message.includes("'order_id'")) {
+      delete payload.order_id;
       const retryResult = await supabase.from('community_posts').upsert(payload);
       error = retryResult.error;
     }
@@ -648,4 +658,3 @@ export async function resetSupabaseCouponsToSingle(initialCoupon: CouponItem): P
     return { success: false, error: err?.message || '重置异常' };
   }
 }
-

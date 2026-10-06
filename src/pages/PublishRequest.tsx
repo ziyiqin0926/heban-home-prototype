@@ -198,6 +198,7 @@ export default function PublishRequest({ onBack, onNavigateToCommunity, onNaviga
     const newOrder = addOrder(draft);
     setSubmittedOrderId(newOrder.id);
     addOfficialCommunityPost({
+      orderId: newOrder.id,
       title,
       type: effectiveType.label,
       city: currentCity,

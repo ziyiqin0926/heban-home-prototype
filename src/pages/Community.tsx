@@ -35,7 +35,8 @@ export default function Community({ onNavigateToAgent }: CommunityProps) {
     communityPosts,
     currentCity,
     setCurrentCity,
-    setPrefilledPrompt
+    setPrefilledPrompt,
+    updateOrder
   } = useAppContext();
   const [isPublishOpen, setIsPublishOpen] = useState(false);
   const [publishText, setPublishText] = useState('');
@@ -45,6 +46,9 @@ export default function Community({ onNavigateToAgent }: CommunityProps) {
   const [publishSubmitted, setPublishSubmitted] = useState(false);
   const [localPosts, setLocalPosts] = useState<CommunityPost[]>([]);
   const [shareNotice, setShareNotice] = useState('');
+  const [editingOrder, setEditingOrder] = useState<CommunityPost | null>(null);
+  const [editingDraft, setEditingDraft] = useState({ title: '', description: '', time: '', location: '', budget: '' });
+  const [sharingPost, setSharingPost] = useState<CommunityPost | null>(null);
 
   const [activeMainTab, setActiveMainTab] = useState<'feed' | 'leaderboard'>('feed');
   const [activeCategory, setActiveCategory] = useState('全部');
@@ -69,6 +73,17 @@ export default function Community({ onNavigateToAgent }: CommunityProps) {
   });
 
   const handlePostSimilar = (post: CommunityPost) => {
+    if (post.isOrder && post.isMine && post.status === 'pending' && post.orderId) {
+      setEditingDraft({
+        title: post.title,
+        description: post.description,
+        time: post.time,
+        location: post.location,
+        budget: post.budget || ''
+      });
+      setEditingOrder(post);
+      return;
+    }
     const prompt = `我也需要在【${post.city || currentCity}】发布一个类似的【${post.type}】需求：地点在${post.location}，预计需要${post.estimatedDuration || '2-3小时'}，主要需求内容是：${post.description.slice(0, 45)}... 请帮我生成需求单`;
     setPrefilledPrompt(prompt);
     onNavigateToAgent();
@@ -79,14 +94,61 @@ export default function Community({ onNavigateToAgent }: CommunityProps) {
     window.setTimeout(() => setShareNotice(''), 2600);
   };
 
-  const handleSharePost = async (post: CommunityPost) => {
-    const shareText = `${post.title}｜${post.description.slice(0, 55)}...`;
+  const getShareLink = (post: CommunityPost) => {
+    const url = new URL(window.location.href);
+    url.searchParams.set('shareOrder', post.orderId || post.id);
+    return url.toString();
+  };
+
+  const getShareText = (post: CommunityPost) => {
+    const title = post.isOrder ? '邀请助力｜帮我加速匹配合适的小伴师傅' : post.title;
+    return `${title}\n${post.description.slice(0, 70)}\n时间：${post.time}\n地点：${post.location}\n分享至群聊和朋友圈，可加速匹配并获得奖励。\n${getShareLink(post)}`;
+  };
+
+  const handleSharePost = (post: CommunityPost) => {
+    setSharingPost(post);
+  };
+
+  const copyShareContent = async (post: CommunityPost) => {
+    const shareText = getShareText(post);
     try {
       await navigator.clipboard?.writeText(shareText);
+      showShareNotice('分享内容已复制，可发送至微信群聊和朋友圈');
     } catch {
       // Clipboard permission is optional in the local prototype.
+      showShareNotice('请长按复制分享内容');
     }
-    showShareNotice('分享内容已生成，分享奖励 +3 积分');
+  };
+
+  const useNativeShare = async (post: CommunityPost) => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: post.isOrder ? '邀请助力加速匹配' : post.title,
+          text: getShareText(post),
+          url: getShareLink(post)
+        });
+        showShareNotice('分享成功，已获得高曝光匹配助力');
+      } else {
+        await copyShareContent(post);
+      }
+    } catch {
+      showShareNotice('分享已取消，订单仍保留在匹配大厅');
+    }
+  };
+
+  const saveOrderEdits = (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!editingOrder?.orderId) return;
+    const saved = updateOrder(editingOrder.orderId, {
+      title: editingDraft.title.trim(),
+      description: editingDraft.description.trim(),
+      time: editingDraft.time.trim(),
+      location: editingDraft.location.trim(),
+      budget: editingDraft.budget.trim()
+    });
+    setEditingOrder(null);
+    showShareNotice(saved ? '订单信息已更新，继续等待匹配' : '订单已进入履约流程，暂不可修改');
   };
 
   const openPublish = (mode: 'story' | 'card' = 'story') => {
@@ -142,17 +204,34 @@ export default function Community({ onNavigateToAgent }: CommunityProps) {
         tabIndex={0}
         className={`community-card${post.isOrder ? ' community-card-order' : ''}`}
       >
-        <div className="community-card-media">
-          <img
-            src={cardCover}
-            alt={post.title}
-            className="community-card-image"
-            referrerPolicy="no-referrer"
-          />
-          <span className="community-card-type">{post.type}</span>
-          <span className="community-card-place"><MapPin size={11} />{post.district}</span>
-          {post.isOrder && <span className="community-order-badge">我的待匹配订单</span>}
-        </div>
+        {post.isOrder ? (
+          <div className="community-card-media community-order-status-media">
+            <div className="community-order-status-top">
+              <span className="community-card-type">{post.type}</span>
+              <span className="community-order-badge">{post.status === 'pending' ? '我的待匹配订单' : '匹配中'}</span>
+            </div>
+            <div className="community-order-status-copy">
+              <strong>{post.title}</strong>
+              <span>{post.description.replace(/\n/g, ' ').slice(0, 70)}</span>
+            </div>
+            <div className="community-order-status-meta">
+              <span><Clock size={11} />{post.time}</span>
+              <span><MapPin size={11} />{post.location}</span>
+            </div>
+            <div className="community-order-matching-line"><i /><span>系统正在匹配合适的小伴师傅</span></div>
+          </div>
+        ) : (
+          <div className="community-card-media">
+            <img
+              src={cardCover}
+              alt={post.title}
+              className="community-card-image"
+              referrerPolicy="no-referrer"
+            />
+            <span className="community-card-type">{post.type}</span>
+            <span className="community-card-place"><MapPin size={11} />{post.district}</span>
+          </div>
+        )}
         <div className="community-card-body">
           <h3>
             {post.title}
@@ -177,8 +256,8 @@ export default function Community({ onNavigateToAgent }: CommunityProps) {
               <span className="community-card-stats"><Heart size={12} />{post.likesCount}<Clock size={12} />{post.publishedTimeAgo || '刚刚'}</span>
             </div>
             <div className="community-card-actions">
-              <button type="button" onClick={event => { event.stopPropagation(); handlePostSimilar(post); }}><PenLine size={12} />转发同类需求</button>
-              <button type="button" onClick={event => { event.stopPropagation(); handleSharePost(post); }}><Share2 size={12} />分享名片</button>
+              <button type="button" onClick={event => { event.stopPropagation(); handlePostSimilar(post); }}><PenLine size={12} />{post.isOrder && post.isMine && post.status === 'pending' ? '修改订单信息' : '转发同类需求'}</button>
+              <button type="button" onClick={event => { event.stopPropagation(); handleSharePost(post); }}><Share2 size={12} />{post.isOrder ? '分享订单' : '分享名片'}</button>
             </div>
           </div>
       </article>
@@ -291,6 +370,38 @@ export default function Community({ onNavigateToAgent }: CommunityProps) {
               <p>发布后可生成可转发内容，分享给同城用户并积累信任。</p><button type="submit">生成并发布<Share2 size={15} /></button>
             </form>}
           </div>
+        </div>
+      )}
+      {editingOrder && (
+        <div className="community-modal-backdrop" onClick={() => setEditingOrder(null)}>
+          <form className="community-order-edit-modal" onSubmit={saveOrderEdits} onClick={event => event.stopPropagation()}>
+            <div className="community-modal-heading"><div><span>待匹配订单</span><h2>修改订单信息</h2></div><button type="button" onClick={() => setEditingOrder(null)} aria-label="关闭">×</button></div>
+            <label>事件标题<input value={editingDraft.title} onChange={event => setEditingDraft(prev => ({ ...prev, title: event.target.value }))} required /></label>
+            <label>事件详情<textarea rows={4} value={editingDraft.description} onChange={event => setEditingDraft(prev => ({ ...prev, description: event.target.value }))} required /></label>
+            <div className="community-edit-grid">
+              <label>期望时间<input value={editingDraft.time} onChange={event => setEditingDraft(prev => ({ ...prev, time: event.target.value }))} required /></label>
+              <label>服务地点<input value={editingDraft.location} onChange={event => setEditingDraft(prev => ({ ...prev, location: event.target.value }))} required /></label>
+            </div>
+            <label>预算参考<input value={editingDraft.budget} onChange={event => setEditingDraft(prev => ({ ...prev, budget: event.target.value }))} placeholder="可不填" /></label>
+            <button className="community-modal-primary" type="submit"><CheckCircle2 size={16} />保存并继续匹配</button>
+          </form>
+        </div>
+      )}
+      {sharingPost && (
+        <div className="community-modal-backdrop" onClick={() => setSharingPost(null)}>
+          <section className="community-share-modal" role="dialog" aria-modal="true" onClick={event => event.stopPropagation()}>
+            <div className="community-modal-heading"><div><span>和伴订单分享</span><h2>{sharingPost.isOrder ? '邀请助力，加速匹配' : '分享服务名片'}</h2></div><button type="button" onClick={() => setSharingPost(null)} aria-label="关闭">×</button></div>
+            <div className="community-share-preview">
+              <strong>{sharingPost.isOrder ? '帮我找到合适的小伴师傅' : sharingPost.title}</strong>
+              <p>{sharingPost.description.slice(0, 90)}</p>
+              <div><span>{sharingPost.time}</span><span>{sharingPost.location}</span></div>
+            </div>
+            <p className="community-share-copy">分享至三个群聊或朋友圈，可获得高曝光速率匹配与跨领域消费积分。</p>
+            <div className="community-share-actions">
+              <button type="button" onClick={() => useNativeShare(sharingPost)}><Share2 size={16} />直接分享</button>
+              <button type="button" onClick={() => copyShareContent(sharingPost)}><PenLine size={16} />复制分享内容</button>
+            </div>
+          </section>
         </div>
       )}
       {shareNotice && <div className="community-share-notice" role="status"><Gift size={15} />{shareNotice}</div>}
