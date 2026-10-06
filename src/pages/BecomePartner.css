@@ -1,6 +1,8 @@
 .partner-hero-carousel { position: relative; min-height: 174px; overflow: hidden; }
 .partner-hero-slide { position: absolute; inset: 0; opacity: 0; transform: translateX(14px); pointer-events: none; transition: opacity 360ms ease-out, transform 360ms ease-out; }
 .partner-hero-slide.active { opacity: 1; transform: translateX(0); pointer-events: auto; }
+.partner-hero > div:first-of-type { min-width: 0; position: relative; z-index: 1; }
+.partner-hero h1, .partner-hero p { overflow-wrap: anywhere; }
 .partner-skill-card, .partner-calendar-card { position: absolute; right: 15px; bottom: 13px; width: 142px; border: 1px solid #ffffff45; border-radius: 13px; background: #ffffff1c; backdrop-filter: blur(8px); }
 .partner-skill-card { display: grid; grid-template-columns: 22px 1fr; gap: 3px 6px; padding: 10px; color: #fff; transform: rotate(-4deg); }
 .partner-skill-card > svg { grid-row: 1 / 3; margin-top: 2px; color: #ffd875; }
