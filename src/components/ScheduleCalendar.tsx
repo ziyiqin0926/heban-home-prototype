@@ -53,6 +53,7 @@ const viewOptions = [
   { id: '3day' as const, label: '3日', icon: Columns3 },
   { id: 'day' as const, label: '日', icon: Rows3 },
 ];
+const DEMO_HINT_DISMISSED_KEY = 'heban-schedule-demo-hint-dismissed';
 
 interface ScheduleCalendarProps {
   onClose: () => void;
@@ -72,7 +73,7 @@ export default function ScheduleCalendar({ onClose, onOpenAgent, onOpenProfile, 
   const [showViewMenu, setShowViewMenu] = useState(false);
   const [showQuickAdd, setShowQuickAdd] = useState(false);
   const [aiDraft, setAiDraft] = useState('帮我安排一个陪妈妈去医院复查的档期');
-  const [showDemoHint, setShowDemoHint] = useState(true);
+  const [showDemoHint, setShowDemoHint] = useState(() => window.localStorage.getItem(DEMO_HINT_DISMISSED_KEY) !== '1');
 
   const todayKey = formatDateKey(today);
   const selectedKey = formatDateKey(selectedDate);
@@ -156,21 +157,23 @@ export default function ScheduleCalendar({ onClose, onOpenAgent, onOpenProfile, 
         )}
 
         {view !== 'month' && view !== 'list' && (
-          <div className="schedule-timeline">
-            <div className="schedule-day-navigation">
-              <button type="button" aria-label="前一天" onClick={() => moveDate(-1)}><ChevronLeft /></button>
-              <div><strong>{dateLabel(selectedDate)}</strong><span>{selectedKey === todayKey ? '今天的安排' : '可前后移动查看日程'}</span></div>
-              <button type="button" aria-label="后一天" onClick={() => moveDate(1)}><ChevronRight /></button>
+          <>
+            <div className={`schedule-timeline schedule-timeline-${view}`}>
+              <div className="schedule-day-navigation">
+                <button type="button" aria-label="前一天" onClick={() => moveDate(-1)}><ChevronLeft /></button>
+                <div><strong>{dateLabel(selectedDate)}</strong><span>{selectedKey === todayKey ? '今天的安排' : '可前后移动查看日程'}</span></div>
+                <button type="button" aria-label="后一天" onClick={() => moveDate(1)}><ChevronRight /></button>
+              </div>
+              {visibleDates.map(date => {
+                const tasks = tasksFor(date);
+                return <section key={formatDateKey(date)} className="schedule-timeline-day">
+                  {view === '3day' && <button type="button" className={`schedule-timeline-date ${formatDateKey(date) === selectedKey ? 'active' : ''}`} onClick={() => setDate(date)}><strong>{date.getDate()}</strong><span>{dateLabel(date)}</span></button>}
+                  {tasks.length === 0 ? <div className="schedule-empty">当天暂无排期，可向 AI 说一句话快速安排。</div> : tasks.map(task => <div key={task.id} className={`schedule-timeline-row ${task.status === 'accepted' ? 'green' : task.status === 'completed' ? 'gray' : ''}`}><span className="schedule-time-label">{task.time.split(' ')[0]}</span><div className="schedule-timeline-card"><strong>{task.title}</strong><span>{task.note}</span><em>{task.statusLabel}{task.demo ? ' · 示例' : ''}</em></div></div>)}
+                </section>;
+              })}
             </div>
-            {visibleDates.map(date => {
-              const tasks = tasksFor(date);
-              return <section key={formatDateKey(date)} className="schedule-timeline-day">
-                {view === '3day' && <button type="button" className={`schedule-timeline-date ${formatDateKey(date) === selectedKey ? 'active' : ''}`} onClick={() => setDate(date)}><strong>{date.getDate()}</strong><span>{dateLabel(date)}</span></button>}
-                {tasks.length === 0 ? <div className="schedule-empty">当天暂无排期，可向 AI 说一句话快速安排。</div> : tasks.map(task => <div key={task.id} className={`schedule-timeline-row ${task.status === 'accepted' ? 'green' : task.status === 'completed' ? 'gray' : ''}`}><span className="schedule-time-label">{task.time.split(' ')[0]}</span><div className="schedule-timeline-card"><strong>{task.title}</strong><span>{task.note}</span><em>{task.statusLabel}{task.demo ? ' · 示例' : ''}</em></div></div>)}
-              </section>;
-            })}
-            {showDemoHint && tasksFor(selectedDate).some(task => task.demo) && <div className="schedule-demo-hint"><Sparkles /><span>这是新用户示范日程，告诉 AI 你的事情，它会自动补全日期、时间和家庭成员。</span><button type="button" onClick={() => setShowDemoHint(false)} aria-label="关闭提示"><X /></button></div>}
-          </div>
+            {showDemoHint && tasksFor(selectedDate).some(task => task.demo) && <div className="schedule-demo-hint"><Sparkles /><span>这是新用户示范日程，告诉 AI 你的事情，它会自动补全日期、时间和家庭成员。</span><button type="button" onClick={() => { setShowDemoHint(false); window.localStorage.setItem(DEMO_HINT_DISMISSED_KEY, '1'); }} aria-label="关闭提示"><X /></button></div>}
+          </>
         )}
 
         {view === 'list' && <div className="schedule-list schedule-list-view"><div className="schedule-section-label"><span>全部日程 · {allTasks.length} 项</span><span className="schedule-tag">按日期排列</span></div>{allTasks.map(task => <div key={task.id} className={`schedule-card ${task.status === 'accepted' ? 'schedule-card-green' : task.status === 'completed' ? 'schedule-card-gray' : 'schedule-card-blue'} schedule-clickable`}><div className="schedule-card-time"><Clock className="schedule-card-time-icon" /><span>{dateLabel(new Date(`${task.date}T00:00:00`))} · {task.time}</span><span className="schedule-status-tag">{task.statusLabel}</span></div><div className="schedule-card-main"><h4>{task.title}</h4><p>{task.note}</p></div></div>)}</div>}

@@ -2062,6 +2062,16 @@ select:focus-visible {
   border-left: 1px solid #e2e8f0;
 }
 
+.schedule-timeline.schedule-timeline-day {
+  display: block;
+  overflow-x: hidden;
+}
+
+.schedule-timeline.schedule-timeline-day > .schedule-timeline-day {
+  width: 100%;
+  min-width: 0;
+}
+
 .schedule-timeline-date {
   display: flex;
   align-items: baseline;
@@ -2234,7 +2244,8 @@ select:focus-visible {
   display: flex;
   align-items: flex-start;
   gap: 7px;
-  margin: 4px 0 2px;
+  width: calc(100% - 32px);
+  margin: 10px 16px 6px;
   padding: 9px 10px;
   border: 1px solid #f5df9b;
   border-radius: 10px;
@@ -2242,6 +2253,11 @@ select:focus-visible {
   background: #fff9e8;
   font-size: 10px;
   line-height: 1.45;
+}
+
+.schedule-demo-hint > span {
+  min-width: 0;
+  flex: 1;
 }
 
 .schedule-demo-hint > svg {
